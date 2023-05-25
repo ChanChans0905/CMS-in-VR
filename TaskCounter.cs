@@ -5,7 +5,7 @@ using UnityEngine.UIElements;
 
 public class TaskCounter : MonoBehaviour
 {
-    public GameObject FollowingCarLeft, FollowingCarRight, LaneChengingCar;
+    public GameObject FollowingCarLeft, FollowingCarRight, LaneChangingCar;
     [SerializeField] DemoCarController DriverCar;
 
     private void OnTriggerEnter(Collider other)
@@ -14,7 +14,7 @@ public class TaskCounter : MonoBehaviour
         {
             FollowingCarLeft.SetActive(true);
             FollowingCarRight.SetActive(true);
-            LaneChengingCar.SetActive(true);
+            LaneChangingCar.SetActive(true);
             DriverCar.taskCount++;
         }
     }

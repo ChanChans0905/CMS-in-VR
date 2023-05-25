@@ -8,7 +8,6 @@ public class FollowingCar : MonoBehaviour
 {
     Rigidbody _rb;
     public GameObject TargetCar;
-    public float laneChangeCoor;
     public PathCreator pathCreator;
     float distanceTravelled;
     public bool wayPointTrigger = false;
@@ -18,12 +17,15 @@ public class FollowingCar : MonoBehaviour
     Vector3 startPos;
     [SerializeField] DemoCarController DriverCar;
     public GameObject carLeft, carRight;
+    public bool eventStartBool = false;
+    public float accelTime;
 
     void Start()
     {
         _rb = GetComponent<Rigidbody>();
         startPos= transform.position;
-        gameObject.SetActive(false);
+        carLeft.SetActive(false);
+        carRight.SetActive(false);
     }
 
     void FixedUpdate()
@@ -35,32 +37,45 @@ public class FollowingCar : MonoBehaviour
         velocityRight.y = 0;
         velocityRight.x = 0;
 
-        laneChangeCoor += Time.deltaTime;
-
-        if (DriverCar.FollowingCarSpeed[DriverCar.taskCount] == 1 )
+        if(eventStartBool == false )
         {
-            velocityLeft.z *= 1.5f;
-            velocityRight.z *= 1.2f;
-        }
-        else
-        {
-            velocityLeft.z *= 1.2f;
-            velocityRight.z *= 1.5f;
+            velocityLeft.z = 1;
+            velocityRight.z = 1;
         }
 
-        if(wayPointTrigger == true)
+        if(eventStartBool == true)
         {
-            distanceTravelled += Time.deltaTime*8;
-            transform.position = pathCreator.path.GetPointAtDistance(distanceTravelled);
-            transform.rotation = pathCreator.path.GetRotationAtDistance(distanceTravelled);
-            disableTime += Time.deltaTime;
-            if(disableTime > 8)
+            accelTime += Time.deltaTime;
+
+            if(accelTime >= 8 + DriverCar.LaneChangeTime[DriverCar.taskCount])
             {
-                gameObject.transform.position = startPos;
-                gameObject.transform.rotation= Quaternion.identity;
-                gameObject.SetActive(false);
+                if (DriverCar.FollowingCarSpeed[DriverCar.taskCount] == 1)
+                {
+                    velocityLeft.z *= 1.15f;
+                    velocityRight.z *= 1.1f;
+                }
+                else
+                {
+                    velocityLeft.z *= 1.1f;
+                    velocityRight.z *= 1.15f;
+                }
+            }
 
-                wayPointTrigger = false;
+            if (wayPointTrigger == true)
+            {
+                distanceTravelled += Time.deltaTime * 8;
+                transform.position = pathCreator.path.GetPointAtDistance(distanceTravelled);
+                transform.rotation = pathCreator.path.GetRotationAtDistance(distanceTravelled);
+                disableTime += Time.deltaTime;
+                if (disableTime > 8)
+                {
+                    gameObject.transform.position = startPos;
+                    gameObject.transform.rotation = Quaternion.identity;
+                    gameObject.SetActive(false);
+
+                    wayPointTrigger = false;
+                    eventStartBool= false;
+                }
             }
         }
     }
@@ -70,7 +85,11 @@ public class FollowingCar : MonoBehaviour
         if (other.gameObject.CompareTag("WayPoint"))
         {
             wayPointTrigger = true;
-        }   
+        }
+        if (other.gameObject.CompareTag("EventStartPoint"))
+        {
+            eventStartBool= true;
+        }
     }
 
     private void OnTriggerStay(Collider other)

@@ -5,7 +5,7 @@ using UnityEngine;
 
 public class Respawn : MonoBehaviour
 {
-    float timecount = 0;
+    float timeCount = 0;
 
    
     void Start()
@@ -16,8 +16,8 @@ public class Respawn : MonoBehaviour
     
     void Update()
     {
-        timecount += Time.deltaTime;
-        if (timecount > 5)
+        timeCount += Time.deltaTime;
+        if (timeCount > 5)
         {
             gameObject.transform.position = new Vector3(6035, 54, -1672);
         }

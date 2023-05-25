@@ -9,6 +9,11 @@ public class TrialCar : MonoBehaviour
     float distanceTravelled;
     [SerializeField] DemoCarController DriverCar;
 
+    private void Start()
+    {
+        gameObject.SetActive(false);
+    }
+
     void Update()
     {
         if (DriverCar.TrialBool)

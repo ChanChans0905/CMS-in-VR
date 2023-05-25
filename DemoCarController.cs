@@ -1,0 +1,253 @@
+﻿using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+using System;
+
+public class DemoCarController : MonoBehaviour
+{
+
+    [Header("Settings")]
+    [SerializeField] private bool brakeToReverse = true;
+    [SerializeField] private AnimationCurve availableForwardTorque = AnimationCurve.Constant(0, 50, 2700);
+    [SerializeField] private AnimationCurve availableReverseTorque = AnimationCurve.Linear(0, 2700, 15, 0);
+
+    [Header("Data")] // This is how you reference custom data, both for read and write purposes.
+    [SerializeField] private VolvoCars.Data.PropulsiveDirection propulsiveDirection = default;
+    [SerializeField] private VolvoCars.Data.WheelTorque wheelTorque = default;
+    [SerializeField] private VolvoCars.Data.UserSteeringInput userSteeringInput = default;
+    [SerializeField] private VolvoCars.Data.Velocity velocity = default;
+    [SerializeField] private VolvoCars.Data.GearLeverIndication gearLeverIndication = default;
+    [SerializeField] private VolvoCars.Data.DoorIsOpenR1L doorIsOpenR1L = default; // R1L stands for Row 1 Left.
+    [SerializeField] private VolvoCars.Data.LampBrake lampBrake = default;
+
+    public bool respawnTrigger = false;
+    public GameObject VolvoCar;
+    public GameObject Questionnaire;
+    public float waitTimer;
+    public int taskCount = 0;
+    public int CMSchangeCount;
+    public int QuestionnaireCount;
+    public bool CMSchangeBool = false;
+    public bool QuestionnaireBool = false;
+    public bool FinalQuestionnaireBool = false;
+    public bool TrialBool = false;
+    public GameObject CMSLeft, CMSRight, CMSCenter, CMSStitched;
+    public int[] LaneChangeTime = { 0, 0, 0, 1, 3, 5, 7, 9 };
+    public int[] CMScombination = { 1, 2, 3, 4, 5, 6, 7 };
+    public int[] FollowingCarSpeed = { 0, 0, 0, 0, 1, 1, 1, 1 };
+
+    #region Private variables not shown in the inspector
+    private VolvoCars.Data.Value.Public.WheelTorque wheelTorqueValue = new VolvoCars.Data.Value.Public.WheelTorque(); // This is the value type used by the wheelTorque data item.     
+    private VolvoCars.Data.Value.Public.LampGeneral lampValue = new VolvoCars.Data.Value.Public.LampGeneral(); // This is the value type used by lights/lamps
+    private float totalTorque;  // The total torque requested by the user, will be split between the four wheels
+    private float steeringReduction; // Used to make it easier to drive with keyboard in higher speeds
+    public const float MAX_BRAKE_TORQUE = 8000; // [Nm]
+    #endregion
+
+    private void Start()
+    {
+        LaneChangeTime = ShuffleArray(LaneChangeTime);
+        CMScombination = ShuffleArray(CMScombination);
+        FollowingCarSpeed = ShuffleArray(FollowingCarSpeed);
+    }
+
+    private void Update()
+    {
+
+        // Driving inputs 
+        float rawSteeringInput = Input.GetAxis("Horizontal");
+        float rawForwardInput = Input.GetAxis("Vertical");
+        float parkInput = Input.GetAxis("Jump");
+
+        // Steering
+        steeringReduction = 1 - Mathf.Min(Mathf.Abs(velocity.Value) / 30f, 0.85f);
+        userSteeringInput.Value = rawSteeringInput * steeringReduction;
+
+        #region Wheel torques 
+
+        if (parkInput > 0)
+        { // Park request ("hand brake")
+            if (Mathf.Abs(velocity.Value) > 5f / 3.6f)
+            {
+                totalTorque = -MAX_BRAKE_TORQUE; // Regular brakes
+            }
+            else
+            {
+                totalTorque = -9000; // Parking brake and/or gear P
+                propulsiveDirection.Value = 0;
+                gearLeverIndication.Value = 0;
+            }
+
+        }
+        else if (propulsiveDirection.Value == 1)
+        { // Forward
+
+            if (rawForwardInput >= 0 && velocity.Value > -1.5f)
+            {
+                totalTorque = Mathf.Min(availableForwardTorque.Evaluate(Mathf.Abs(velocity.Value)), -1800 + 7900 * rawForwardInput - 9500 * rawForwardInput * rawForwardInput + 9200 * rawForwardInput * rawForwardInput * rawForwardInput);
+            }
+            else
+            {
+                totalTorque = -Mathf.Abs(rawForwardInput) * MAX_BRAKE_TORQUE;
+                if (Mathf.Abs(velocity.Value) < 0.01f && brakeToReverse)
+                {
+                    propulsiveDirection.Value = -1;
+                    gearLeverIndication.Value = 1;
+                }
+            }
+
+        }
+        else if (propulsiveDirection.Value == -1)
+        { // Reverse
+            if (rawForwardInput <= 0 && velocity.Value < 1.5f)
+            {
+                float absInput = Mathf.Abs(rawForwardInput);
+                totalTorque = Mathf.Min(availableReverseTorque.Evaluate(Mathf.Abs(velocity.Value)), -1800 + 7900 * absInput - 9500 * absInput * absInput + 9200 * absInput * absInput * absInput);
+            }
+            else
+            {
+                totalTorque = -Mathf.Abs(rawForwardInput) * MAX_BRAKE_TORQUE;
+                if (Mathf.Abs(velocity.Value) < 0.01f)
+                {
+                    propulsiveDirection.Value = 1;
+                    gearLeverIndication.Value = 3;
+                }
+            }
+
+        }
+        else
+        { // No direction (such as neutral gear or P)
+            totalTorque = 0;
+            if (Mathf.Abs(velocity.Value) < 1f)
+            {
+                if (rawForwardInput > 0)
+                {
+                    propulsiveDirection.Value = 1;
+                    gearLeverIndication.Value = 3;
+                }
+                else if (rawForwardInput < 0 && brakeToReverse)
+                {
+                    propulsiveDirection.Value = -1;
+                    gearLeverIndication.Value = 1;
+                }
+            }
+            else if (gearLeverIndication.Value == 0)
+            {
+                totalTorque = -9000;
+            }
+        }
+
+        ApplyWheelTorques(totalTorque);
+        #endregion
+
+
+        if (respawnTrigger == true)
+        {
+            waitTimer += Time.deltaTime;
+            if (waitTimer > 1) // FadeIn 시간을 위해 1초 대기
+            {
+                velocity.Value = 0;
+                wheelTorque.Value = wheelTorqueValue;
+                VolvoCar.transform.localPosition = new Vector3(0, 0, 0);
+                VolvoCar.transform.rotation = Quaternion.Slerp(VolvoCar.transform.rotation, transform.rotation, 0.5f * Time.deltaTime);
+            }
+        }
+
+        if (CMSchangeBool == true)
+        {
+            CMSchange();
+        }
+    }
+
+    private void ApplyWheelTorques(float totalWheelTorque)
+    {
+        // Set the torque values for the four wheels.
+        wheelTorqueValue.fL = 0.4f * totalWheelTorque / 4f;
+        wheelTorqueValue.fR = 0.4f * totalWheelTorque / 4f;
+        wheelTorqueValue.rL = 1.6f * totalWheelTorque / 4f;
+        wheelTorqueValue.rR = 1.6f * totalWheelTorque / 4f;
+
+        // Update the wheel torque data item with the new values. This is accessible to other scripts, such as chassis dynamics.
+        wheelTorque.Value = wheelTorqueValue;
+    }
+
+    public void CMSchange()
+    {
+        taskCount = 0;
+        CMSCenter.SetActive(false);
+        CMSLeft.SetActive(false);
+        CMSRight.SetActive(false);
+        CMSStitched.SetActive(false);
+        // AR signal setactive false, stitched false
+
+        switch (CMSchangeCount)
+        {
+            case 1: // Traditional Mirror
+                {
+                    break;
+                }
+            case 2: // CMS beside Traditional Mirror
+                {
+                    break;
+                }
+            case 3: // CMS near the Steering Wheel
+                {
+                    CMSCenter.transform.localPosition = new Vector3(0, 0.234f, 0);
+                    CMSCenter.transform.eulerAngles = new Vector3(90, 0, 90);
+                    CMSLeft.transform.localPosition = new Vector3(0, 0.163f, 0.175f);
+                    CMSLeft.transform.eulerAngles = new Vector3(90, 0, 90);
+                    CMSRight.transform.localPosition = new Vector3(0, 0.163f, -0.175f);
+                    CMSRight.transform.eulerAngles = new Vector3(90, 0, 90);
+                    break;
+                }
+            case 4: // CMS Stitched
+                {
+                    break;
+                }
+            case 5: // CMS beside Traditional Mirror with AR signal
+                {
+                    break;
+                }
+            case 6: // CMS near the Steering Wheel with AR signal
+                {
+                    break;
+                }
+            case 7: // CMS Stitched with AR signal
+                {
+                    break;
+                }
+        }
+
+        QuestionnaireCount = CMSchangeCount;
+        QuestionnaireBool = true;
+        if(QuestionnaireBool)
+        {
+            Questionnaire.SetActive(true);
+        }
+        else if(QuestionnaireBool == false)
+        {
+            Questionnaire.SetActive(false);
+        }
+        CMSchangeBool = false;
+    }
+
+    static public T[] ShuffleArray<T>(T[] array)
+    {
+        int random1, random2;
+        T temp;
+
+        for (int i = 0; i < array.Length; ++i)
+        {
+
+            random1 = UnityEngine.Random.Range(0, array.Length);
+            random2 = UnityEngine.Random.Range(0, array.Length);
+
+            temp = array[random1];
+            array[random1] = array[random2];
+            array[random2] = temp;
+        }
+
+        return array;
+    }
+
+}
