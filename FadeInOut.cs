@@ -30,7 +30,7 @@ public class FadeInOut : MonoBehaviour
             _mat.SetColor("_BaseColor", nNew);
 
 
-        if (Input.GetKeyDown(KeyCode.M)) // ¼³¹®Áö Á¾·á ½Ã fade out¿ë trigger
+        if (Input.GetKeyDown(KeyCode.M)) // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ fade outï¿½ï¿½ trigger
         {
             DriverCar.respawnTrigger = false;
             Event= false;
@@ -63,7 +63,7 @@ public class FadeInOut : MonoBehaviour
             DriverCar.respawnTrigger = true;
         }
 
-        if (other.gameObject.CompareTag("WayPoint") && DriverCar.taskCount % 5 == 0)
+        if (other.gameObject.CompareTag("WayPoint") && DriverCar.taskCount == 8)
         {
             Event = true;
             DriverCar.respawnTrigger = true;

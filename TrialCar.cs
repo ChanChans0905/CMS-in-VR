@@ -8,6 +8,7 @@ public class TrialCar : MonoBehaviour
     public PathCreator pathCreator;
     float distanceTravelled;
     [SerializeField] DemoCarController DriverCar;
+    public float trialTime;
 
     private void Start()
     {
@@ -16,11 +17,24 @@ public class TrialCar : MonoBehaviour
 
     void Update()
     {
+        trialTime += Time.deltaTime;
+
         if (DriverCar.TrialBool)
         {
-            distanceTravelled += Time.deltaTime * 8;
+            distanceTravelled += Time.deltaTime * 15;
             transform.position = pathCreator.path.GetPointAtDistance(distanceTravelled);
             transform.rotation = pathCreator.path.GetRotationAtDistance(distanceTravelled);
+        }
+
+        if( trialTime >= 120)
+        {
+            DriverCar.TrialBool = false;
+        }
+
+        if(DriverCar.TrialBool == false)
+        {
+            trialTime = 0;
+            gameObject.SetActive(false );
         }
     }
 }

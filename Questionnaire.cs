@@ -69,6 +69,7 @@ public class Questionnaire : MonoBehaviour
 
             DriverCar.respawnTrigger = false;
             DriverCar.QuestionnaireBool= false;
+            DriverCar.TrialBool = true;
         }
 
         if (DriverCar.QuestionnaireCount == 7 && Input.GetKeyDown(KeyCode.M)) // 7번째 CMS 저장 버튼 누르면 최종 설문으로 이동
@@ -167,6 +168,7 @@ public class Questionnaire : MonoBehaviour
             }
             finalString += csvSeparator;
             sw.WriteLine(finalString);
+            SaveTrigger = false;
             gameObject.SetActive(false);
         }
     }

@@ -19,7 +19,7 @@ public class LeadingCar : MonoBehaviour
     public PathCreator pathCreator;
     float distanceTravelled;
     public bool wayPointTrigger = false;
-    bool eventStartBool = false;
+    public bool eventStartBool = false;
 
 
     void Start()

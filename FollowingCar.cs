@@ -16,6 +16,7 @@ public class FollowingCar : MonoBehaviour
     float disableTime;
     Vector3 startPos;
     [SerializeField] DemoCarController DriverCar;
+    [SerializeField] LeadingCar LeadingCar;
     public GameObject carLeft, carRight;
     public bool eventStartBool = false;
     public float accelTime;
@@ -37,13 +38,7 @@ public class FollowingCar : MonoBehaviour
         velocityRight.y = 0;
         velocityRight.x = 0;
 
-        if(eventStartBool == false )
-        {
-            velocityLeft.z = 1;
-            velocityRight.z = 1;
-        }
-
-        if(eventStartBool == true)
+        if(LeadingCar.eventStartBool == true)
         {
             accelTime += Time.deltaTime;
 
@@ -85,10 +80,6 @@ public class FollowingCar : MonoBehaviour
         if (other.gameObject.CompareTag("WayPoint"))
         {
             wayPointTrigger = true;
-        }
-        if (other.gameObject.CompareTag("EventStartPoint"))
-        {
-            eventStartBool= true;
         }
     }
 

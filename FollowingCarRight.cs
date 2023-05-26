@@ -12,14 +12,12 @@ public class FollowingCarRight : MonoBehaviour
     float disableTime;
     Vector3 startPos;
 
-    // Start is called before the first frame update
     void Start()
     {
         _rb = GetComponent<Rigidbody>();
         startPos = transform.position;
     }
 
-    // Update is called once per frame
     void Update()
     {
         if (wayPointTrigger == true)
