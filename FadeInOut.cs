@@ -41,7 +41,7 @@ public class FadeInOut : MonoBehaviour
     {
             if(alpha <= 1)
             {
-                degree += .05f;
+                degree += .01f;
                 alpha = degree;
             }
     }
