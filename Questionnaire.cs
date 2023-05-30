@@ -51,7 +51,7 @@ public class Questionnaire : MonoBehaviour
                 SaveTrigger= true;
             }
         }
-        else if (rec.rgbButtons[3] == 128 || Input.GetKeyDown(KeyCode.N))
+        else if (rec.rgbButtons[5] == 128 || Input.GetKeyDown(KeyCode.N))
         {
             if(QuestionnaireNumber > 1)
             {
@@ -63,9 +63,7 @@ public class Questionnaire : MonoBehaviour
         
         if (SaveTrigger == true) // save 확인 버튼 클릭 시
         {
-            SaveToCSV();
-            
-            // 리스폰트리거 제거, fade out
+            SaveToCSV();            
 
             DriverCar.respawnTrigger = false;
             DriverCar.QuestionnaireBool= false;

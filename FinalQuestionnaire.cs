@@ -17,7 +17,7 @@ public class FinalQuestionnaire : MonoBehaviour
     private string[] csvHeaders = new string[2] { "Number", "Answer" };
     private string csvDirectoryName = "Questionnaire";
     LogitechGSDK.LogiControllerPropertiesData properties;
-    public bool SaveTrigger;
+    public bool GameEndBool = false;
 
     private void Start()
     {
@@ -45,12 +45,8 @@ public class FinalQuestionnaire : MonoBehaviour
                 children[QuestionnaireNumber - 1].gameObject.SetActive(false);
             }
             QuestionnaireNumber++;
-            if (Input.GetKeyDown(KeyCode.N)) // 마지막 저장 예 버튼 클릭시
-            {
-                SaveTrigger = true;
-            }
         }
-        else if (rec.rgbButtons[3] == 128 || Input.GetKeyDown(KeyCode.N))
+        else if (rec.rgbButtons[5] == 128 || Input.GetKeyDown(KeyCode.N))
         {
             if (QuestionnaireNumber > 1)
             {
@@ -60,32 +56,14 @@ public class FinalQuestionnaire : MonoBehaviour
             }
         }
 
-        if (SaveTrigger == true) // save 확인 버튼 클릭 시
+        if (GameEndBool == true) // save 확인 버튼 클릭 시
         {
             SaveToCSV();
 
-            // 리스폰트리거 제거, fade out
+            // 게임이 종료되었습니다. 관리자에게 말씀해주세요.
 
-            DriverCar.respawnTrigger = false;
-            DriverCar.QuestionnaireBool = false;
+
         }
-
-        if (DriverCar.FinalQuestionnaireBool)
-        {
-            FQ();
-        }
-    }
-
-    public void FQ()
-    {
-        // 최종 설문
-
-
-    }
-
-    public void GameEnd()
-    {
-        // 게임 종료 안내 문구 투영 ( 게임이 끝났습니다. 관리자에게 말씀해주세요 )
     }
 
     List<Transform> GetChildren(Transform parent)
