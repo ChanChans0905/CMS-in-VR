@@ -19,11 +19,11 @@ public class SaveTrigger : MonoBehaviour
         LogitechGSDK.DIJOYSTATE2ENGINES rec;
         rec = LogitechGSDK.LogiGetStateUnity(0);
 
-        if (rec.rgbButtons[5] == 128)
+        if (rec.rgbButtons[5] == 128 && Questionnaire.FinalQuestionnaireBool == false)
         {
             Questionnaire.SaveTrigger = true;
         }
-        else if(Questionnaire.FinalQuestionnaireBool == true && rec.rgbButtons[5] == 128)
+        else if(rec.rgbButtons[5] == 128 && Questionnaire.FinalQuestionnaireBool == true)
         {
             FinalQuestionnaire.GameEndBool = true;
         }

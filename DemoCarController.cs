@@ -23,7 +23,7 @@ public class DemoCarController : MonoBehaviour
 
     public bool respawnTrigger = false;
     public GameObject VolvoCar;
-    public GameObject Questionnaire;
+    public GameObject Questionnaire, FinalQuestionnaire;
     public float waitTimer;
     public int taskCount = 0;
     public int CMSchangeCount;
@@ -189,7 +189,15 @@ public class DemoCarController : MonoBehaviour
         // AR signal setactive false, stitched false
 
         QuestionnaireCount = CMSchangeCount;
-        QuestionnaireBool = true;
+        if (FinalQuestionnaireBool == false)
+        {
+            QuestionnaireBool = true;
+        }
+        else if (FinalQuestionnaireBool == true)
+        {
+            FinalQuestionnaire.SetActive(true);
+        }
+
         if(QuestionnaireBool)
         {
             Questionnaire.SetActive(true);

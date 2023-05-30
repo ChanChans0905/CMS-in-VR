@@ -47,7 +47,7 @@ public class Questionnaire : MonoBehaviour
                 children[QuestionnaireNumber - 1].gameObject.SetActive(false);
             }
             QuestionnaireNumber++;
-            if (rec.rgbButtons[4] == 128 && SaveTriggerFile.SaveButton == true) // 마지막 저장 예 버튼 클릭시
+            if (rec.rgbButtons[4] == 128 && SaveTriggerFile.SaveButton == true)
             {
                 SaveTrigger= true;
             }
