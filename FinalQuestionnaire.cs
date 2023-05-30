@@ -18,6 +18,7 @@ public class FinalQuestionnaire : MonoBehaviour
     private string csvDirectoryName = "Questionnaire";
     LogitechGSDK.LogiControllerPropertiesData properties;
     public bool GameEndBool = false;
+    public GameObject GameEndNotice;
 
     private void Start()
     {
@@ -60,6 +61,7 @@ public class FinalQuestionnaire : MonoBehaviour
         {
             SaveToCSV();
 
+            GameEndNotice.SetActive(true);
             // 실험이 종료되었습니다. 고생하셨스니다.  관리자에게 알려주세요.
 
         }

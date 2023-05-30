@@ -6,6 +6,7 @@ using UnityEngine;
 public class SaveTrigger : MonoBehaviour
 {
     [SerializeField] Questionnaire Questionnaire;
+    [SerializeField] FinalQuestionnaire FinalQuestionnaire;
     LogitechGSDK.LogiControllerPropertiesData properties;
     public bool SaveButton = false;
 
@@ -21,6 +22,10 @@ public class SaveTrigger : MonoBehaviour
         if (rec.rgbButtons[5] == 128)
         {
             Questionnaire.SaveTrigger = true;
+        }
+        else if(Questionnaire.FinalQuestionnaireBool == true && rec.rgbButtons[5] == 128)
+        {
+            FinalQuestionnaire.GameEndBool = true;
         }
     }
 }
