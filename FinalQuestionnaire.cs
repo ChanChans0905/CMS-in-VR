@@ -60,8 +60,7 @@ public class FinalQuestionnaire : MonoBehaviour
         {
             SaveToCSV();
 
-            // 게임이 종료되었습니다. 관리자에게 말씀해주세요.
-
+            // 실험이 종료되었습니다. 고생하셨스니다.  관리자에게 알려주세요.
 
         }
     }
