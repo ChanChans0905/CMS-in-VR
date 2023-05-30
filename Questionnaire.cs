@@ -17,7 +17,7 @@ public class Questionnaire : MonoBehaviour
     private string[] csvHeaders = new string[2] { "Number", "Answer" };
     private string csvDirectoryName = "Questionnaire";
     LogitechGSDK.LogiControllerPropertiesData properties;
-    public bool SaveTrigger;
+    public bool SaveTrigger = false;
 
     void Start()
     {
@@ -46,7 +46,7 @@ public class Questionnaire : MonoBehaviour
                 children[QuestionnaireNumber - 1].gameObject.SetActive(false);
             }
             QuestionnaireNumber++;
-            if (Input.GetKeyDown(KeyCode.N)) // 마지막 저장 예 버튼 클릭시
+            if (rec.rgbButtons[4] == 128) // 마지막 저장 예 버튼 클릭시
             {
                 SaveTrigger= true;
             }
