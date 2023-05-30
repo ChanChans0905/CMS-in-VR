@@ -1,6 +1,6 @@
 # CMS-in-VR
 
-### This package is based on Unity, using virtual reality(VR) <br/>
+### This package is based on Unity, with virtual reality(VR) <br/>
 
 In this package, we check following points :<br/>
 * Efficiency of several locations and combinations of Camera Monitor Systems(CMS) <br/>
