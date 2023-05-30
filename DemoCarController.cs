@@ -22,8 +22,8 @@ public class DemoCarController : MonoBehaviour
     [SerializeField] private VolvoCars.Data.LampBrake lampBrake = default;
 
     public bool respawnTrigger = false;
-    public GameObject VolvoCar;
-    public GameObject Questionnaire, FinalQuestionnaire;
+    public GameObject VolvoCar, Questionnaire, FinalQuestionnaire;
+    public GameObject CMSLeft, CMSRight, CMSCenter, CMSStitched, ARSignalLeft, ARSignalRight, ARSignalRear, ARSignalStitched, TraditionalMirrorLeft, TraditionalMirrorRight;
     public float waitTimer;
     public int taskCount = 0;
     public int CMSchangeCount;
@@ -32,7 +32,7 @@ public class DemoCarController : MonoBehaviour
     public bool QuestionnaireBool = false;
     public bool FinalQuestionnaireBool = false;
     public bool TrialBool = false;
-    public GameObject CMSLeft, CMSRight, CMSCenter, CMSStitched, ARSignalLeft, ARSignalRight, ARSignalRear, ARSignalStitched, TraditionalMirrorLeft, TraditionalMirrorRight;
+
     public int[] LaneChangeTime = { 0, 0, 0, 1, 3, 5, 7, 9 };
     public int[] CMScombination = { 1, 2, 3, 4, 5, 6, 7 };
     public int[] FollowingCarSpeed = { 0, 0, 0, 0, 1, 1, 1, 1 };

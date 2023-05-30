@@ -62,7 +62,7 @@ public class Questionnaire : MonoBehaviour
             }
         }
         
-        if (SaveTrigger == true) // save 확인 버튼 클릭 시
+        if (SaveTrigger == true) 
         {
             SaveToCSV();            
 
@@ -71,7 +71,7 @@ public class Questionnaire : MonoBehaviour
             DriverCar.TrialBool = true;
         }
 
-        if (DriverCar.QuestionnaireCount == 7 && Input.GetKeyDown(KeyCode.M)) // 7번째 CMS 저장 버튼 누르면 최종 설문으로 이동
+        if (DriverCar.QuestionnaireCount == 7 && Input.GetKeyDown(KeyCode.M))
         {
             DriverCar.FinalQuestionnaireBool = true;
         }
