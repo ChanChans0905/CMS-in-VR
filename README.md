@@ -1,8 +1,9 @@
 # CMS-in-VR
 
 ### This package is based on Unity, with virtual reality(VR) environment <br/>
-* Here we only uploaded the code we use for this package, the whole package will be uploaded after publishing the paper <br/>
-* Devices used for this experiment : Varjo Aero, Logitech G29 Steering Wheel <br/>
+* **Notice** :
+  * Here we only uploaded the code we use for this package, the whole package will be uploaded after publishing the paper <br/>
+  * Devices used for this experiment : Varjo Aero, Logitech G29 Steering Wheel <br/>
 
 In this package, we check following points :<br/>
 * Efficiency of several locations and combinations of Camera Monitor Systems(CMS) <br/>
