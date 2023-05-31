@@ -47,10 +47,10 @@ public class Questionnaire : MonoBehaviour
                 children[QuestionnaireNumber - 1].gameObject.SetActive(false);
             }
             QuestionnaireNumber++;
-            if (rec.rgbButtons[4] == 128 && SaveTriggerFile.SaveButton == true)
+            /*if (rec.rgbButtons[4] == 128 && SaveTriggerFile.SaveButton == true)
             {
                 SaveTrigger= true;
-            }
+            }*/
         }
         else if (rec.rgbButtons[5] == 128)
         {

@@ -13,10 +13,10 @@ public class SaveTrigger : MonoBehaviour
 
     void Update()
     {
-        if(gameObject.active)
+        /*if(gameObject.active)
         {
             SaveButton = true;
-        }
+        }*/
         LogitechGSDK.DIJOYSTATE2ENGINES rec;
         rec = LogitechGSDK.LogiGetStateUnity(0);
 
