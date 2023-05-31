@@ -38,7 +38,7 @@ public class Questionnaire : MonoBehaviour
         LogitechGSDK.DIJOYSTATE2ENGINES rec;
         rec = LogitechGSDK.LogiGetStateUnity(0);
 
-        if (rec.rgbButtons[4] == 128 || Input.GetKeyDown(KeyCode.M))
+        if (rec.rgbButtons[4] == 128 )
         {
 
             children[QuestionnaireNumber].gameObject.SetActive(true);
@@ -52,7 +52,7 @@ public class Questionnaire : MonoBehaviour
                 SaveTrigger= true;
             }
         }
-        else if (rec.rgbButtons[5] == 128 || Input.GetKeyDown(KeyCode.N))
+        else if (rec.rgbButtons[5] == 128)
         {
             if(QuestionnaireNumber > 1)
             {
