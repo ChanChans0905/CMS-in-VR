@@ -69,12 +69,14 @@ public class Questionnaire : MonoBehaviour
             DriverCar.respawnTrigger = false;
             DriverCar.QuestionnaireBool= false;
             DriverCar.TrialBool = true;
+
+            if (DriverCar.QuestionnaireCount == 7)
+            {
+                DriverCar.FinalQuestionnaireBool = true;
+            }
         }
 
-        if (DriverCar.QuestionnaireCount == 7 && Input.GetKeyDown(KeyCode.M))
-        {
-            DriverCar.FinalQuestionnaireBool = true;
-        }
+
     }
 
     List<Transform> GetChildren(Transform parent)
