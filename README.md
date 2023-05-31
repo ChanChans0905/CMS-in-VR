@@ -1,12 +1,15 @@
 # CMS-in-VR
 
 ### This package is based on Unity, with virtual reality(VR) environment <br/>
+* **Notice** :
+  * Here we only uploaded the code we use for this package, the whole package will be uploaded after publishing the paper <br/>
+  * Devices used for this experiment : Varjo Aero, Logitech G29 Steering Wheel <br/>
 
 In this package, we check following points :<br/>
 * Efficiency of several locations and combinations of Camera Monitor Systems(CMS) <br/>
 
 We measure it by the data of : <br/>
-**Driver** ( velocity, pedal, steering wheel, lane change time etc. ) <br/>
+**Driver Car** ( velocity, pedal, steering wheel, lane change time etc. ) <br/>
 **Eye gaze** ( eye off road time, number of gazing the CMS monitor etc. ) <br/>
 
 * Differences in driving behavior with/without AR signal on the CMS, which let the driver know the danger of lane changing. <br/>
