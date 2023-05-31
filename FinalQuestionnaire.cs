@@ -62,7 +62,7 @@ public class FinalQuestionnaire : MonoBehaviour
             SaveToCSV();
 
             GameEndNotice.SetActive(true);
-            // 실험이 종료되었습니다. 고생하셨스니다.  관리자에게 알려주세요.
+            // 실험이 종료되었습니다. 고생하셨습니다.  관리자에게 알려주세요.
 
         }
     }
