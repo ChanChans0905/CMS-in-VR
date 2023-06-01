@@ -15,19 +15,21 @@ public class LeadingCar : MonoBehaviour
     Vector3 velocity2 = new Vector3(0, 0, 0);
     [SerializeField] DemoCarController DriverCar;
     Vector3 startPos;
+    public GameObject LeadingCar1, LeadingCar2;
     float disableTime;
     public PathCreator pathCreator;
     float distanceTravelled;
     public bool wayPointTrigger = false;
     public bool eventStartBool = false;
+    public int LaneChangeDirection = 0;
 
 
     void Start()
     {
         _rb = GetComponent<Rigidbody>();
-        startPos= transform.position;
+        startPos = LeadingCar1.transform.position;
         gameObject.SetActive(false);
-        
+
     }
 
     void FixedUpdate()
@@ -38,7 +40,7 @@ public class LeadingCar : MonoBehaviour
         velocity2.x = 0;
         eventTimer += Time.deltaTime;
 
-        if(eventStartBool == true)
+        if (eventStartBool == true)
         {
             EventStart(DriverCar.taskCount);
         }
@@ -59,7 +61,14 @@ public class LeadingCar : MonoBehaviour
 
         if (overtake >= 5 && overtake <= 8)
         {
-            velocity2.x = 1.3f;
+            if (LaneChangeDirection == 2)
+            {
+                velocity2.x = -1.3f;
+            }
+            else if (LaneChangeDirection == 1)
+            {
+                velocity2.x = 1.3f;
+            }
         }
 
         if (overtake >= 8 + DriverCar.LaneChangeTime[count - 1] && (DriverCar.LaneChangeTime[count - 1] != 0))
@@ -69,15 +78,15 @@ public class LeadingCar : MonoBehaviour
 
         if (velocity2.z > 0)
         {
-            velocity2.z *= 1.3f;
+            velocity2.z *= 1.25f;
         }
 
         if (overtake >= 25 && (DriverCar.LaneChangeTime[count - 1] != 0))
         {
             gameObject.SetActive(false);
         }
-        
-        if(wayPointTrigger == true)
+
+        if (wayPointTrigger == true)
         {
             distanceTravelled += Time.deltaTime * 8;
             transform.position = pathCreator.path.GetPointAtDistance(distanceTravelled);
@@ -89,16 +98,23 @@ public class LeadingCar : MonoBehaviour
                 gameObject.transform.rotation = Quaternion.identity;
                 gameObject.SetActive(false);
 
-                wayPointTrigger= false;
+                wayPointTrigger = false;
             }
         }
     }
 
     private void OnTriggerEnter(Collider other)
     {
-        if(other.gameObject.CompareTag("TaskStartPoint"))
+        if (other.gameObject.CompareTag("TaskStartPoint1"))
         {
-            eventStartBool= true;
+            eventStartBool = true;
+            LaneChangeDirection = 1;
+        }
+
+        if (other.gameObject.CompareTag("TaskStartPoint2"))
+        {
+            eventStartBool = true;
+            LaneChangeDirection = 2;
         }
 
         if (other.gameObject.CompareTag("WayPoint"))
