@@ -22,7 +22,7 @@ public class FollowingCarRight : MonoBehaviour
     {
         if (wayPointTrigger == true)
         {
-            distanceTravelled += Time.deltaTime * 8;
+            distanceTravelled += Time.deltaTime * 15;
             transform.position = pathCreator.path.GetPointAtDistance(distanceTravelled);
             transform.rotation = pathCreator.path.GetRotationAtDistance(distanceTravelled);
             disableTime += Time.deltaTime;

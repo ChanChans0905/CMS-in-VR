@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Data;
 using UnityEngine;
 using UnityEngine.UIElements;
 
@@ -7,18 +8,39 @@ public class TaskCounter : MonoBehaviour
 {
     public GameObject FollowingCarLeft, FollowingCarRight, LaneChangingCar, TrialCarLeft, TrialCarRight;
     [SerializeField] DemoCarController DriverCar;
+    public int threshold;
 
     private void OnTriggerEnter(Collider other)
     {
-        if(other.gameObject.CompareTag("DriverCar") && DriverCar.TrialBool == false)
+        if (other.gameObject.CompareTag("DriverCar") && DriverCar.TrialBool == false)
         {
             FollowingCarLeft.SetActive(true);
             FollowingCarRight.SetActive(true);
             LaneChangingCar.SetActive(true);
-            DriverCar.taskCount++;
+
+            if (threshold == 0)
+            {
+                threshold++;
+            }
+            else
+            {
+                DriverCar.taskCount++;
+                Debug.Log("TaskCOunt Added");
+            }
+
+            if (gameObject.transform.localPosition.z < 500)
+            {
+                DriverCar.laneChangeDirection = 1;
+                Debug.Log("Taskcount1" + DriverCar.LaneChangeTime[DriverCar.taskCount]);
+            }
+            else if (gameObject.transform.localPosition.z > 500)
+            {
+                DriverCar.laneChangeDirection = 2;
+                Debug.Log("Taskcount2" + DriverCar.LaneChangeTime[DriverCar.taskCount]);
+            }
         }
 
-        if(other.gameObject.CompareTag("DriverCar") && DriverCar.TrialBool == true)
+        if (other.gameObject.CompareTag("DriverCar") && DriverCar.TrialBool == true)
         {
             TrialCarLeft.SetActive(true);
             TrialCarRight.SetActive(true);

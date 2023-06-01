@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using System.Threading;
 using UnityEngine;
 
-public class LeadingCar : MonoBehaviour
+public class LeadingCar2 : MonoBehaviour
 {
     Rigidbody _rb;
     public GameObject TargetCar;
@@ -21,7 +21,7 @@ public class LeadingCar : MonoBehaviour
     public bool wayPointTrigger = false;
     public bool eventStartBool = false;
     public int LaneChangeDirection = 0;
-    Vector3 CarSpeed = new Vector3(-404, 0, 0);
+    Vector3 CarSpeed = new Vector3(-95.6f, 0, 1097);
     public bool enterTrigger = false;
 
 
@@ -35,8 +35,8 @@ public class LeadingCar : MonoBehaviour
 
     void Update()
     {
-        CarSpeed.z = TargetCar.transform.localPosition.x + 80;
 
+        CarSpeed.z = TargetCar.transform.localPosition.x - 80;
         if (enterTrigger == false)
         {
             gameObject.transform.localPosition = CarSpeed;
@@ -61,13 +61,10 @@ public class LeadingCar : MonoBehaviour
 
         if (overtake > 5 && overtake <= 8)
         {
-            if (DriverCar.laneChangeDirection == 1)
-            {
-                laneChangeTimer += Time.deltaTime * 1.4f;
-                CarSpeed.x = laneChangeTimer - 404;
-                gameObject.transform.localPosition = CarSpeed;
 
-            }
+            laneChangeTimer -= Time.deltaTime * 1.4f;
+            CarSpeed.x = laneChangeTimer - 95.5f;
+            gameObject.transform.localPosition = CarSpeed;
         }
 
         if (overtake > 8 && (DriverCar.LaneChangeTime[count] == 0))
@@ -83,7 +80,6 @@ public class LeadingCar : MonoBehaviour
         {
             laneChangeTimer = 0;
             gameObject.SetActive(false);
-
         }
 
 
@@ -95,6 +91,7 @@ public class LeadingCar : MonoBehaviour
             disableTime += Time.deltaTime;
             if (disableTime > 12)
             {
+
                 overtake = 0;
                 distanceTravelled = 0;
                 disableTime = 0;
@@ -112,7 +109,8 @@ public class LeadingCar : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        if (other.gameObject.CompareTag("TaskStartPoint1"))
+
+        if (other.gameObject.CompareTag("TaskStartPoint2"))
         {
             eventStartBool = true;
             enterTrigger = true;

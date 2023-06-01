@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Threading;
 using UnityEngine;
 
-public class FollowingCar : MonoBehaviour
+public class FollowingCar2 : MonoBehaviour
 {
     Rigidbody _rb;
     public GameObject TargetCar;
@@ -16,12 +16,12 @@ public class FollowingCar : MonoBehaviour
     float disableTime;
     Vector3 startPos;
     [SerializeField] DemoCarController DriverCar;
-    [SerializeField] LeadingCar LeadingCar;
+    [SerializeField] LeadingCar2 LeadingCar;
     public GameObject carLeft, carRight;
     public bool eventStartBool = false;
     public float accelTime;
-    public Vector3 CarSpeedLeft1 = new Vector3(-404, 0, 0);
-    public Vector3 CarSpeedRight1 = new Vector3(-395, 0, 0);
+    public Vector3 CarSpeedLeft1 = new Vector3(-95.7f, 0, 1138.2f);
+    public Vector3 CarSpeedRight1 = new Vector3(-104.2f, 0, 1139);
     public float laneChangeTimer;
 
 
@@ -48,14 +48,14 @@ public class FollowingCar : MonoBehaviour
                     if (DriverCar.FollowingCarSpeed[DriverCar.taskCount] == 1)
                     {
                         laneChangeTimer += Time.deltaTime;
-                        CarSpeedLeft1.z = (TargetCar.transform.localPosition.x - 15) + laneChangeTimer * 5f;
-                        CarSpeedRight1.z = (TargetCar.transform.localPosition.x - 15) + laneChangeTimer * 10f;
+                        CarSpeedLeft1.z = (TargetCar.transform.localPosition.x + 15) - laneChangeTimer * 15f;
+                        CarSpeedRight1.z = (TargetCar.transform.localPosition.x + 15) - laneChangeTimer * 10f;
                     }
                     else
                     {
                         laneChangeTimer += Time.deltaTime;
-                        CarSpeedLeft1.z = (TargetCar.transform.localPosition.x - 15) + laneChangeTimer * 10f;
-                        CarSpeedRight1.z = (TargetCar.transform.localPosition.x - 15) + laneChangeTimer * 5f;
+                        CarSpeedLeft1.z = (TargetCar.transform.localPosition.x + 15) - laneChangeTimer * 10f;
+                        CarSpeedRight1.z = (TargetCar.transform.localPosition.x + 15) - laneChangeTimer * 15f;
                     }
                 }
                 else if (accelTime <= 8 + DriverCar.LaneChangeTime[DriverCar.taskCount])
@@ -73,8 +73,8 @@ public class FollowingCar : MonoBehaviour
         }
         else if (eventStartBool == false)
         {
-            CarSpeedLeft1.z = TargetCar.transform.localPosition.x - 15;
-            CarSpeedRight1.z = TargetCar.transform.localPosition.x - 5;
+            CarSpeedLeft1.z = TargetCar.transform.localPosition.x + 15;
+            CarSpeedRight1.z = TargetCar.transform.localPosition.x + 5;
         }
 
         if (wayPointTrigger == true)

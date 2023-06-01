@@ -18,7 +18,13 @@ public class FadeInOut : MonoBehaviour
 
     void Update()
     {
-        if (Event == true) 
+        if (Input.GetKeyDown(KeyCode.K))
+        {
+            Event = true;
+            DriverCar.respawnTrigger = true;
+        }
+
+        if (Event == true)
         {
             FadeIn(alpha);
         }
@@ -26,40 +32,40 @@ public class FadeInOut : MonoBehaviour
         {
             FadeOut(alpha);
         }
-            Color nNew = new Color(0, 0, 0, alpha);
-            _mat.SetColor("_BaseColor", nNew);
+        Color nNew = new Color(0, 0, 0, alpha);
+        _mat.SetColor("_BaseColor", nNew);
 
 
-        if (Input.GetKeyDown(KeyCode.M)) // ������ ���� �� fade out�� trigger
+        if (Input.GetKeyDown(KeyCode.M))
         {
             DriverCar.respawnTrigger = false;
-            Event= false;
+            Event = false;
         }
     }
 
     public void FadeIn(float degree)
     {
-            if(alpha <= 1)
-            {
-                degree += .01f;
-                alpha = degree;
-            }
+        if (alpha <= 1)
+        {
+            degree += .05f;
+            alpha = degree;
+        }
     }
 
     public void FadeOut(float degree)
     {
-            if(alpha >= 0)
-            {
-                degree -= .05f;
-                alpha = degree;
-            }
+        if (alpha >= 0)
+        {
+            degree -= .05f;
+            alpha = degree;
+        }
     }
 
     private void OnTriggerEnter(Collider other)
     {
         if (other.gameObject.CompareTag("Car") || other.gameObject.CompareTag("OutOfRoad"))
         {
-            Event= true;
+            Event = true;
             DriverCar.respawnTrigger = true;
         }
 
@@ -71,7 +77,7 @@ public class FadeInOut : MonoBehaviour
             DriverCar.CMSchangeBool = true;
             DriverCar.taskCount = 0;
         }
-        
+
 
     }
 }
