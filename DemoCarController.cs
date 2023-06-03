@@ -206,7 +206,7 @@ public class DemoCarController : MonoBehaviour
         {
             Questionnaire.SetActive(false);
 
-            switch (CMSchangeCount)
+            switch (CMScombination[CMSchangeCount])
             {
                 case 1: // Traditional Mirror
                     {
