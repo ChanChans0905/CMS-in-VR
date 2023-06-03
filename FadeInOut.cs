@@ -8,7 +8,7 @@ public class FadeInOut : MonoBehaviour
     private Material _mat;
     public bool FadingEvent;
     [SerializeField] DemoCarController DriverCar;
-
+    public float noticeTime;
 
     void Start()
     {
@@ -58,6 +58,21 @@ public class FadeInOut : MonoBehaviour
         {
             degree -= .05f;
             alpha = degree;
+        }
+        if(DriverCar.taskCount == 0 && DriverCar.noticeBool == true )
+        {
+            noticeTime += Time.deltaTime;
+            if( noticeTime <= 10 && noticeTime > 0 )
+            {
+                // 각 CMS 별 실험 시작 알림
+                // 실험을 시작합니다. 등 안내
+            }
+            else if( noticeTime > 10 )
+            {
+                noticeTime = 0;
+                DriverCar.noticeBool = false;
+            }
+
         }
     }
 
