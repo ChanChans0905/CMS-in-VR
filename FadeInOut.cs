@@ -18,12 +18,6 @@ public class FadeInOut : MonoBehaviour
 
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.K))
-        {
-            FadingEvent = true;
-            DriverCar.respawnTrigger = true;
-        }
-
         if (FadingEvent == true)
         {
             FadeIn(alpha);
