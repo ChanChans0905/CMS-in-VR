@@ -74,7 +74,7 @@ public class FollowingCar : MonoBehaviour
         else if (eventStartBool == false)
         {
             CarSpeedLeft1.z = TargetCar.transform.localPosition.x - 15;
-            CarSpeedRight1.z = TargetCar.transform.localPosition.x - 5;
+            CarSpeedRight1.z = TargetCar.transform.localPosition.x - 15;
         }
 
         if (wayPointTrigger == true)
