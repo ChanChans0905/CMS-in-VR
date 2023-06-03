@@ -29,12 +29,8 @@ public class TrialCar : MonoBehaviour
         if( trialTime >= 120)
         {
             DriverCar.TrialBool = false;
-        }
-
-        if(DriverCar.TrialBool == false)
-        {
             trialTime = 0;
-            gameObject.SetActive(false );
+            gameObject.SetActive(false);
         }
     }
 }

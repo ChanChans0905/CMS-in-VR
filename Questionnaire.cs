@@ -42,6 +42,7 @@ public class Questionnaire : MonoBehaviour
         {
 
             children[QuestionnaireNumber].gameObject.SetActive(true);
+
             if(QuestionnaireNumber != 0)
             {
                 children[QuestionnaireNumber - 1].gameObject.SetActive(false);
@@ -54,7 +55,7 @@ public class Questionnaire : MonoBehaviour
         }
         else if (rec.rgbButtons[5] == 128)
         {
-            if(QuestionnaireNumber > 1)
+            if(QuestionnaireNumber != 0)
             {
                 QuestionnaireNumber--;
                 children[QuestionnaireNumber].gameObject.SetActive(false);
@@ -69,11 +70,15 @@ public class Questionnaire : MonoBehaviour
             DriverCar.respawnTrigger = false;
             DriverCar.QuestionnaireBool= false;
             DriverCar.TrialBool = true;
+            QuestionnaireNumber = 0;
 
             if (DriverCar.QuestionnaireCount == 7)
             {
                 DriverCar.FinalQuestionnaireBool = true;
             }
+
+            gameObject.SetActive(false);
+            SaveTrigger = false;
         }
 
 
@@ -94,7 +99,7 @@ public class Questionnaire : MonoBehaviour
     public void SaveToCSV()
     {
         List<Transform> children = GetChildren(transform);
-        for(int i = 0; i < children.Count; i++)
+        for(int i = 0; i < children.Count; i++) 
         {
             AnswerSlider = children[i].GetComponent<Slider>();
             float[] Data = new float[2];
@@ -102,7 +107,6 @@ public class Questionnaire : MonoBehaviour
             Data[1] = AnswerSlider.value;
             AppendToCsv(Data);
         }
-        
     }
 
     string GetDirectoryPath()
@@ -169,8 +173,6 @@ public class Questionnaire : MonoBehaviour
             }
             finalString += csvSeparator;
             sw.WriteLine(finalString);
-            SaveTrigger = false;
-            gameObject.SetActive(false);
         }
     }
 

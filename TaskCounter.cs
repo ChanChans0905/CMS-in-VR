@@ -8,7 +8,7 @@ public class TaskCounter : MonoBehaviour
 {
     public GameObject FollowingCarLeft, FollowingCarRight, LaneChangingCar, TrialCarLeft, TrialCarRight;
     [SerializeField] DemoCarController DriverCar;
-    public int threshold;
+    public bool threshold = false;
 
     private void OnTriggerEnter(Collider other)
     {
@@ -18,25 +18,22 @@ public class TaskCounter : MonoBehaviour
             FollowingCarRight.SetActive(true);
             LaneChangingCar.SetActive(true);
 
-            if (threshold == 0)
+            if (threshold == false)
             {
-                threshold++;
+                threshold = true;
             }
             else
             {
                 DriverCar.taskCount++;
-                Debug.Log("TaskCOunt Added");
             }
 
             if (gameObject.transform.localPosition.z < 500)
             {
                 DriverCar.laneChangeDirection = 1;
-                Debug.Log("Taskcount1" + DriverCar.LaneChangeTime[DriverCar.taskCount]);
             }
             else if (gameObject.transform.localPosition.z > 500)
             {
                 DriverCar.laneChangeDirection = 2;
-                Debug.Log("Taskcount2" + DriverCar.LaneChangeTime[DriverCar.taskCount]);
             }
         }
 

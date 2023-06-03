@@ -6,7 +6,7 @@ public class FadeInOut : MonoBehaviour
 {
     public float alpha = 0;
     private Material _mat;
-    public bool Event;
+    public bool FadingEvent;
     [SerializeField] DemoCarController DriverCar;
 
 
@@ -20,15 +20,15 @@ public class FadeInOut : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.K))
         {
-            Event = true;
+            FadingEvent = true;
             DriverCar.respawnTrigger = true;
         }
 
-        if (Event == true)
+        if (FadingEvent == true)
         {
             FadeIn(alpha);
         }
-        else if (Event == false)
+        else if (FadingEvent == false)
         {
             FadeOut(alpha);
         }
@@ -39,7 +39,7 @@ public class FadeInOut : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.M))
         {
             DriverCar.respawnTrigger = false;
-            Event = false;
+            FadingEvent = false;
         }
     }
 
@@ -47,7 +47,7 @@ public class FadeInOut : MonoBehaviour
     {
         if (alpha <= 1)
         {
-            degree += .05f;
+            degree += .01f;
             alpha = degree;
         }
     }
@@ -65,13 +65,13 @@ public class FadeInOut : MonoBehaviour
     {
         if (other.gameObject.CompareTag("Car") || other.gameObject.CompareTag("OutOfRoad"))
         {
-            Event = true;
+            FadingEvent = true;
             DriverCar.respawnTrigger = true;
         }
 
-        if (other.gameObject.CompareTag("WayPoint") && DriverCar.taskCount == 8)
+        if (other.gameObject.CompareTag("WayPoint") ad DriverCar.taskCount == 8)
         {
-            Event = true;
+            FadingEvent = true;
             DriverCar.respawnTrigger = true;
             DriverCar.CMSchangeCount++;
             DriverCar.CMSchangeBool = true;
