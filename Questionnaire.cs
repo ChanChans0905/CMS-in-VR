@@ -19,6 +19,7 @@ public class Questionnaire : MonoBehaviour
     private string csvDirectoryName = "Questionnaire";
     LogitechGSDK.LogiControllerPropertiesData properties;
     public bool SaveTrigger = false;
+    public float trialNoticeTimer;
 
     void Start()
     {
@@ -69,7 +70,6 @@ public class Questionnaire : MonoBehaviour
 
             DriverCar.respawnTrigger = false;
             DriverCar.QuestionnaireBool= false;
-            DriverCar.TrialBool = true;
             DriverCar.waitTimer = 0;
             QuestionnaireNumber = 0;
 
@@ -77,9 +77,12 @@ public class Questionnaire : MonoBehaviour
             {
                 DriverCar.FinalQuestionnaireBool = true;
             }
-
-            gameObject.SetActive(false);
-            SaveTrigger = false;
+            else
+            {
+                DriverCar.TrialBool = true;
+                gameObject.SetActive(false);
+                SaveTrigger = false;
+            }
         }
 
 
