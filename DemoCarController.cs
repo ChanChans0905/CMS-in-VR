@@ -150,12 +150,13 @@ public class DemoCarController : MonoBehaviour
         if (respawnTrigger)
         {
             waitTimer += Time.deltaTime;
-            if (waitTimer > 1) // FadeIn 시간을 위해 1초 대기
+            if (waitTimer > 1)
             {
                 velocity.Value = 0;
                 wheelTorque.Value = wheelTorqueValue;
                 VolvoCar.transform.localPosition = new Vector3(0, 0, 0);
                 VolvoCar.transform.rotation = Quaternion.Slerp(VolvoCar.transform.rotation, transform.rotation, 0.5f * Time.deltaTime);
+                waitTimer = 0;
             }
         }
 

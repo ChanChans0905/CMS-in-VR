@@ -8,6 +8,7 @@ public class TrialCar : MonoBehaviour
     public PathCreator pathCreator;
     float distanceTravelled;
     [SerializeField] DemoCarController DriverCar;
+    public float trialTime;
 
     private void Start()
     {
@@ -33,6 +34,7 @@ public class TrialCar : MonoBehaviour
         if( trialTime >= 180)
         {
             trialTime = 0;
+            distanceTravelled = 0;
             gameObject.SetActive(false);
         }
     }
