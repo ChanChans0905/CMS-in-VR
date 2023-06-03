@@ -86,7 +86,5 @@ public class FadeInOut : MonoBehaviour
             DriverCar.CMSchangeBool = true;
             DriverCar.taskCount = 0;
         }
-
-
     }
 }
