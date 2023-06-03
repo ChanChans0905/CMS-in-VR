@@ -70,6 +70,7 @@ public class Questionnaire : MonoBehaviour
             DriverCar.respawnTrigger = false;
             DriverCar.QuestionnaireBool= false;
             DriverCar.TrialBool = true;
+            DriverCar.waitTimer = 0;
             QuestionnaireNumber = 0;
 
             if (DriverCar.QuestionnaireCount == 7)
