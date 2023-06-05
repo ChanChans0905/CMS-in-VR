@@ -58,8 +58,8 @@ public class FadeInOut : MonoBehaviour
             noticeTime += Time.deltaTime;
             if( noticeTime <= 10 && noticeTime > 0 )
             {
-                // °¢ CMS º° ½ÇÇè ½ÃÀÛ ¾Ë¸²
-                // ½ÇÇèÀ» ½ÃÀÛÇÕ´Ï´Ù. µî ¾È³»
+                // ï¿½ï¿½ CMS ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ë¸ï¿½
+                // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Õ´Ï´ï¿½. ï¿½ï¿½ ï¿½È³ï¿½
             }
             else if( noticeTime > 10 )
             {
