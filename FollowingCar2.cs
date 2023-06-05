@@ -60,21 +60,21 @@ public class FollowingCar2 : MonoBehaviour
                 }
                 else if (accelTime <= 8 + DriverCar.LaneChangeTime[DriverCar.taskCount])
                 {
-                    CarSpeedLeft1.z = TargetCar.transform.localPosition.x - 15;
-                    CarSpeedRight1.z = TargetCar.transform.localPosition.x - 15;
+                    CarSpeedLeft1.z = TargetCar.transform.localPosition.x + 15;
+                    CarSpeedRight1.z = TargetCar.transform.localPosition.x + 15;
                 }
             }
             else if (DriverCar.LaneChangeTime[DriverCar.taskCount] == 0)
             {
 
-                CarSpeedLeft1.z = TargetCar.transform.localPosition.x - 15;
-                CarSpeedRight1.z = TargetCar.transform.localPosition.x - 15;
+                CarSpeedLeft1.z = TargetCar.transform.localPosition.x + 15;
+                CarSpeedRight1.z = TargetCar.transform.localPosition.x + 15;
             }
         }
         else if (eventStartBool == false)
         {
             CarSpeedLeft1.z = TargetCar.transform.localPosition.x + 15;
-            CarSpeedRight1.z = TargetCar.transform.localPosition.x + 5;
+            CarSpeedRight1.z = TargetCar.transform.localPosition.x + 15;
         }
 
         if (wayPointTrigger == true)
