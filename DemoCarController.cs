@@ -22,22 +22,23 @@ public class DemoCarController : MonoBehaviour
     [SerializeField] private VolvoCars.Data.LampBrake lampBrake = default;
 
     public bool respawnTrigger = false;
-    public GameObject VolvoCar, Questionnaire, FinalQuestionnaire;
-    public GameObject CMSLeft, CMSRight, CMSCenter, CMSStitched, ARSignalLeft, ARSignalRight, ARSignalRear, ARSignalStitched, TraditionalMirrorLeft, TraditionalMirrorRight;
+    public GameObject VolvoCar;
+    public GameObject Questionnaire;
     public float waitTimer;
-    public int taskCount = 0;
+    public int taskCount;
     public int CMSchangeCount;
     public int QuestionnaireCount;
     public bool CMSchangeBool = false;
-    public bool QuestionnaireBool = false;
-    public bool FinalQuestionnaireBool = false;
-    public bool TrialBool = false;
-    public bool noticeBool;
-    public bool threshold = false;
-
+    public bool FinalQuestionnaireBool;
+    public bool TrialBool = true;
+    public GameObject CMS_LD_SW, CMS_LD_TM, CMS_RD_SW, CMS_RD_TM, CMSCenter, CMSStitched, ARSignalLeft, ARSignalRight, ARSignalRear, ARSignalStitched, TraditionalMirrorLeft, TraditionalMirrorRight;
     public int[] LaneChangeTime = { 0, 0, 0, 1, 3, 5, 7, 9 };
     public int[] CMScombination = { 1, 2, 3, 4, 5, 6, 7 };
     public int[] FollowingCarSpeed = { 0, 0, 0, 0, 1, 1, 1, 1 };
+    public int laneChangeDirection;
+    public bool threshold = false;
+    public bool noticeBool = true;
+    public float TrialTimeCount;
 
     #region Private variables not shown in the inspector
     private VolvoCars.Data.Value.Public.WheelTorque wheelTorqueValue = new VolvoCars.Data.Value.Public.WheelTorque(); // This is the value type used by the wheelTorque data item.     
@@ -52,11 +53,11 @@ public class DemoCarController : MonoBehaviour
         LaneChangeTime = ShuffleArray(LaneChangeTime);
         CMScombination = ShuffleArray(CMScombination);
         FollowingCarSpeed = ShuffleArray(FollowingCarSpeed);
+        CMSchange();
     }
 
     private void Update()
     {
-
         // Driving inputs 
         float rawSteeringInput = Input.GetAxis("Horizontal");
         float rawForwardInput = Input.GetAxis("Vertical");
@@ -157,7 +158,6 @@ public class DemoCarController : MonoBehaviour
                 wheelTorque.Value = wheelTorqueValue;
                 VolvoCar.transform.localPosition = new Vector3(0, 0, 0);
                 VolvoCar.transform.rotation = Quaternion.Slerp(VolvoCar.transform.rotation, transform.rotation, 0.5f * Time.deltaTime);
-                waitTimer = 0;
             }
         }
 
@@ -165,7 +165,6 @@ public class DemoCarController : MonoBehaviour
         {
             CMSchange();
         }
-
     }
 
     private void ApplyWheelTorques(float totalWheelTorque)
@@ -184,111 +183,78 @@ public class DemoCarController : MonoBehaviour
     {
         taskCount = 0;
         CMSCenter.SetActive(false);
-        CMSLeft.SetActive(false);
-        CMSRight.SetActive(false);
+        CMS_LD_SW.SetActive(false);
+        CMS_LD_TM.SetActive(false);
+        CMS_RD_SW.SetActive(false);
+        CMS_RD_TM.SetActive(false);
         CMSStitched.SetActive(false);
         TraditionalMirrorLeft.SetActive(false);
         TraditionalMirrorRight.SetActive(false);
         // AR signal setactive false, stitched false
 
-        QuestionnaireCount = CMSchangeCount;
-        if (FinalQuestionnaireBool == false)
+        switch (CMScombination[CMSchangeCount])
         {
-            QuestionnaireBool = true;
-        }
-        else if (FinalQuestionnaireBool == true)
-        {
-            FinalQuestionnaire.SetActive(true);
-        }
+            case 1: // Traditional Mirror
+                {
+                    TraditionalMirrorLeft.SetActive(true);
+                    TraditionalMirrorRight.SetActive(true);
+                    Debug.Log("Case : " + 1);
+                    break;
 
-        if(QuestionnaireBool)
-        {
-            Questionnaire.SetActive(true);
+                }
+            case 2: // CMS beside Traditional Mirror
+                {
+                    CMSCenter.SetActive(true);
+                    CMS_LD_TM.SetActive(true);
+                    CMS_RD_TM.SetActive(true);
+                    //ARSignalLeft.SetActive(false);
+                    //ARSignalRight.SetActive(false);
+                    //ARSignalRear.SetActive(false);
+                    Debug.Log("Case : " + 2);
+                    break;
+                }
+            case 3: // CMS near the Steering Wheel
+                {
+                    CMSCenter.SetActive(true);
+                    CMS_LD_SW.SetActive(true);
+                    CMS_RD_SW.SetActive(true);
+                    //ARSignalLeft.SetActive(false);
+                    //ARSignalRight.SetActive(false);
+                    //ARSignalRear.SetActive(false);
+                    Debug.Log("Case : " + 3);
+                    break;
+                }
+            case 4: // CMS Stitched
+                {
+                    CMSStitched.SetActive(true);
+                    //ARSignalStitched.SetActive(false);
+                    Debug.Log("Case : " + 7);
+                    break;
+                }
+            case 5: // CMS beside Traditional Mirror with AR signal
+                {
+                    CMSCenter.SetActive(true);
+                    CMS_LD_TM.SetActive(true);
+                    CMS_RD_TM.SetActive(true);
+                    Debug.Log("Case : " + 4);
+                    break;
+                }
+            case 6: // CMS near the Steering Wheel with AR signal
+                {
+                    CMSCenter.SetActive(true);
+                    CMS_LD_SW.SetActive(true);
+                    CMS_RD_SW.SetActive(true);
+                    Debug.Log("Case : " + 5);
+                    break;
+                }
+            case 7: // CMS Stitched with AR signal
+                {
+                    CMSStitched.SetActive(true);
+                    Debug.Log("Case : " + 6);
+                    break;
+                }
         }
-        else if(QuestionnaireBool == false)
-        {
-            Questionnaire.SetActive(false);
-
-            switch (CMScombination[CMSchangeCount])
-            {
-                case 1: // Traditional Mirror
-                    {
-                        TraditionalMirrorLeft.SetActive(true) ;
-                        TraditionalMirrorRight.SetActive(true);
-                        break;
-                    }
-                case 2: // CMS beside Traditional Mirror
-                    {
-                        CMSCenter.transform.localPosition = new Vector3(0, 0.234f, 0);
-                        CMSCenter.transform.eulerAngles = new Vector3(90, 0, 90);
-                        CMSLeft.transform.localPosition = new Vector3(-0.037f, 0.065f, -0.281f);
-                        CMSLeft.transform.eulerAngles = new Vector3(75, 93, 50);
-                        CMSRight.transform.localPosition = new Vector3(-0.027f, 0.025f, 0.886f);
-                        CMSRight.transform.eulerAngles = new Vector3(77, 112, -30);
-                        CMSCenter.SetActive(true);
-                        CMSLeft.SetActive(true);
-                        CMSRight.SetActive(true);
-                        ARSignalLeft.SetActive(false);
-                        ARSignalRight.SetActive(false);
-                        ARSignalRear.SetActive(false);
-                        break;
-                    }
-                case 3: // CMS near the Steering Wheel
-                    {
-                        CMSCenter.transform.localPosition = new Vector3(0, 0.234f, 0);
-                        CMSCenter.transform.eulerAngles = new Vector3(90, 0, 90);
-                        CMSLeft.transform.localPosition = new Vector3(0, 0.163f, 0.175f);
-                        CMSLeft.transform.eulerAngles = new Vector3(90, 0, 90);
-                        CMSRight.transform.localPosition = new Vector3(0, 0.163f, -0.175f);
-                        CMSRight.transform.eulerAngles = new Vector3(90, 0, 90);
-                        CMSCenter.SetActive(true);
-                        CMSLeft.SetActive(true);
-                        CMSRight.SetActive(true);
-                        ARSignalLeft.SetActive(false);
-                        ARSignalRight.SetActive(false);
-                        ARSignalRear.SetActive(false);
-                        break;
-                    }
-                case 4: // CMS Stitched
-                    {
-                        CMSStitched.SetActive(true);
-                        ARSignalStitched.SetActive(false);
-                        break;
-                    }
-                case 5: // CMS beside Traditional Mirror with AR signal
-                    {
-                        CMSCenter.transform.localPosition = new Vector3(0, 0.234f, 0);
-                        CMSCenter.transform.eulerAngles = new Vector3(90, 0, 90);
-                        CMSLeft.transform.localPosition = new Vector3(-0.037f, 0.065f, -0.281f);
-                        CMSLeft.transform.eulerAngles = new Vector3(75, 93, 50);
-                        CMSRight.transform.localPosition = new Vector3(-0.027f, 0.025f, 0.886f);
-                        CMSRight.transform.eulerAngles = new Vector3(77, 112, -30);
-                        CMSCenter.SetActive(true);
-                        CMSLeft.SetActive(true);
-                        CMSRight.SetActive(true);
-                        break;
-                    }
-                case 6: // CMS near the Steering Wheel with AR signal
-                    {
-                        CMSCenter.transform.localPosition = new Vector3(0, 0.234f, 0);
-                        CMSCenter.transform.eulerAngles = new Vector3(90, 0, 90);
-                        CMSLeft.transform.localPosition = new Vector3(0, 0.163f, 0.175f);
-                        CMSLeft.transform.eulerAngles = new Vector3(90, 0, 90);
-                        CMSRight.transform.localPosition = new Vector3(0, 0.163f, -0.175f);
-                        CMSRight.transform.eulerAngles = new Vector3(90, 0, 90);
-                        CMSCenter.SetActive(true);
-                        CMSLeft.SetActive(true);
-                        CMSRight.SetActive(true);
-                        break;
-                    }
-                case 7: // CMS Stitched with AR signal
-                    {
-                        CMSStitched.SetActive(true);
-                        break;
-                    }
-            }
-        }
-        noticeBool = true;
+        CMSchangeCount++;
         CMSchangeBool = false;
     }
 

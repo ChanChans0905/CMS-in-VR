@@ -10,7 +10,6 @@ using UnityEngine.XR;
 public class Questionnaire : MonoBehaviour
 {
     [SerializeField] DemoCarController DriverCar;
-    [SerializeField] Savetrigger SaveTriggerFile;
     public int QuestionnaireNumber;
     [SerializeField] Slider AnswerSlider;
     private string csvSeparator = ",";
@@ -18,12 +17,13 @@ public class Questionnaire : MonoBehaviour
     private string[] csvHeaders = new string[2] { "Number", "Answer" };
     private string csvDirectoryName = "Questionnaire";
     LogitechGSDK.LogiControllerPropertiesData properties;
-    public bool SaveTrigger = false;
-    public float trialNoticeTimer;
+    public bool SaveTrigger;
+    [SerializeField] FadeInOut FadeInOut;
+    public GameObject FinalQuestionnaire;
 
     void Start()
     {
-        csvFileName = "Questionnaire" + DriverCar.QuestionnaireCount +".csv";
+
         List<Transform> children = GetChildren(transform);
 
         foreach (Transform child in children)
@@ -36,56 +36,49 @@ public class Questionnaire : MonoBehaviour
     void Update()
     {
         List<Transform> children = GetChildren(transform);
-        LogitechGSDK.DIJOYSTATE2ENGINES rec;
-        rec = LogitechGSDK.LogiGetStateUnity(0);
-
-        if (rec.rgbButtons[4] == 128 )
+        if (LogitechGSDK.LogiUpdate() && LogitechGSDK.LogiIsConnected(0))
         {
+            LogitechGSDK.DIJOYSTATE2ENGINES rec;
+            rec = LogitechGSDK.LogiGetStateUnity(0);
 
-            children[QuestionnaireNumber].gameObject.SetActive(true);
-
-            if(QuestionnaireNumber != 0)
+            if (rec.rgbButtons[4] == 128 || Input.GetKeyDown(KeyCode.M))
             {
-                children[QuestionnaireNumber - 1].gameObject.SetActive(false);
+
+                children[QuestionnaireNumber].gameObject.SetActive(true);
+                if (QuestionnaireNumber != 0)
+                {
+                    children[QuestionnaireNumber - 1].gameObject.SetActive(false);
+                }
+                QuestionnaireNumber++;
             }
-            QuestionnaireNumber++;
-            /*if (rec.rgbButtons[4] == 128 && SaveTriggerFile.SaveButton == true)
+            else if (rec.rgbButtons[3] == 128 || Input.GetKeyDown(KeyCode.N))
             {
-                SaveTrigger= true;
-            }*/
-        }
-        else if (rec.rgbButtons[5] == 128)
-        {
-            if(QuestionnaireNumber != 0)
-            {
-                QuestionnaireNumber--;
-                children[QuestionnaireNumber].gameObject.SetActive(false);
-                children[QuestionnaireNumber - 1].gameObject.SetActive(true);
+                if (QuestionnaireNumber > 1)
+                {
+                    QuestionnaireNumber--;
+                    children[QuestionnaireNumber].gameObject.SetActive(false);
+                    children[QuestionnaireNumber - 1].gameObject.SetActive(true);
+                }
             }
-        }
-        
-        if (SaveTrigger == true) 
-        {
-            SaveToCSV();            
 
-            DriverCar.respawnTrigger = false;
-            DriverCar.QuestionnaireBool= false;
-            DriverCar.waitTimer = 0;
-            QuestionnaireNumber = 0;
+            if (SaveTrigger == true)
+            {
+                SaveToCSV();
 
-            if (DriverCar.QuestionnaireCount == 7)
-            {
-                DriverCar.FinalQuestionnaireBool = true;
-            }
-            else
-            {
-                DriverCar.TrialBool = true;
-                gameObject.SetActive(false);
-                SaveTrigger = false;
+                if(DriverCar.QuestionnaireCount < 7)
+                {
+                    DriverCar.CMSchangeBool = true;
+                    DriverCar.TrialBool = true;
+                    FadeInOut.FadingEvent = false;
+                    DriverCar.respawnTrigger = false;
+                }
+                
+                if(DriverCar.QuestionnaireCount == 7)
+                {
+                    FinalQuestionnaire.SetActive(true);
+                }
             }
         }
-
-
     }
 
     List<Transform> GetChildren(Transform parent)
@@ -102,8 +95,10 @@ public class Questionnaire : MonoBehaviour
 
     public void SaveToCSV()
     {
+        DriverCar.QuestionnaireCount++;
+        csvFileName = "Questionnaire" + DriverCar.QuestionnaireCount + ".csv";
         List<Transform> children = GetChildren(transform);
-        for(int i = 0; i < children.Count; i++) 
+        for(int i = 0; i < children.Count; i++)
         {
             AnswerSlider = children[i].GetComponent<Slider>();
             float[] Data = new float[2];
@@ -111,6 +106,7 @@ public class Questionnaire : MonoBehaviour
             Data[1] = AnswerSlider.value;
             AppendToCsv(Data);
         }
+        
     }
 
     string GetDirectoryPath()
@@ -177,6 +173,8 @@ public class Questionnaire : MonoBehaviour
             }
             finalString += csvSeparator;
             sw.WriteLine(finalString);
+            SaveTrigger = false;
+            gameObject.SetActive(false);
         }
     }
 

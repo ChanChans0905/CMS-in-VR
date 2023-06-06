@@ -20,14 +20,15 @@ public class LeadingCar : MonoBehaviour
     float distanceTravelled;
     public bool wayPointTrigger = false;
     public bool eventStartBool = false;
-    Vector3 CarSpeed = new Vector3(-404, 0, 0);
+    public int LaneChangeDirection = 0;
+    Vector3 CarSpeed = new Vector3(-404,0,0);
     public bool enterTrigger = false;
 
 
     void Start()
     {
         _rb = GetComponent<Rigidbody>();
-        startPos = gameObject.transform.position;
+        startPos= gameObject.transform.position;
         gameObject.SetActive(false);
 
     }
@@ -35,12 +36,12 @@ public class LeadingCar : MonoBehaviour
     void Update()
     {
         CarSpeed.z = TargetCar.transform.localPosition.x + 80;
-
-        if (enterTrigger == false)
+        
+        if(enterTrigger == false)
         {
             gameObject.transform.localPosition = CarSpeed;
         }
-
+        
 
 
         if (eventStartBool == true)
@@ -53,14 +54,14 @@ public class LeadingCar : MonoBehaviour
     private void EventStart(int count)
     {
         overtake += Time.deltaTime;
-        if (overtake > 0 && overtake <= 5)
+        if(overtake > 0 && overtake <= 5)
         {
             gameObject.transform.localPosition = CarSpeed;
         }
 
         if (overtake > 5 && overtake <= 8)
         {
-            if (DriverCar.laneChangeDirection == 1)
+            if(DriverCar.laneChangeDirection == 1)
             {
                 laneChangeTimer += Time.deltaTime * 1.4f;
                 CarSpeed.x = laneChangeTimer - 404;
@@ -80,11 +81,13 @@ public class LeadingCar : MonoBehaviour
 
         if (overtake >= 25 && (DriverCar.LaneChangeTime[count] != 0))
         {
+            laneChangeTimer = 0;
             gameObject.SetActive(false);
+
         }
+        
 
-
-        if (wayPointTrigger == true)
+        if(wayPointTrigger == true)
         {
             distanceTravelled += Time.deltaTime * 20;
             transform.position = pathCreator.path.GetPointAtDistance(distanceTravelled);
@@ -92,8 +95,6 @@ public class LeadingCar : MonoBehaviour
             disableTime += Time.deltaTime;
             if (disableTime > 12)
             {
-                laneChangeTimer = 0;
-                eventTimer = 0;
                 overtake = 0;
                 distanceTravelled = 0;
                 disableTime = 0;
@@ -111,9 +112,9 @@ public class LeadingCar : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        if (other.gameObject.CompareTag("TaskStartPoint1"))
+        if(other.gameObject.CompareTag("TaskStartPoint1"))
         {
-            eventStartBool = true;
+            eventStartBool= true;
             enterTrigger = true;
         }
 

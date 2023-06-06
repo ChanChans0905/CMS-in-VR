@@ -9,6 +9,7 @@ public class FadeInOut : MonoBehaviour
     public bool FadingEvent;
     [SerializeField] DemoCarController DriverCar;
     public float noticeTime;
+    public GameObject Questionnaire;
 
     void Start()
     {
@@ -29,12 +30,6 @@ public class FadeInOut : MonoBehaviour
         Color nNew = new Color(0, 0, 0, alpha);
         _mat.SetColor("_BaseColor", nNew);
 
-
-        if (Input.GetKeyDown(KeyCode.M))
-        {
-            DriverCar.respawnTrigger = false;
-            FadingEvent = false;
-        }
     }
 
     public void FadeIn(float degree)
@@ -53,18 +48,18 @@ public class FadeInOut : MonoBehaviour
             degree -= .05f;
             alpha = degree;
         }
-        if(DriverCar.taskCount == 0 && DriverCar.noticeBool == true )
+        if (DriverCar.taskCount == 0 && DriverCar.noticeBool == true)
         {
             noticeTime += Time.deltaTime;
-            if( noticeTime <= 10 && noticeTime > 0 )
+            if (noticeTime <= 10 && noticeTime > 0)
             {
+                // new combination has been activated. try it for 3minutes from now.
             }
-            else if( noticeTime > 10 )
+            else if (noticeTime > 7)
             {
                 noticeTime = 0;
                 DriverCar.noticeBool = false;
             }
-
         }
     }
 
@@ -76,12 +71,11 @@ public class FadeInOut : MonoBehaviour
             DriverCar.respawnTrigger = true;
         }
 
-        if (other.gameObject.CompareTag("WayPoint") && DriverCar.taskCount == 8)
+        if (other.gameObject.CompareTag("WayPoint") && DriverCar.taskCount == 1)
         {
             FadingEvent = true;
             DriverCar.respawnTrigger = true;
-            DriverCar.CMSchangeCount++;
-            DriverCar.CMSchangeBool = true;
+            Questionnaire.SetActive(true);
             DriverCar.taskCount = 0;
         }
     }

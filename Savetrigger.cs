@@ -13,20 +13,19 @@ public class SaveTrigger : MonoBehaviour
 
     void Update()
     {
-        /*if(gameObject.active)
+        if (LogitechGSDK.LogiUpdate() && LogitechGSDK.LogiIsConnected(0))
         {
-            SaveButton = true;
-        }*/
-        LogitechGSDK.DIJOYSTATE2ENGINES rec;
-        rec = LogitechGSDK.LogiGetStateUnity(0);
+            LogitechGSDK.DIJOYSTATE2ENGINES rec;
+            rec = LogitechGSDK.LogiGetStateUnity(0);
 
-        if (rec.rgbButtons[5] == 128 && DriverCar.FinalQuestionnaireBool == false)
-        {
-            Questionnaire.SaveTrigger = true;
-        }
-        else if(rec.rgbButtons[5] == 128 && DriverCar.FinalQuestionnaireBool == true)
-        {
-            FinalQuestionnaire.GameEndBool = true;
+            if (rec.rgbButtons[5] == 128 && DriverCar.FinalQuestionnaireBool == false)
+            {
+                Questionnaire.SaveTrigger = true;
+            }
+            else if (rec.rgbButtons[5] == 128 && DriverCar.FinalQuestionnaireBool == true)
+            {
+                FinalQuestionnaire.SaveTrigger= true;
+            }
         }
     }
 }

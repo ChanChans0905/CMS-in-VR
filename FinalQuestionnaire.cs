@@ -17,13 +17,14 @@ public class FinalQuestionnaire : MonoBehaviour
     private string[] csvHeaders = new string[2] { "Number", "Answer" };
     private string csvDirectoryName = "Questionnaire";
     LogitechGSDK.LogiControllerPropertiesData properties;
-    public bool GameEndBool = false;
-    public GameObject GameEndNotice;
+    public bool SaveTrigger;
+    public GameObject GameEnd;
 
     private void Start()
     {
         csvFileName = "FInalQuestionnaire.csv";
         List<Transform> children = GetChildren(transform);
+        GameEnd.SetActive(false);
 
         foreach (Transform child in children)
         {
@@ -46,8 +47,12 @@ public class FinalQuestionnaire : MonoBehaviour
                 children[QuestionnaireNumber - 1].gameObject.SetActive(false);
             }
             QuestionnaireNumber++;
+            if (Input.GetKeyDown(KeyCode.N)) // 마지막 저장 예 버튼 클릭시
+            {
+                SaveTrigger = true;
+            }
         }
-        else if (rec.rgbButtons[5] == 128 || Input.GetKeyDown(KeyCode.N))
+        else if (rec.rgbButtons[3] == 128 || Input.GetKeyDown(KeyCode.N))
         {
             if (QuestionnaireNumber > 1)
             {
@@ -57,13 +62,11 @@ public class FinalQuestionnaire : MonoBehaviour
             }
         }
 
-        if (GameEndBool == true) // save 확인 버튼 클릭 시
+        if (SaveTrigger == true)
         {
             SaveToCSV();
 
-            GameEndNotice.SetActive(true);
-            // 실험이 종료되었습니다. 고생하셨습니다.  관리자에게 알려주세요.
-
+            GameEnd.SetActive(true);
         }
     }
 

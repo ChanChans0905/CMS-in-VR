@@ -23,7 +23,7 @@ public class FollowingCar : MonoBehaviour
     public Vector3 CarSpeedLeft1 = new Vector3(-404, 0, 0);
     public Vector3 CarSpeedRight1 = new Vector3(-395, 0, 0);
     public float laneChangeTimer;
-    public float distance = 20;
+    public float distance = 25;
 
 
     void Start()

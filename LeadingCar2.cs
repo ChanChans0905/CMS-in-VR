@@ -20,6 +20,7 @@ public class LeadingCar2 : MonoBehaviour
     float distanceTravelled;
     public bool wayPointTrigger = false;
     public bool eventStartBool = false;
+    public int LaneChangeDirection = 0;
     Vector3 CarSpeed = new Vector3(-95.6f, 0, 1097);
     public bool enterTrigger = false;
 
@@ -61,9 +62,9 @@ public class LeadingCar2 : MonoBehaviour
         if (overtake > 5 && overtake <= 8)
         {
 
-            laneChangeTimer -= Time.deltaTime * 1.4f;
-            CarSpeed.x = laneChangeTimer - 95.5f;
-            gameObject.transform.localPosition = CarSpeed;
+                laneChangeTimer -= Time.deltaTime * 1.4f;
+                CarSpeed.x = laneChangeTimer - 95.5f;
+                gameObject.transform.localPosition = CarSpeed;
         }
 
         if (overtake > 8 && (DriverCar.LaneChangeTime[count] == 0))
@@ -77,7 +78,7 @@ public class LeadingCar2 : MonoBehaviour
 
         if (overtake >= 25 && (DriverCar.LaneChangeTime[count] != 0))
         {
-
+            laneChangeTimer = 0;
             gameObject.SetActive(false);
         }
 
@@ -90,8 +91,7 @@ public class LeadingCar2 : MonoBehaviour
             disableTime += Time.deltaTime;
             if (disableTime > 12)
             {
-                laneChangeTimer = 0;
-                eventTimer = 0;
+
                 overtake = 0;
                 distanceTravelled = 0;
                 disableTime = 0;

@@ -9,30 +9,30 @@ public class TrialCar : MonoBehaviour
     float distanceTravelled;
     [SerializeField] DemoCarController DriverCar;
     public float trialTime;
+    [SerializeField] FadeInOut FadeInOut;
 
     private void Start()
     {
-        gameObject.SetActive(false);
     }
 
     void Update()
     {
-        if (DriverCar.TrialBool)
+        distanceTravelled += Time.deltaTime * 15;
+        transform.position = pathCreator.path.GetPointAtDistance(distanceTravelled);
+        transform.rotation = pathCreator.path.GetRotationAtDistance(distanceTravelled);
+        trialTime += Time.deltaTime;
+
+        if (trialTime >= 120)
         {
-            distanceTravelled += Time.deltaTime * 15;
-            transform.position = pathCreator.path.GetPointAtDistance(distanceTravelled);
-            transform.rotation = pathCreator.path.GetRotationAtDistance(distanceTravelled);
-            trialTime += Time.deltaTime;
+            DriverCar.TrialBool = false;
+            FadeInOut.FadingEvent = true;
+            DriverCar.respawnTrigger = true;
         }
 
-        if (trialTime <= 10 && trialTime > 0 )
+        if (trialTime >= 125)
         {
-            // 시험 주행 안내 문구 투영
-            // 지금부터 3분간 시험 주행을 진행합니다.
-        }
-
-        if( trialTime >= 180)
-        {
+            FadeInOut.FadingEvent = false;
+            DriverCar.respawnTrigger = false;
             trialTime = 0;
             distanceTravelled = 0;
             gameObject.SetActive(false);
