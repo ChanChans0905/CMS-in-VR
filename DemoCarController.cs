@@ -30,7 +30,7 @@ public class DemoCarController : MonoBehaviour
     public int QuestionnaireCount;
     public bool CMSchangeBool = false;
     public bool FinalQuestionnaireBool;
-    public bool TrialBool = true;
+    public bool TrialBool;
     public GameObject CMS_LD_SW, CMS_LD_TM, CMS_RD_SW, CMS_RD_TM, CMSCenter, CMSStitched, ARSignalLeft, ARSignalRight, ARSignalRear, ARSignalStitched, TraditionalMirrorLeft, TraditionalMirrorRight;
     public int[] LaneChangeTime = { 0, 0, 0, 1, 3, 5, 7, 9 };
     public int[] CMScombination = { 1, 2, 3, 4, 5, 6, 7 };
@@ -53,6 +53,7 @@ public class DemoCarController : MonoBehaviour
         LaneChangeTime = ShuffleArray(LaneChangeTime);
         CMScombination = ShuffleArray(CMScombination);
         FollowingCarSpeed = ShuffleArray(FollowingCarSpeed);
+        TrialBool = true;
         CMSchange();
     }
 
