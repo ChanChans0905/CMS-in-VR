@@ -23,6 +23,7 @@ public class FollowingCar2 : MonoBehaviour
     public Vector3 CarSpeedLeft1 = new Vector3(-95.7f, 0, 1138.2f);
     public Vector3 CarSpeedRight1 = new Vector3(-104.2f, 0, 1139);
     public float laneChangeTimer;
+    public float distance = 20;
 
 
     void Start()
@@ -48,33 +49,33 @@ public class FollowingCar2 : MonoBehaviour
                     if (DriverCar.FollowingCarSpeed[DriverCar.taskCount] == 1)
                     {
                         laneChangeTimer += Time.deltaTime;
-                        CarSpeedLeft1.z = (TargetCar.transform.localPosition.x + 15) - laneChangeTimer * 15f;
-                        CarSpeedRight1.z = (TargetCar.transform.localPosition.x + 15) - laneChangeTimer * 10f;
+                        CarSpeedLeft1.z = (TargetCar.transform.localPosition.x + distance) - laneChangeTimer * 15f;
+                        CarSpeedRight1.z = (TargetCar.transform.localPosition.x + distance) - laneChangeTimer * 10f;
                     }
                     else
                     {
                         laneChangeTimer += Time.deltaTime;
-                        CarSpeedLeft1.z = (TargetCar.transform.localPosition.x + 15) - laneChangeTimer * 10f;
-                        CarSpeedRight1.z = (TargetCar.transform.localPosition.x + 15) - laneChangeTimer * 15f;
+                        CarSpeedLeft1.z = (TargetCar.transform.localPosition.x + distance) - laneChangeTimer * 10f;
+                        CarSpeedRight1.z = (TargetCar.transform.localPosition.x + distance) - laneChangeTimer * 15f;
                     }
                 }
                 else if (accelTime <= 8 + DriverCar.LaneChangeTime[DriverCar.taskCount])
                 {
-                    CarSpeedLeft1.z = TargetCar.transform.localPosition.x + 15;
-                    CarSpeedRight1.z = TargetCar.transform.localPosition.x + 15;
+                    CarSpeedLeft1.z = TargetCar.transform.localPosition.x + distance;
+                    CarSpeedRight1.z = TargetCar.transform.localPosition.x + distance;
                 }
             }
             else if (DriverCar.LaneChangeTime[DriverCar.taskCount] == 0)
             {
 
-                CarSpeedLeft1.z = TargetCar.transform.localPosition.x + 15;
-                CarSpeedRight1.z = TargetCar.transform.localPosition.x + 15;
+                CarSpeedLeft1.z = TargetCar.transform.localPosition.x + distance;
+                CarSpeedRight1.z = TargetCar.transform.localPosition.x + distance;
             }
         }
         else if (eventStartBool == false)
         {
-            CarSpeedLeft1.z = TargetCar.transform.localPosition.x + 15;
-            CarSpeedRight1.z = TargetCar.transform.localPosition.x + 15;
+            CarSpeedLeft1.z = TargetCar.transform.localPosition.x + distance;
+            CarSpeedRight1.z = TargetCar.transform.localPosition.x + distance;
         }
 
         if (wayPointTrigger == true)
