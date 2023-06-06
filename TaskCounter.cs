@@ -18,9 +18,9 @@ public class TaskCounter : MonoBehaviour
             FollowingCarRight.SetActive(true);
             LaneChangingCar.SetActive(true);
 
-            if (threshold == false)
+            if (DriverCar.threshold == false)
             {
-                threshold = true;
+                DriverCar.threshold = true;
             }
             else
             {
