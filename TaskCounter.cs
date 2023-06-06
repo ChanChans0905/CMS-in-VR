@@ -8,7 +8,32 @@ public class TaskCounter : MonoBehaviour
 {
     public GameObject FollowingCarLeft, FollowingCarRight, LaneChangingCar, TrialCarLeft, TrialCarRight;
     [SerializeField] DemoCarController DriverCar;
+    public float trialTime;
+    [SerializeField] FadeInOut FadeInOut;
+    public bool TrialBoolLocal;
 
+    private void Update()
+    {
+        if(TrialBoolLocal == true)
+        {
+            trialTime += Time.deltaTime;
+            if (trialTime >= 120)
+            {
+                DriverCar.TrialBool = false;
+                FadeInOut.FadingEvent = true;
+                DriverCar.respawnTrigger = true;
+                TrialBoolLocal = false;
+            }
+
+            if (trialTime >= 125)
+            {
+                FadeInOut.FadingEvent = false;
+                DriverCar.respawnTrigger = false;
+                trialTime = 0;
+            }
+        }
+
+    }
 
     private void OnTriggerEnter(Collider other)
     {
@@ -45,6 +70,7 @@ public class TaskCounter : MonoBehaviour
         {
             TrialCarLeft.SetActive(true);
             TrialCarRight.SetActive(true);
+            TrialBoolLocal = true;
         }
     }
 }
