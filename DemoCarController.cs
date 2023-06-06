@@ -33,7 +33,7 @@ public class DemoCarController : MonoBehaviour
     public bool FinalQuestionnaireBool = false;
     public bool TrialBool = false;
     public bool noticeBool;
-    public int threshold;
+    public bool threshold = false;
 
     public int[] LaneChangeTime = { 0, 0, 0, 1, 3, 5, 7, 9 };
     public int[] CMScombination = { 1, 2, 3, 4, 5, 6, 7 };
