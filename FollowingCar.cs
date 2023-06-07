@@ -28,7 +28,6 @@ public class FollowingCar : MonoBehaviour
 
     void Start()
     {
-        _rb = GetComponent<Rigidbody>();
         startPos= transform.position;
         carLeft.SetActive(false);
         carRight.SetActive(false);

@@ -199,7 +199,6 @@ public class DemoCarController : MonoBehaviour
                 {
                     TraditionalMirrorLeft.SetActive(true);
                     TraditionalMirrorRight.SetActive(true);
-                    Debug.Log("Case : " + 1);
                     break;
 
                 }
@@ -211,7 +210,6 @@ public class DemoCarController : MonoBehaviour
                     //ARSignalLeft.SetActive(false);
                     //ARSignalRight.SetActive(false);
                     //ARSignalRear.SetActive(false);
-                    Debug.Log("Case : " + 2);
                     break;
                 }
             case 3: // CMS near the Steering Wheel
@@ -222,14 +220,12 @@ public class DemoCarController : MonoBehaviour
                     //ARSignalLeft.SetActive(false);
                     //ARSignalRight.SetActive(false);
                     //ARSignalRear.SetActive(false);
-                    Debug.Log("Case : " + 3);
                     break;
                 }
             case 4: // CMS Stitched
                 {
                     CMSStitched.SetActive(true);
                     //ARSignalStitched.SetActive(false);
-                    Debug.Log("Case : " + 7);
                     break;
                 }
             case 5: // CMS beside Traditional Mirror with AR signal
@@ -237,7 +233,6 @@ public class DemoCarController : MonoBehaviour
                     CMSCenter.SetActive(true);
                     CMS_LD_TM.SetActive(true);
                     CMS_RD_TM.SetActive(true);
-                    Debug.Log("Case : " + 4);
                     break;
                 }
             case 6: // CMS near the Steering Wheel with AR signal
@@ -245,13 +240,11 @@ public class DemoCarController : MonoBehaviour
                     CMSCenter.SetActive(true);
                     CMS_LD_SW.SetActive(true);
                     CMS_RD_SW.SetActive(true);
-                    Debug.Log("Case : " + 5);
                     break;
                 }
             case 7: // CMS Stitched with AR signal
                 {
                     CMSStitched.SetActive(true);
-                    Debug.Log("Case : " + 6);
                     break;
                 }
         }

@@ -61,13 +61,9 @@ public class LeadingCar : MonoBehaviour
 
         if (overtake > 5 && overtake <= 8)
         {
-            if(DriverCar.laneChangeDirection == 1)
-            {
                 laneChangeTimer += Time.deltaTime * 1.4f;
                 CarSpeed.x = laneChangeTimer - 404;
                 gameObject.transform.localPosition = CarSpeed;
-
-            }
         }
 
         if (overtake > 8 && (DriverCar.LaneChangeTime[count] == 0))
