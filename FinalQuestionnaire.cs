@@ -52,7 +52,7 @@ public class FinalQuestionnaire : MonoBehaviour
                 SaveTrigger = true;
             }
         }
-        else if (rec.rgbButtons[3] == 128 || Input.GetKeyDown(KeyCode.N))
+        else if (rec.rgbButtons[5] == 128 || Input.GetKeyDown(KeyCode.N))
         {
             if (QuestionnaireNumber > 1)
             {

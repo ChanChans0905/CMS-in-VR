@@ -89,7 +89,7 @@ public class LeadingCar : MonoBehaviour
             transform.position = pathCreator.path.GetPointAtDistance(distanceTravelled);
             transform.rotation = pathCreator.path.GetRotationAtDistance(distanceTravelled);
             disableTime += Time.deltaTime;
-            if (disableTime > 12)
+            if (disableTime > 20)
             {
                 overtake = 0;
                 distanceTravelled = 0;

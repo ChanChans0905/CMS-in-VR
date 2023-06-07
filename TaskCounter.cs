@@ -23,6 +23,7 @@ public class TaskCounter : MonoBehaviour
                 FadeInOut.FadingEvent = true;
                 DriverCar.respawnTrigger = true;
                 TrialBoolLocal = false;
+                // activate notice Text UI 
             }
 
             if (trialTime >= 125)
@@ -30,9 +31,9 @@ public class TaskCounter : MonoBehaviour
                 FadeInOut.FadingEvent = false;
                 DriverCar.respawnTrigger = false;
                 trialTime = 0;
+                // deactivate notice Text UI
             }
         }
-
     }
 
     private void OnTriggerEnter(Collider other)
@@ -52,17 +53,6 @@ public class TaskCounter : MonoBehaviour
             {
                 DriverCar.taskCount++;
                 Debug.Log("TaskCOunt Added" + DriverCar.taskCount);
-            }
-
-            if(gameObject.transform.localPosition.z < 500 )
-            {
-                DriverCar.laneChangeDirection = 1;
-                Debug.Log("Taskcount1" + DriverCar.LaneChangeTime[DriverCar.taskCount]);
-            }
-            else if(gameObject.transform.localPosition.z > 500 )
-            {
-                DriverCar.laneChangeDirection = 2;
-                Debug.Log("Taskcount2" + DriverCar.LaneChangeTime[DriverCar.taskCount]);
             }
         }
 

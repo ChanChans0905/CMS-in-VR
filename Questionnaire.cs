@@ -9,6 +9,11 @@ using UnityEngine.XR;
 
 public class Questionnaire : MonoBehaviour
 {
+    public bool SaveTriggerExit = false;
+    public GameObject SaveTriggerObject;
+    float x;
+    int threshold_y;
+    int threshold_z;
     [SerializeField] DemoCarController DriverCar;
     public int QuestionnaireNumber;
     [SerializeField] Slider AnswerSlider;
@@ -41,23 +46,86 @@ public class Questionnaire : MonoBehaviour
             LogitechGSDK.DIJOYSTATE2ENGINES rec;
             rec = LogitechGSDK.LogiGetStateUnity(0);
 
-            if (rec.rgbButtons[4] == 128 || Input.GetKeyDown(KeyCode.M))
+            if (rec.lX > 0)
             {
-
-                children[QuestionnaireNumber].gameObject.SetActive(true);
-                if (QuestionnaireNumber != 0)
+                if (rec.lX < 1500)
                 {
-                    children[QuestionnaireNumber - 1].gameObject.SetActive(false);
+                    x = 0;
                 }
-                QuestionnaireNumber++;
-            }
-            else if (rec.rgbButtons[3] == 128 || Input.GetKeyDown(KeyCode.N))
-            {
-                if (QuestionnaireNumber > 1)
+                else if (rec.lX > 1500 && rec.lX < 4500)
                 {
-                    QuestionnaireNumber--;
-                    children[QuestionnaireNumber].gameObject.SetActive(false);
-                    children[QuestionnaireNumber - 1].gameObject.SetActive(true);
+                    x = 1;
+                }
+                else if (rec.lX > 4500 && rec.lX < 7500)
+                {
+                    x = 2;
+                }
+                else if (rec.lX > 7500)
+                {
+                    x = 3;
+                }
+            }
+            else
+            {
+                if (rec.lX > -1500)
+                {
+                    x = 0;
+                }
+                else if (rec.lX < -1500 && rec.lX > -4500)
+                {
+                    x = -1;
+                }
+                else if (rec.lX < -4500 && rec.lX > -7500)
+                {
+                    x = -2;
+                }
+                else if (rec.lX < -7500)
+                {
+                    x = -3;
+                }
+            }
+
+            Chage_value(x);
+
+            if (rec.rgbButtons[4] == 128)
+            {
+                threshold_y++;
+                if (threshold_y >= 30)
+                {
+                    threshold_y = 0;
+                    children[QuestionnaireNumber].gameObject.SetActive(true);
+                    AnswerSlider = children[QuestionnaireNumber].GetComponent<Slider>();
+                    Debug.Log(AnswerSlider.value);
+                    if (QuestionnaireNumber != 0)
+                    {
+                        children[QuestionnaireNumber - 1].gameObject.SetActive(false);
+                        Debug.Log(AnswerSlider.value);
+                    }
+                    QuestionnaireNumber++;
+
+                    if (QuestionnaireNumber == 10) // needed to be fixed
+                    {
+                        SaveTriggerObject.SetActive(true);
+                        children[9].gameObject.SetActive(false);
+                    }
+
+                }
+            }
+
+            if (rec.rgbButtons[5] == 128)
+            {
+                threshold_z++;
+                if (threshold_z >= 30)
+                {
+                    if (QuestionnaireNumber > 1 && QuestionnaireNumber < 10)
+                    {
+                        QuestionnaireNumber--;
+                        children[QuestionnaireNumber].gameObject.SetActive(false);
+                        children[QuestionnaireNumber - 1].gameObject.SetActive(true);
+                        AnswerSlider = children[QuestionnaireNumber - 1].GetComponent<Slider>();
+                        Debug.Log(AnswerSlider.value);
+                    }
+                    threshold_z = 0;
                 }
             }
 
@@ -65,15 +133,15 @@ public class Questionnaire : MonoBehaviour
             {
                 SaveToCSV();
 
-                if(DriverCar.QuestionnaireCount < 7)
+                if (DriverCar.QuestionnaireCount < 7)
                 {
                     DriverCar.CMSchangeBool = true;
                     DriverCar.TrialBool = true;
                     FadeInOut.FadingEvent = false;
                     DriverCar.respawnTrigger = false;
                 }
-                
-                if(DriverCar.QuestionnaireCount == 7)
+
+                if (DriverCar.QuestionnaireCount == 7)
                 {
                     FinalQuestionnaire.SetActive(true);
                 }
@@ -81,11 +149,47 @@ public class Questionnaire : MonoBehaviour
         }
     }
 
+    void Chage_value(float x)
+    {
+        if (Mathf.Abs(x) > 0)
+        {
+            if (x == 1)
+            {
+                AnswerSlider.value = 5;
+            }
+            else if (x == 2)
+            {
+                AnswerSlider.value = 6;
+            }
+            else if (x == 3)
+            {
+                AnswerSlider.value = 7;
+            }
+            else if (x == -1)
+            {
+                AnswerSlider.value = 3;
+            }
+            else if (x == -2)
+            {
+                AnswerSlider.value = 2;
+            }
+            else if (x == -3)
+            {
+                AnswerSlider.value = 1;
+            }
+        }
+        else
+        {
+            AnswerSlider.value = 4;
+
+        }
+    }
+
     List<Transform> GetChildren(Transform parent)
     {
         List<Transform> children = new List<Transform>();
 
-        foreach(Transform child in parent)
+        foreach (Transform child in parent)
         {
             children.Add(child);
         }
@@ -98,15 +202,15 @@ public class Questionnaire : MonoBehaviour
         DriverCar.QuestionnaireCount++;
         csvFileName = "Questionnaire" + DriverCar.QuestionnaireCount + ".csv";
         List<Transform> children = GetChildren(transform);
-        for(int i = 0; i < children.Count; i++)
+        for (int i = 0; i < children.Count; i++)
         {
             AnswerSlider = children[i].GetComponent<Slider>();
             float[] Data = new float[2];
-            Data[0] = i+1;
+            Data[0] = i + 1;
             Data[1] = AnswerSlider.value;
             AppendToCsv(Data);
         }
-        
+
     }
 
     string GetDirectoryPath()
@@ -174,6 +278,7 @@ public class Questionnaire : MonoBehaviour
             finalString += csvSeparator;
             sw.WriteLine(finalString);
             SaveTrigger = false;
+            SaveTriggerExit = true;
             gameObject.SetActive(false);
         }
     }

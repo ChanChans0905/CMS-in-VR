@@ -48,14 +48,14 @@ public class FollowingCar : MonoBehaviour
                         if (DriverCar.FollowingCarSpeed[DriverCar.taskCount] == 1)
                         {
                         laneChangeTimer += Time.deltaTime;
-                        CarSpeedLeft1.z = (TargetCar.transform.localPosition.x - distance) + laneChangeTimer*5f;
-                        CarSpeedRight1.z = (TargetCar.transform.localPosition.x - distance) + laneChangeTimer*10f;
+                        CarSpeedLeft1.z = (TargetCar.transform.localPosition.x - distance) + laneChangeTimer*2f;
+                        CarSpeedRight1.z = (TargetCar.transform.localPosition.x - distance) + laneChangeTimer*3f;
                         }
                         else
                         {
                         laneChangeTimer += Time.deltaTime;
-                        CarSpeedLeft1.z = (TargetCar.transform.localPosition.x - distance) + laneChangeTimer * 10f;
-                            CarSpeedRight1.z = (TargetCar.transform.localPosition.x - distance) + laneChangeTimer * 5f;
+                        CarSpeedLeft1.z = (TargetCar.transform.localPosition.x - distance) + laneChangeTimer * 3f;
+                            CarSpeedRight1.z = (TargetCar.transform.localPosition.x - distance) + laneChangeTimer * 2f;
                         }
                     }
                     else if (accelTime <= 8 + DriverCar.LaneChangeTime[DriverCar.taskCount])
@@ -84,7 +84,7 @@ public class FollowingCar : MonoBehaviour
             transform.rotation = pathCreator.path.GetRotationAtDistance(distanceTravelled);
             disableTime += Time.deltaTime;
 
-            if (disableTime > 8)
+            if (disableTime > 20)
             {
                 laneChangeTimer = 0;
                 accelTime = 0;

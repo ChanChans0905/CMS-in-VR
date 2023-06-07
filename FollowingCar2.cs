@@ -85,7 +85,7 @@ public class FollowingCar2 : MonoBehaviour
             transform.rotation = pathCreator.path.GetRotationAtDistance(distanceTravelled);
             disableTime += Time.deltaTime;
 
-            if (disableTime > 8)
+            if (disableTime > 20)
             {
                 laneChangeTimer = 0;
                 accelTime = 0;

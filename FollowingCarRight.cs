@@ -26,7 +26,7 @@ public class FollowingCarRight : MonoBehaviour
             transform.position = pathCreator.path.GetPointAtDistance(distanceTravelled);
             transform.rotation = pathCreator.path.GetRotationAtDistance(distanceTravelled);
             disableTime += Time.deltaTime;
-            if (disableTime > 8)
+            if (disableTime > 20)
             {
                 gameObject.transform.position = startPos;
                 gameObject.transform.rotation = Quaternion.identity;
