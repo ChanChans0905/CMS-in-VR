@@ -21,5 +21,5 @@ We measure it by the data of : <br/>
 ### Example Video : <br/>
 
 <p align="center">
-<img src="https://github.com/ChanChans0905/CMS-in-VR/assets/108471565/6083b824-fd23-48e0-9370-776e5be47087">
+<img src="https://github.com/ChanChans0905/CMS-in-VR/assets/108471565/bac90b14-846a-4387-a088-0c7c4e0403e2">
   </p>
