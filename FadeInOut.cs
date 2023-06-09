@@ -45,7 +45,7 @@ public class FadeInOut : MonoBehaviour
     {
         if (alpha >= 0)
         {
-            degree -= .05f;
+            degree -= .01f;
             alpha = degree;
         }
         if (DriverCar.taskCount == 0 && DriverCar.noticeBool == true)
