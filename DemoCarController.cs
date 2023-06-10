@@ -32,8 +32,8 @@ public class DemoCarController : MonoBehaviour
     public bool FinalQuestionnaireBool;
     public bool TrialBool;
     public GameObject CMS_LD_SW, CMS_LD_TM, CMS_RD_SW, CMS_RD_TM, CMSCenter, CMSStitched, ARSignalLeft, ARSignalRight, ARSignalRear, ARSignalStitched, TraditionalMirrorLeft, TraditionalMirrorRight;
-    public int[] LaneChangeTime = { 0, 0, 0, 1, 3, 5, 7, 9 };
-    public int[] CMScombination = { 1, 2, 3, 4, 5, 6, 7 };
+    public int[] LaneChangeTime = { 0, 0, 0, 1, 3, 5, 7, 9 }; // make the 2 dimension list by using counter-balance
+    public int[] CMScombination = { 1, 2, 3, 4, 5, 6, 7 }; 
     public int[] FollowingCarSpeed = { 0, 0, 0, 0, 1, 1, 1, 1 };
     public int laneChangeDirection;
     public bool threshold = false;
@@ -50,7 +50,6 @@ public class DemoCarController : MonoBehaviour
 
     private void Start()
     {
-        FollowingCarSpeed = ShuffleArray(FollowingCarSpeed);
         TrialBool = true;
         CMSchange();
     }
@@ -214,9 +213,9 @@ public class DemoCarController : MonoBehaviour
                     CMSCenter.SetActive(true);
                     CMS_LD_TM.SetActive(true);
                     CMS_RD_TM.SetActive(true);
-                    //ARSignalLeft.SetActive(false);
-                    //ARSignalRight.SetActive(false);
-                    //ARSignalRear.SetActive(false);
+                    ARSignalLeft.SetActive(false);
+                    ARSignalRight.SetActive(false);
+                    ARSignalRear.SetActive(false);
                     break;
                 }
             case 3: // CMS near the Steering Wheel
@@ -224,15 +223,15 @@ public class DemoCarController : MonoBehaviour
                     CMSCenter.SetActive(true);
                     CMS_LD_SW.SetActive(true);
                     CMS_RD_SW.SetActive(true);
-                    //ARSignalLeft.SetActive(false);
-                    //ARSignalRight.SetActive(false);
-                    //ARSignalRear.SetActive(false);
+                    ARSignalLeft.SetActive(false);
+                    ARSignalRight.SetActive(false);
+                    ARSignalRear.SetActive(false);
                     break;
                 }
             case 4: // CMS Stitched
                 {
                     CMSStitched.SetActive(true);
-                    //ARSignalStitched.SetActive(false);
+                    ARSignalStitched.SetActive(false);
                     break;
                 }
             case 5: // CMS beside Traditional Mirror with AR signal
@@ -259,7 +258,7 @@ public class DemoCarController : MonoBehaviour
         CMSchangeBool = false;
     }
 
-    static public T[] ShuffleArray<T>(T[] array)
+    /*static public T[] ShuffleArray<T>(T[] array)
     {
         int random1, random2;
         T temp;
@@ -276,6 +275,6 @@ public class DemoCarController : MonoBehaviour
         }
 
         return array;
-    }
+    }*/
 
 }
