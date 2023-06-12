@@ -26,6 +26,7 @@ public class Questionnaire : MonoBehaviour
     [SerializeField] FadeInOut FadeInOut;
     public GameObject FinalQuestionnaire;
 
+
     void Start()
     {
 
@@ -137,6 +138,7 @@ public class Questionnaire : MonoBehaviour
                 {
                     DriverCar.CMSchangeBool = true;
                     DriverCar.TrialBool = true;
+                    DriverCar.TrialBoolFilter = true;
                     FadeInOut.FadingEvent = false;
                     DriverCar.respawnTrigger = false;
                 }

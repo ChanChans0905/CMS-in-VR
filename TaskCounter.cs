@@ -11,27 +11,29 @@ public class TaskCounter : MonoBehaviour
     public float trialTime;
     [SerializeField] FadeInOut FadeInOut;
     public bool TrialBoolLocal;
+    public GameObject TrialStartNotive, TrialEndNotice;
 
     private void Update()
     {
         if(TrialBoolLocal == true)
         {
             trialTime += Time.deltaTime;
-            if (trialTime >= 120)
+            if (trialTime >= 10)
             {
                 DriverCar.TrialBool = false;
                 FadeInOut.FadingEvent = true;
                 DriverCar.respawnTrigger = true;
-                TrialBoolLocal = false;
-                // activate notice Text UI 
+                TrialEndNotice.SetActive(true);
             }
 
-            if (trialTime >= 125)
+            if (trialTime >= 17)
             {
+                DriverCar.waitTimer = 0;
                 FadeInOut.FadingEvent = false;
                 DriverCar.respawnTrigger = false;
+                TrialEndNotice.SetActive(false);
                 trialTime = 0;
-                // deactivate notice Text UI
+                TrialBoolLocal = false;
             }
         }
     }

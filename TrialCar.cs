@@ -7,8 +7,6 @@ public class TrialCar : MonoBehaviour
 {
     public PathCreator pathCreator;
     float distanceTravelled;
-    [SerializeField] DemoCarController DriverCar;
-
 
     private void Start()
     {

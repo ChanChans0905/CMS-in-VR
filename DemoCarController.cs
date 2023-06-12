@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using System;
 using VolvoCars.Data;
+using Unity.VisualScripting;
 
 public class DemoCarController : MonoBehaviour
 {
@@ -20,10 +21,17 @@ public class DemoCarController : MonoBehaviour
     [SerializeField] private VolvoCars.Data.GearLeverIndication gearLeverIndication = default;
     [SerializeField] private VolvoCars.Data.DoorIsOpenR1L doorIsOpenR1L = default; // R1L stands for Row 1 Left.
     [SerializeField] private VolvoCars.Data.LampBrake lampBrake = default;
+    [SerializeField] LeadingCar LC;
+    [SerializeField] FollowingCar FC;
+    [SerializeField] GetTrialCarPosition1 TC1;
+    [SerializeField] GetTrialCarPosition2 TC2;
+
+    public GameObject VolvoCar;
+    public GameObject CMS_LD_SW, CMS_LD_TM, CMS_RD_SW, CMS_RD_TM, CMSCenter, CMSStitched, TraditionalMirrorLeft, TraditionalMirrorRight;
+    public GameObject TrialStartNotice;
 
     public bool respawnTrigger = false;
-    public GameObject VolvoCar;
-    public GameObject Questionnaire;
+
     public float waitTimer;
     public int taskCount;
     public int CMSchangeCount;
@@ -31,14 +39,19 @@ public class DemoCarController : MonoBehaviour
     public bool CMSchangeBool = false;
     public bool FinalQuestionnaireBool;
     public bool TrialBool;
-    public GameObject CMS_LD_SW, CMS_LD_TM, CMS_RD_SW, CMS_RD_TM, CMSCenter, CMSStitched, ARSignalLeft, ARSignalRight, ARSignalRear, ARSignalStitched, TraditionalMirrorLeft, TraditionalMirrorRight;
-    public int[] LaneChangeTime = { 0, 0, 0, 1, 3, 5, 7, 9 }; // make the 2 dimension list by using counter-balance
-    public int[] CMScombination = { 1, 2, 3, 4, 5, 6, 7 }; 
-    public int[] FollowingCarSpeed = { 0, 0, 0, 0, 1, 1, 1, 1 };
+    public bool TrialBoolFilter;
     public int laneChangeDirection;
     public bool threshold = false;
     public bool noticeBool = true;
     public float TrialTimeCount;
+    public float NoticeTimer;
+    public float FCLposition, FCRposition, LCposition, DCposition;
+    public bool FCLbool, FCRbool, LCbool, TCLbool, TCRbool;
+    public bool ARbool;
+
+    public int[] LaneChangeTime = { 0, 0, 0, 1, 3, 5, 7, 9 }; // make the 2 dimension list by using counter-balance
+    public int[] CMScombination = { 1, 2, 3, 4, 5, 6, 7 };
+    public int[] FollowingCarSpeed = { 0, 0, 0, 0, 1, 1, 1, 1 };
 
     #region Private variables not shown in the inspector
     private VolvoCars.Data.Value.Public.WheelTorque wheelTorqueValue = new VolvoCars.Data.Value.Public.WheelTorque(); // This is the value type used by the wheelTorque data item.     
@@ -51,7 +64,9 @@ public class DemoCarController : MonoBehaviour
     private void Start()
     {
         TrialBool = true;
+        TrialBoolFilter = true;
         CMSchange();
+        
     }
 
     private void Update()
@@ -72,7 +87,7 @@ public class DemoCarController : MonoBehaviour
 
             #region Wheel torques 
 
-            if (parkInput > 0)
+            /*if (parkInput > 0)
             { // Park request ("hand brake")
                 if (Mathf.Abs(velocity.Value) > 5f / 3.6f)
                 {
@@ -148,9 +163,13 @@ public class DemoCarController : MonoBehaviour
                 {
                     totalTorque = -9000;
                 }
-            }
+            }*/
 
             totalTorque = (rec.lRz - rec.lY) / 15;
+            if (velocity.Value >= 27.5)
+            {
+                totalTorque = 0;
+            }
             ApplyWheelTorques(totalTorque);
             #endregion
 
@@ -158,7 +177,7 @@ public class DemoCarController : MonoBehaviour
             if (respawnTrigger)
             {
                 waitTimer += Time.deltaTime;
-                if (waitTimer > 1)
+                if (waitTimer > 1.5)
                 {
                     velocity.Value = 0;
                     wheelTorque.Value = wheelTorqueValue;
@@ -170,6 +189,49 @@ public class DemoCarController : MonoBehaviour
             if (CMSchangeBool)
             {
                 CMSchange();
+            }
+
+            if(TrialBool && TrialBoolFilter)
+            {
+                TrialStartNotice.SetActive(true);
+                NoticeTimer += Time.deltaTime;
+                if (NoticeTimer > 5)
+                {
+                    NoticeTimer = 0;
+                    TrialBoolFilter = false;
+                    TrialStartNotice.SetActive(false);
+                }
+            }
+            LCposition = LC.gameObject.transform.position.z;
+            FCLposition = FC.carLeft.transform.position.z;
+            FCRposition = FC.carRight.transform.position.z;
+            DCposition = gameObject.transform.position.x;
+
+            if(ARbool)
+            {
+                if (MathF.Abs(Mathf.Abs(DCposition) - Mathf.Abs(LCposition)) <= 15) { LCbool = true; }
+                else if (MathF.Abs(Mathf.Abs(DCposition) - Mathf.Abs(FCLposition)) <= 15) { FCLbool = true; }
+                else if (MathF.Abs(Mathf.Abs(DCposition) - Mathf.Abs(FCRposition)) <= 15) { FCRbool = true; }
+
+                if (MathF.Abs(Mathf.Abs(DCposition) - Mathf.Abs(LCposition)) >= 15) { LCbool = false; }
+                else if (MathF.Abs(Mathf.Abs(DCposition) - Mathf.Abs(FCLposition)) >= 15) { FCLbool = false; }
+                else if (MathF.Abs(Mathf.Abs(DCposition) - Mathf.Abs(FCRposition)) >= 15) { FCRbool = false; }
+
+                if (TrialBool)
+                {
+                    if (TC1.TC1bool || TC1.TC2bool || TC1.TC3bool) { FCLbool = true; }
+                    else { FCLbool = false; }
+
+                    if (TC1.TC4bool || TC1.TC5bool || TC1.TC6bool) { FCRbool = true; }
+                    else { FCRbool = false; }
+                    
+                    if (TC2.TC1bool || TC2.TC2bool || TC2.TC3bool) { FCLbool = true; }
+                    else { FCLbool = false; }
+
+                    if (TC2.TC4bool || TC2.TC5bool || TC2.TC6bool) { FCRbool = true; }
+                    else { FCRbool = false; }
+
+                }
             }
         }
     }
@@ -205,6 +267,7 @@ public class DemoCarController : MonoBehaviour
                 {
                     TraditionalMirrorLeft.SetActive(true);
                     TraditionalMirrorRight.SetActive(true);
+                    ARbool = false;
                     break;
 
                 }
@@ -213,9 +276,7 @@ public class DemoCarController : MonoBehaviour
                     CMSCenter.SetActive(true);
                     CMS_LD_TM.SetActive(true);
                     CMS_RD_TM.SetActive(true);
-                    ARSignalLeft.SetActive(false);
-                    ARSignalRight.SetActive(false);
-                    ARSignalRear.SetActive(false);
+                    ARbool = false;
                     break;
                 }
             case 3: // CMS near the Steering Wheel
@@ -223,15 +284,13 @@ public class DemoCarController : MonoBehaviour
                     CMSCenter.SetActive(true);
                     CMS_LD_SW.SetActive(true);
                     CMS_RD_SW.SetActive(true);
-                    ARSignalLeft.SetActive(false);
-                    ARSignalRight.SetActive(false);
-                    ARSignalRear.SetActive(false);
+                    ARbool = false;
                     break;
                 }
             case 4: // CMS Stitched
                 {
                     CMSStitched.SetActive(true);
-                    ARSignalStitched.SetActive(false);
+                    ARbool = false;
                     break;
                 }
             case 5: // CMS beside Traditional Mirror with AR signal
@@ -239,6 +298,7 @@ public class DemoCarController : MonoBehaviour
                     CMSCenter.SetActive(true);
                     CMS_LD_TM.SetActive(true);
                     CMS_RD_TM.SetActive(true);
+                    ARbool = true;
                     break;
                 }
             case 6: // CMS near the Steering Wheel with AR signal
@@ -246,11 +306,13 @@ public class DemoCarController : MonoBehaviour
                     CMSCenter.SetActive(true);
                     CMS_LD_SW.SetActive(true);
                     CMS_RD_SW.SetActive(true);
+                    ARbool = true;
                     break;
                 }
             case 7: // CMS Stitched with AR signal
                 {
                     CMSStitched.SetActive(true);
+                    ARbool = true;
                     break;
                 }
         }
