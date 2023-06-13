@@ -9,7 +9,7 @@ public class FadeInOut : MonoBehaviour
     public bool FadingEvent;
     [SerializeField] DemoCarController DriverCar;
     public float noticeTime;
-    public GameObject Questionnaire;
+    public GameObject QuestionnaireStartNotice;
 
     void Start()
     {
@@ -48,6 +48,7 @@ public class FadeInOut : MonoBehaviour
             degree -= .01f;
             alpha = degree;
         }
+
         if (DriverCar.taskCount == 0 && DriverCar.noticeBool == true)
         {
             noticeTime += Time.deltaTime;
@@ -75,7 +76,7 @@ public class FadeInOut : MonoBehaviour
         {
             FadingEvent = true;
             DriverCar.respawnTrigger = true;
-            Questionnaire.SetActive(true);
+            QuestionnaireStartNotice.SetActive(true);
             DriverCar.taskCount = 0;
         }
     }

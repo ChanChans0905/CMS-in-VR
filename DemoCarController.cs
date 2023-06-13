@@ -85,94 +85,12 @@ public class DemoCarController : MonoBehaviour
             steeringReduction = 1 - Mathf.Min(Mathf.Abs(velocity.Value) / 30f, 0.85f);
             userSteeringInput.Value = rawSteeringInput * steeringReduction;
 
-            #region Wheel torques 
-
-            /*if (parkInput > 0)
-            { // Park request ("hand brake")
-                if (Mathf.Abs(velocity.Value) > 5f / 3.6f)
-                {
-                    totalTorque = -MAX_BRAKE_TORQUE; // Regular brakes
-                }
-                else
-                {
-                    totalTorque = -9000; // Parking brake and/or gear P
-                    propulsiveDirection.Value = 0;
-                    gearLeverIndication.Value = 0;
-                }
-
-            }
-            else if (propulsiveDirection.Value == 1)
-            { // Forward
-
-                if (rawForwardInput >= 0 && velocity.Value > -1.5f)
-                {
-                    totalTorque = Mathf.Min(availableForwardTorque.Evaluate(Mathf.Abs(velocity.Value)), -1800 + 7900 * rawForwardInput - 9500 * rawForwardInput * rawForwardInput + 9200 * rawForwardInput * rawForwardInput * rawForwardInput);
-                    if (velocity.Value >= 27.5)
-                    {
-                        totalTorque = 0;
-                    }
-                }
-                else
-                {
-                    totalTorque = -Mathf.Abs(rawForwardInput) * MAX_BRAKE_TORQUE;
-                    if (Mathf.Abs(velocity.Value) < 0.01f && brakeToReverse)
-                    {
-                        propulsiveDirection.Value = -1;
-                        gearLeverIndication.Value = 1;
-                    }
-                }
-
-
-
-            }
-            else if (propulsiveDirection.Value == -1)
-            { // Reverse
-                if (rawForwardInput <= 0 && velocity.Value < 1.5f)
-                {
-                    float absInput = Mathf.Abs(rawForwardInput);
-                    totalTorque = Mathf.Min(availableReverseTorque.Evaluate(Mathf.Abs(velocity.Value)), -1800 + 7900 * absInput - 9500 * absInput * absInput + 9200 * absInput * absInput * absInput);
-                }
-                else
-                {
-                    totalTorque = -Mathf.Abs(rawForwardInput) * MAX_BRAKE_TORQUE;
-                    if (Mathf.Abs(velocity.Value) < 0.01f)
-                    {
-                        propulsiveDirection.Value = 1;
-                        gearLeverIndication.Value = 3;
-                    }
-                }
-
-            }
-            else
-            { // No direction (such as neutral gear or P)
-                totalTorque = 0;
-                if (Mathf.Abs(velocity.Value) < 1f)
-                {
-                    if (rawForwardInput > 0)
-                    {
-                        propulsiveDirection.Value = 1;
-                        gearLeverIndication.Value = 3;
-                    }
-                    else if (rawForwardInput < 0 && brakeToReverse)
-                    {
-                        propulsiveDirection.Value = -1;
-                        gearLeverIndication.Value = 1;
-                    }
-                }
-                else if (gearLeverIndication.Value == 0)
-                {
-                    totalTorque = -9000;
-                }
-            }*/
-
             totalTorque = (rec.lRz - rec.lY) / 15;
             if (velocity.Value >= 27.5)
             {
                 totalTorque = 0;
             }
             ApplyWheelTorques(totalTorque);
-            #endregion
-
 
             if (respawnTrigger)
             {
@@ -185,6 +103,7 @@ public class DemoCarController : MonoBehaviour
                     VolvoCar.transform.rotation = Quaternion.Slerp(VolvoCar.transform.rotation, transform.rotation, 0.5f * Time.deltaTime);
                 }
             }
+            else if(respawnTrigger == false && waitTimer > 0) { waitTimer = 0; }
 
             if (CMSchangeBool)
             {
@@ -259,7 +178,6 @@ public class DemoCarController : MonoBehaviour
         CMSStitched.SetActive(false);
         TraditionalMirrorLeft.SetActive(false);
         TraditionalMirrorRight.SetActive(false);
-        // AR signal setactive false, stitched false
 
         switch (CMScombination[CMSchangeCount])
         {
