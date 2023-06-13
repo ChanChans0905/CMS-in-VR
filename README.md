@@ -1,9 +1,10 @@
 # CMS-in-VR
 
 ### This package is based on Unity, with Virtual Reality(VR) environment <br/>
-Used : 'Test track' package provided by Volvo, Eye tracking technology provided by Varjo ( Varjo Aero is used in this package ).
+**Used** : 'Test track' package provided by Volvo, Eye tracking technology provided by Varjo. <br/>
+**Device** : Varjo Aero, Logitech G29 Steering Wheel and Pedal. <br/>
 
-In this package, we check following points :<br/>
+#### In this package, we check following points :<br/>
 * Efficiency of several locations and combinations of Camera Monitor Systems(CMS) <br/>
 
 We measure it by the data of : <br/>
