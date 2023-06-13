@@ -25,11 +25,12 @@ public class Questionnaire : MonoBehaviour
     public bool SaveTrigger;
     [SerializeField] FadeInOut FadeInOut;
     public GameObject FinalQuestionnaire;
+    public bool ButtonActivation;
 
 
     void Start()
     {
-
+        ButtonActivation = true;
         List<Transform> children = GetChildren(transform);
 
         foreach (Transform child in children)
@@ -88,47 +89,52 @@ public class Questionnaire : MonoBehaviour
 
             Chage_value(x);
 
-            if (rec.rgbButtons[4] == 128)
+            if (ButtonActivation)
             {
-                threshold_y++;
-                if (threshold_y >= 30)
+                if (rec.rgbButtons[4] == 128)
                 {
-                    threshold_y = 0;
-                    children[QuestionnaireNumber].gameObject.SetActive(true);
-                    AnswerSlider = children[QuestionnaireNumber].GetComponent<Slider>();
-                    Debug.Log(AnswerSlider.value);
-                    if (QuestionnaireNumber != 0)
+                    threshold_y++;
+                    if (threshold_y >= 30)
                     {
-                        children[QuestionnaireNumber - 1].gameObject.SetActive(false);
+                        threshold_y = 0;
+                        children[QuestionnaireNumber].gameObject.SetActive(true);
+                        AnswerSlider = children[QuestionnaireNumber].GetComponent<Slider>();
                         Debug.Log(AnswerSlider.value);
-                    }
-                    QuestionnaireNumber++;
+                        if (QuestionnaireNumber != 0)
+                        {
+                            children[QuestionnaireNumber - 1].gameObject.SetActive(false);
+                            Debug.Log(AnswerSlider.value);
+                        }
+                        QuestionnaireNumber++;
 
-                    if (QuestionnaireNumber == 10) // needed to be fixed
+                        if (QuestionnaireNumber == 10)
+                        {
+                            SaveTriggerObject.SetActive(true);
+                            children[9].gameObject.SetActive(false);
+                            ButtonActivation = false;
+                        }
+
+                    }
+                }
+
+                if (rec.rgbButtons[5] == 128)
+                {
+                    threshold_z++;
+                    if (threshold_z >= 30)
                     {
-                        SaveTriggerObject.SetActive(true);
-                        children[9].gameObject.SetActive(false);
+                        if (QuestionnaireNumber > 1 && QuestionnaireNumber < 10)
+                        {
+                            QuestionnaireNumber--;
+                            children[QuestionnaireNumber].gameObject.SetActive(false);
+                            children[QuestionnaireNumber - 1].gameObject.SetActive(true);
+                            AnswerSlider = children[QuestionnaireNumber - 1].GetComponent<Slider>();
+                            Debug.Log(AnswerSlider.value);
+                        }
+                        threshold_z = 0;
                     }
-
                 }
             }
-
-            if (rec.rgbButtons[5] == 128)
-            {
-                threshold_z++;
-                if (threshold_z >= 30)
-                {
-                    if (QuestionnaireNumber > 1 && QuestionnaireNumber < 10)
-                    {
-                        QuestionnaireNumber--;
-                        children[QuestionnaireNumber].gameObject.SetActive(false);
-                        children[QuestionnaireNumber - 1].gameObject.SetActive(true);
-                        AnswerSlider = children[QuestionnaireNumber - 1].GetComponent<Slider>();
-                        Debug.Log(AnswerSlider.value);
-                    }
-                    threshold_z = 0;
-                }
-            }
+            
 
             if (SaveTrigger == true)
             {

@@ -18,14 +18,10 @@ public class SaveTrigger : MonoBehaviour
             LogitechGSDK.DIJOYSTATE2ENGINES rec;
             rec = LogitechGSDK.LogiGetStateUnity(0);
 
-            if (rec.rgbButtons[5] == 128 && DriverCar.FinalQuestionnaireBool == false)
-            {
-                Questionnaire.SaveTrigger = true;
-            }
-            else if (rec.rgbButtons[5] == 128 && DriverCar.FinalQuestionnaireBool == true)
-            {
-                FinalQuestionnaire.SaveTrigger= true;
-            }
+            if (rec.rgbButtons[5] == 128 && DriverCar.FinalQuestionnaireBool == false) { Questionnaire.SaveTrigger = true;}
+            else if (rec.rgbButtons[5] == 128 && DriverCar.FinalQuestionnaireBool == true) { FinalQuestionnaire.SaveTrigger= true;}
+
+            if (rec.rgbButtons[4] == 128 && DriverCar.FinalQuestionnaireBool == false) { Questionnaire.ButtonActivation = true; }
+            else if (rec.rgbButtons[4] == 128 && DriverCar.FinalQuestionnaireBool == true) { FinalQuestionnaire.ButtonActivation = true; }
         }
-    }
 }

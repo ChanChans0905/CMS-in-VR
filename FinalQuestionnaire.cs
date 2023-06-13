@@ -19,6 +19,7 @@ public class FinalQuestionnaire : MonoBehaviour
     LogitechGSDK.LogiControllerPropertiesData properties;
     public bool SaveTrigger;
     public GameObject GameEnd;
+    public bool ButtonActivation;
 
     private void Start()
     {
