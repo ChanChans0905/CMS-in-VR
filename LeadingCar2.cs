@@ -83,7 +83,7 @@ public class LeadingCar2 : MonoBehaviour
         }
 
 
-        if (wayPointTrigger == true)
+        if (wayPointTrigger == true || DriverCar.respawnTrigger)
         {
             distanceTravelled += Time.deltaTime * 20;
             transform.position = pathCreator.path.GetPointAtDistance(distanceTravelled);

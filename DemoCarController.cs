@@ -65,6 +65,7 @@ public class DemoCarController : MonoBehaviour
     private void Start()
     {
         int[] CMScombination = { 3, 6, 2, 5, 7, 4, 1 };
+        
         GameStartNoticeBool = false;
         TrialBool = true;
         TrialBoolFilter = true;

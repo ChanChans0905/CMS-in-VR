@@ -37,6 +37,18 @@ public class TaskCounter : MonoBehaviour
                 TrialBoolLocal = false;
             }
         }
+
+        if(DriverCar.respawnTrigger && DriverCar.TrialBool == false)
+        {
+            FollowingCarLeft.SetActive(false);
+            FollowingCarRight.SetActive(false);
+            LaneChangingCar.SetActive(false);
+        }
+        else if(DriverCar.respawnTrigger && DriverCar.TrialBool)
+        {
+            TrialCar1.SetActive(false);
+            TrialCar2.SetActive(false);
+        }
     }
 
     private void OnTriggerEnter(Collider other)
@@ -57,9 +69,10 @@ public class TaskCounter : MonoBehaviour
                 DriverCar.taskCount++;
                 Debug.Log("TaskCOunt Added" + DriverCar.taskCount);
             }
+
         }
 
-        if(other.gameObject.CompareTag("DriverCar") && DriverCar.TrialBool == true)
+        if(other.gameObject.CompareTag("DriverCar") && DriverCar.TrialBool)
         {
             TrialCar1.SetActive(true);
             TrialCar2.SetActive(true);

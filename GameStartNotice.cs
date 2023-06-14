@@ -24,7 +24,6 @@ public class GameStartNotice : MonoBehaviour
                 DriverCar.GameStartNoticeBool = true;
                 gameObject.SetActive(false);
             } 
-
         }
     }
 }

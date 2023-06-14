@@ -78,7 +78,7 @@ public class FollowingCar2 : MonoBehaviour
             CarSpeedRight1.z = TargetCar.transform.localPosition.x + distance;
         }
 
-        if (wayPointTrigger == true)
+        if (wayPointTrigger == true || DriverCar.respawnTrigger)
         {
             distanceTravelled += Time.deltaTime * 15;
             transform.position = pathCreator.path.GetPointAtDistance(distanceTravelled);
