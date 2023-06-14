@@ -93,7 +93,7 @@ public class DemoCarController : MonoBehaviour
             userSteeringInput.Value = rawSteeringInput * steeringReduction;
 
             totalTorque = (rec.lRz - rec.lY) / 15;
-            if (velocity.Value >= 27.5)
+            if (velocity.Value >= 20.5)
             {
                 totalTorque = 0;
             }

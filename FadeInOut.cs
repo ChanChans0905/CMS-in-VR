@@ -72,12 +72,13 @@ public class FadeInOut : MonoBehaviour
             DriverCar.respawnTrigger = true;
         }
 
-        if (other.gameObject.CompareTag("WayPoint") && DriverCar.taskCount == 1)
+        if (other.gameObject.CompareTag("WayPoint") && DriverCar.taskCount == 2)
         {
             FadingEvent = true;
             DriverCar.respawnTrigger = true;
             QuestionnaireStartNotice.SetActive(true);
             DriverCar.taskCount = 0;
+            DriverCar.threshold = false;
         }
     }
 }
