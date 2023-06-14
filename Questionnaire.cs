@@ -37,7 +37,6 @@ public class Questionnaire : MonoBehaviour
         {
             Debug.Log(child.name);
         }
-
     }
 
     void Update()
@@ -94,41 +93,42 @@ public class Questionnaire : MonoBehaviour
                 if (rec.rgbButtons[4] == 128)
                 {
                     threshold_y++;
-                    if (threshold_y >= 30)
+                    if (threshold_y >= 25)
                     {
-                        threshold_y = 0;
-                        children[QuestionnaireNumber].gameObject.SetActive(true);
-                        AnswerSlider = children[QuestionnaireNumber].GetComponent<Slider>();
-                        Debug.Log(AnswerSlider.value);
-                        if (QuestionnaireNumber != 0)
+                        if (QuestionnaireNumber < 4)
                         {
+                            QuestionnaireNumber++;
+                            children[QuestionnaireNumber].gameObject.SetActive(true);
                             children[QuestionnaireNumber - 1].gameObject.SetActive(false);
-                            Debug.Log(AnswerSlider.value);
+                            AnswerSlider = children[QuestionnaireNumber].GetComponent<Slider>();
                         }
-                        QuestionnaireNumber++;
-
-                        if (QuestionnaireNumber == 10)
+                        else if(QuestionnaireNumber == 4)
                         {
-                            SaveTriggerObject.SetActive(true);
-                            children[9].gameObject.SetActive(false);
-                            ButtonActivation = false;
+                            QuestionnaireNumber++;
                         }
 
+                        threshold_y = 0;
                     }
+                }
+
+                if (QuestionnaireNumber == 5)
+                {
+                    children[QuestionnaireNumber - 1].gameObject.SetActive(false);
+                    SaveTriggerObject.SetActive(true);
+                    ButtonActivation = false;
                 }
 
                 if (rec.rgbButtons[5] == 128)
                 {
                     threshold_z++;
-                    if (threshold_z >= 30)
+                    if (threshold_z >= 25)
                     {
-                        if (QuestionnaireNumber > 1 && QuestionnaireNumber < 10)
+                        if (QuestionnaireNumber > 1)
                         {
-                            QuestionnaireNumber--;
                             children[QuestionnaireNumber].gameObject.SetActive(false);
                             children[QuestionnaireNumber - 1].gameObject.SetActive(true);
                             AnswerSlider = children[QuestionnaireNumber - 1].GetComponent<Slider>();
-                            Debug.Log(AnswerSlider.value);
+                            QuestionnaireNumber--;
                         }
                         threshold_z = 0;
                     }
@@ -288,6 +288,7 @@ public class Questionnaire : MonoBehaviour
             SaveTrigger = false;
             SaveTriggerExit = true;
             gameObject.SetActive(false);
+            QuestionnaireNumber = 0;
         }
     }
 

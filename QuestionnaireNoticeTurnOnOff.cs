@@ -5,6 +5,7 @@ using UnityEngine;
 public class QuestionnaireNoticeTurnOnOff : MonoBehaviour
 {
     public GameObject Next;
+    public GameObject ParentObject;
 
     void Update()
     {
@@ -13,7 +14,7 @@ public class QuestionnaireNoticeTurnOnOff : MonoBehaviour
             LogitechGSDK.DIJOYSTATE2ENGINES rec;
             rec = LogitechGSDK.LogiGetStateUnity(0);
 
-            if (rec.rgbButtons[4] == 128) { Next.SetActive(true); gameObject.SetActive(false); }
+            if (rec.rgbButtons[4] == 128) { Next.SetActive(true); ParentObject.SetActive(true); gameObject.SetActive(false); }
         }
     }
 }

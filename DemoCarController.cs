@@ -48,9 +48,10 @@ public class DemoCarController : MonoBehaviour
     public float FCLposition, FCRposition, LCposition, DCposition;
     public bool FCLbool, FCRbool, LCbool, TCLbool, TCRbool;
     public bool ARbool;
+    public bool GameStartNoticeBool;
 
     public int[] LaneChangeTime = { 0, 0, 0, 1, 3, 5, 7, 9 }; // make the 2 dimension list by using counter-balance
-    public int[] CMScombination = { 1, 2, 3, 4, 5, 6, 7 };
+
     public int[] FollowingCarSpeed = { 0, 0, 0, 0, 1, 1, 1, 1 };
 
     #region Private variables not shown in the inspector
@@ -60,13 +61,17 @@ public class DemoCarController : MonoBehaviour
     private float steeringReduction; // Used to make it easier to drive with keyboard in higher speeds
     public const float MAX_BRAKE_TORQUE = 8000; // [Nm]
     #endregion
-
+        
     private void Start()
     {
+        int[] CMScombination = { 3, 6, 2, 5, 7, 4, 1 };
+        GameStartNoticeBool = false;
         TrialBool = true;
         TrialBoolFilter = true;
         CMSchange();
-        
+
+        Debug.Log("1 : " + CMScombination[1]);
+        taskCount = 1;
     }
 
     private void Update()
@@ -110,7 +115,8 @@ public class DemoCarController : MonoBehaviour
                 CMSchange();
             }
 
-            if(TrialBool && TrialBoolFilter)
+            
+            if(TrialBool && TrialBoolFilter && GameStartNoticeBool)
             {
                 TrialStartNotice.SetActive(true);
                 NoticeTimer += Time.deltaTime;
@@ -169,6 +175,8 @@ public class DemoCarController : MonoBehaviour
 
     public void CMSchange()
     {
+        int[] CMScombination = { 3, 6, 2, 5, 7, 4, 1 };
+
         taskCount = 0;
         CMSCenter.SetActive(false);
         CMS_LD_SW.SetActive(false);
@@ -178,6 +186,7 @@ public class DemoCarController : MonoBehaviour
         CMSStitched.SetActive(false);
         TraditionalMirrorLeft.SetActive(false);
         TraditionalMirrorRight.SetActive(false);
+        Debug.Log(CMScombination[CMSchangeCount]);
 
         switch (CMScombination[CMSchangeCount])
         {

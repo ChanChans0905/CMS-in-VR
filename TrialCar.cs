@@ -10,7 +10,6 @@ public class TrialCar : MonoBehaviour
 
     private void Start()
     {
-        gameObject.SetActive(false);
     }
 
     void Update()

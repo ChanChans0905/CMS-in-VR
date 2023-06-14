@@ -4,13 +4,12 @@ using UnityEngine;
 
 public class GameStartNotice : MonoBehaviour
 {
+    [SerializeField] DemoCarController DriverCar;
     [SerializeField] FadeInOut FadeInOut;
-    public float GameStartNoticeTimeCount;
 
     void Start()
     {
         FadeInOut.FadingEvent = true;
-        Debug.Log("게임을 시작하려면 왼쪽 레버를 당기세요");
     }
 
     void Update()
@@ -22,6 +21,7 @@ public class GameStartNotice : MonoBehaviour
             if (rec.rgbButtons[5] == 128)
             {
                 FadeInOut.FadingEvent=false;
+                DriverCar.GameStartNoticeBool = true;
                 gameObject.SetActive(false);
             } 
 

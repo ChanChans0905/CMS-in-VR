@@ -6,7 +6,7 @@ using UnityEngine.UIElements;
 
 public class TaskCounter : MonoBehaviour
 {
-    public GameObject FollowingCarLeft, FollowingCarRight, LaneChangingCar, TrialCarLeft, TrialCarRight;
+    public GameObject FollowingCarLeft, FollowingCarRight, LaneChangingCar, TrialCar1, TrialCar2;
     [SerializeField] DemoCarController DriverCar;
     public float trialTime;
     [SerializeField] FadeInOut FadeInOut;
@@ -24,6 +24,7 @@ public class TaskCounter : MonoBehaviour
                 FadeInOut.FadingEvent = true;
                 DriverCar.respawnTrigger = true;
                 TrialEndNotice.SetActive(true);
+                TrialCar1.SetActive(false); TrialCar2.SetActive(false);
             }
 
             if (trialTime >= 17)
@@ -60,8 +61,8 @@ public class TaskCounter : MonoBehaviour
 
         if(other.gameObject.CompareTag("DriverCar") && DriverCar.TrialBool == true)
         {
-            TrialCarLeft.SetActive(true);
-            TrialCarRight.SetActive(true);
+            TrialCar1.SetActive(true);
+            TrialCar2.SetActive(true);
             TrialBoolLocal = true;
         }
     }
