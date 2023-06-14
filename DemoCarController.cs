@@ -50,9 +50,9 @@ public class DemoCarController : MonoBehaviour
     public bool ARbool;
     public bool GameStartNoticeBool;
 
-    public int[] LaneChangeTime = { 0, 0, 0, 1, 3, 5, 7, 9 }; // make the 2 dimension list by using counter-balance
-
-    public int[] FollowingCarSpeed = { 0, 0, 0, 0, 1, 1, 1, 1 };
+    public int[] LaneChangeTime = new int[8]; // make the 2 dimension list by using counter-balance
+    public int[] FollowingCarSpeed = new int[8];
+    public int[] CMScombination = new int[7];
 
     #region Private variables not shown in the inspector
     private VolvoCars.Data.Value.Public.WheelTorque wheelTorqueValue = new VolvoCars.Data.Value.Public.WheelTorque(); // This is the value type used by the wheelTorque data item.     
@@ -64,14 +64,15 @@ public class DemoCarController : MonoBehaviour
         
     private void Start()
     {
-        int[] CMScombination = { 3, 6, 2, 5, 7, 4, 1 };
-        
+        CMScombination = new int[] { 3, 6, 2, 5, 7, 4, 1 };
+        LaneChangeTime = new int[] { 9, 5, 3, 7, 1, 0, 0, 0 };
+        FollowingCarSpeed = new int[] { 0, 0, 0, 0, 1, 1, 1, 1 };
+
         GameStartNoticeBool = false;
         TrialBool = true;
         TrialBoolFilter = true;
         CMSchange();
 
-        Debug.Log("1 : " + CMScombination[1]);
         taskCount = 1;
     }
 
@@ -187,7 +188,6 @@ public class DemoCarController : MonoBehaviour
         CMSStitched.SetActive(false);
         TraditionalMirrorLeft.SetActive(false);
         TraditionalMirrorRight.SetActive(false);
-        Debug.Log(CMScombination[CMSchangeCount]);
 
         switch (CMScombination[CMSchangeCount])
         {
