@@ -6,12 +6,13 @@
 
 #### In this package, we check following points :<br/>
 * Efficiency of several locations and combinations of Camera Monitor Systems(CMS) <br/>
+* Differences in driving behavior with/without AR signal on the CMS, which let the driver know the danger of lane changing. <br/>
 
 We measure it by the data of : <br/>
 **Driver** ( velocity, pedal, steering wheel, lane change time, etc. ) <br/>
 **Eye gaze** ( eye off road time, number of gazing the CMS monitor, etc. ) <br/>
 
-* Differences in driving behavior with/without AR signal on the CMS, which let the driver know the danger of lane changing. <br/>
+
 
 **AR signal** will be activated when the following car on either left or right lane is close enough to be dangerous for the driver to change the lane. <br/>
 
