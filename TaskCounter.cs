@@ -8,10 +8,15 @@ public class TaskCounter : MonoBehaviour
 {
     public GameObject FollowingCarLeft, FollowingCarRight, LaneChangingCar, TrialCar1, TrialCar2;
     [SerializeField] DemoCarController DriverCar;
+    [SerializeField] FollowingCar FC1;
+    [SerializeField] FollowingCar2 FC2;
+    [SerializeField] LeadingCar LC1;
+    [SerializeField] LeadingCar2 LC2;
     public float trialTime;
     [SerializeField] FadeInOut FadeInOut;
     public bool TrialBoolLocal;
     public GameObject TrialStartNotive, TrialEndNotice;
+
 
     private void Update()
     {
@@ -40,9 +45,9 @@ public class TaskCounter : MonoBehaviour
 
         if(DriverCar.respawnTrigger && DriverCar.TrialBool == false)
         {
-            FollowingCarLeft.SetActive(false);
-            FollowingCarRight.SetActive(false);
-            LaneChangingCar.SetActive(false);
+            FC1.Respawn = true; FC2.Respawn = true;
+            LC1.Respawn = true; LC2.Respawn = true;
+            Debug.Log("C");
         }
         else if(DriverCar.respawnTrigger && DriverCar.TrialBool)
         {

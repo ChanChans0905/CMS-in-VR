@@ -17,18 +17,19 @@ public class FollowingCar2 : MonoBehaviour
     Vector3 startPos;
     [SerializeField] DemoCarController DriverCar;
     [SerializeField] LeadingCar2 LeadingCar;
+    [SerializeField] FollowingCarRight FollowingCarRight;
     public GameObject carLeft, carRight;
     public bool eventStartBool = false;
     public float accelTime;
-    public Vector3 CarSpeedLeft1 = new Vector3(-95.7f, 0, 1138.2f);
-    public Vector3 CarSpeedRight1 = new Vector3(-104.2f, 0, 1139);
+    public Vector3 CarSpeedLeft1 = new Vector3(-404, 0, 0);//
+    public Vector3 CarSpeedRight1 = new Vector3(-395, 0, 0);//
     public float laneChangeTimer;
     public float distance = 25;
+    public bool Respawn;
 
 
     void Start()
     {
-        _rb = GetComponent<Rigidbody>();
         startPos = transform.position;
         carLeft.SetActive(false);
         carRight.SetActive(false);
@@ -49,19 +50,19 @@ public class FollowingCar2 : MonoBehaviour
                     if (DriverCar.FollowingCarSpeed[DriverCar.taskCount] == 1)
                     {
                         laneChangeTimer += Time.deltaTime;
-                        CarSpeedLeft1.z = (TargetCar.transform.localPosition.x + distance) - laneChangeTimer * 15f;
-                        CarSpeedRight1.z = (TargetCar.transform.localPosition.x + distance) - laneChangeTimer * 10f;
+                        CarSpeedLeft1.z = (TargetCar.transform.localPosition.x + distance) + laneChangeTimer * 2f;
+                        CarSpeedRight1.z = (TargetCar.transform.localPosition.x + distance) + laneChangeTimer * 3f;
                     }
                     else
                     {
                         laneChangeTimer += Time.deltaTime;
-                        CarSpeedLeft1.z = (TargetCar.transform.localPosition.x + distance) - laneChangeTimer * 10f;
-                        CarSpeedRight1.z = (TargetCar.transform.localPosition.x + distance) - laneChangeTimer * 15f;
+                        CarSpeedLeft1.z = (TargetCar.transform.localPosition.x + distance) + laneChangeTimer * 3f; 
+                        CarSpeedRight1.z = (TargetCar.transform.localPosition.x + distance) + laneChangeTimer * 2f; 
                     }
                 }
                 else if (accelTime <= 8 + DriverCar.LaneChangeTime[DriverCar.taskCount])
                 {
-                    CarSpeedLeft1.z = TargetCar.transform.localPosition.x + distance;
+                    CarSpeedLeft1.z = TargetCar.transform.localPosition.x + distance; 
                     CarSpeedRight1.z = TargetCar.transform.localPosition.x + distance;
                 }
             }
@@ -85,19 +86,31 @@ public class FollowingCar2 : MonoBehaviour
             transform.rotation = pathCreator.path.GetRotationAtDistance(distanceTravelled);
             disableTime += Time.deltaTime;
 
-            if (disableTime > 20)
-            {
-                laneChangeTimer = 0;
-                accelTime = 0;
-                distanceTravelled = 0;
-                disableTime = 0;
-                wayPointTrigger = false;
-                eventStartBool = false;
-                gameObject.transform.position = startPos;
-                gameObject.transform.rotation = Quaternion.identity;
-                gameObject.SetActive(false);
+            if (disableTime > 20) { Respawn = true; }
 
-            }
+        }
+
+        if (Respawn && DriverCar.respawnTrigger)
+        {
+            FollowingCarRight.transform.position = startPos;
+            FollowingCarRight.transform.rotation = Quaternion.identity;
+            FollowingCarRight.transform.localEulerAngles = new Vector3(0, 180, 0);
+            FollowingCarRight.wayPointTrigger = false;
+            FollowingCarRight.disableTime = 0;
+            FollowingCarRight.distanceTravelled = 0;
+            FollowingCarRight.gameObject.SetActive(false);
+
+            laneChangeTimer = 0;
+            accelTime = 0;
+            distanceTravelled = 0;
+            disableTime = 0;
+            wayPointTrigger = false;
+            eventStartBool = false;
+            Respawn = false;
+            gameObject.transform.position = startPos;
+            gameObject.transform.rotation = Quaternion.identity;
+            gameObject.transform.localEulerAngles = new Vector3(0, 180, 0);
+            gameObject.SetActive(false);
         }
     }
 

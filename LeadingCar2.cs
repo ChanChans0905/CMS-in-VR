@@ -23,6 +23,7 @@ public class LeadingCar2 : MonoBehaviour
     public int LaneChangeDirection = 0;
     Vector3 CarSpeed = new Vector3(-95.6f, 0, 1097);
     public bool enterTrigger = false;
+    public bool Respawn;
 
 
     void Start()
@@ -30,25 +31,36 @@ public class LeadingCar2 : MonoBehaviour
         _rb = GetComponent<Rigidbody>();
         startPos = gameObject.transform.position;
         gameObject.SetActive(false);
-
     }
 
     void Update()
     {
-
         CarSpeed.z = TargetCar.transform.localPosition.x - 80;
+
         if (enterTrigger == false)
         {
             gameObject.transform.localPosition = CarSpeed;
         }
-
-
 
         if (eventStartBool == true)
         {
             EventStart(DriverCar.taskCount);
         }
 
+        if (Respawn && DriverCar.respawnTrigger)
+        {
+            Debug.Log(Respawn);
+            overtake = 0;
+            distanceTravelled = 0;
+            disableTime = 0;
+            wayPointTrigger = false;
+            eventStartBool = false;
+            enterTrigger = false;
+            Respawn = false;
+            gameObject.transform.position = startPos;
+            gameObject.transform.rotation = Quaternion.identity;
+            gameObject.SetActive(false);
+        }
     }
 
     private void EventStart(int count)
@@ -61,10 +73,9 @@ public class LeadingCar2 : MonoBehaviour
 
         if (overtake > 5 && overtake <= 8)
         {
-
-                laneChangeTimer -= Time.deltaTime * 1.4f;
-                CarSpeed.x = laneChangeTimer - 95.5f;
-                gameObject.transform.localPosition = CarSpeed;
+            laneChangeTimer += Time.deltaTime * 1.4f;
+            CarSpeed.x = laneChangeTimer - 95.5f;
+            gameObject.transform.localPosition = CarSpeed;
         }
 
         if (overtake > 8 && (DriverCar.LaneChangeTime[count] == 0))
@@ -79,9 +90,9 @@ public class LeadingCar2 : MonoBehaviour
         if (overtake >= 25 && (DriverCar.LaneChangeTime[count] != 0))
         {
             laneChangeTimer = 0;
-            gameObject.SetActive(false);
-        }
+            Respawn = true;
 
+        }
 
         if (wayPointTrigger == true || DriverCar.respawnTrigger)
         {
@@ -89,28 +100,16 @@ public class LeadingCar2 : MonoBehaviour
             transform.position = pathCreator.path.GetPointAtDistance(distanceTravelled);
             transform.rotation = pathCreator.path.GetRotationAtDistance(distanceTravelled);
             disableTime += Time.deltaTime;
-            if (disableTime > 20)
-            {
 
-                overtake = 0;
-                distanceTravelled = 0;
-                disableTime = 0;
-                wayPointTrigger = false;
-                eventStartBool = false;
-                enterTrigger = false;
-                gameObject.transform.position = startPos;
-                gameObject.transform.rotation = Quaternion.identity;
-                gameObject.SetActive(false);
-
-
-            }
+            if (disableTime > 20) { Respawn = true; }
         }
+
+
     }
 
     private void OnTriggerEnter(Collider other)
     {
-
-        if (other.gameObject.CompareTag("TaskStartPoint2"))
+        if (other.gameObject.CompareTag("TaskStartPoint1"))
         {
             eventStartBool = true;
             enterTrigger = true;

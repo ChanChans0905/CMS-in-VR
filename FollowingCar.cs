@@ -17,6 +17,7 @@ public class FollowingCar : MonoBehaviour
     Vector3 startPos;
     [SerializeField] DemoCarController DriverCar;
     [SerializeField] LeadingCar LeadingCar;
+    [SerializeField] FollowingCarRight FollowingCarRight;
     public GameObject carLeft, carRight;
     public bool eventStartBool = false;
     public float accelTime;
@@ -24,6 +25,7 @@ public class FollowingCar : MonoBehaviour
     public Vector3 CarSpeedRight1 = new Vector3(-395, 0, 0);
     public float laneChangeTimer;
     public float distance = 25;
+    public bool Respawn;
 
 
     void Start()
@@ -84,19 +86,29 @@ public class FollowingCar : MonoBehaviour
             transform.rotation = pathCreator.path.GetRotationAtDistance(distanceTravelled);
             disableTime += Time.deltaTime;
 
-            if (disableTime > 20)
-            {
-                laneChangeTimer = 0;
-                accelTime = 0;
-                distanceTravelled = 0;
-                disableTime = 0;
-                wayPointTrigger = false;
-                eventStartBool = false;
-                gameObject.transform.position = startPos;
-                gameObject.transform.rotation = Quaternion.identity;
-                gameObject.SetActive(false);
+            if(disableTime > 20) { Respawn = true; }
 
-            }
+        }
+
+        if (Respawn && DriverCar.respawnTrigger)
+        {
+            FollowingCarRight.transform.position = startPos;
+            FollowingCarRight.transform.rotation = Quaternion.identity;
+            FollowingCarRight.wayPointTrigger = false;
+            FollowingCarRight.disableTime = 0;
+            FollowingCarRight.distanceTravelled = 0;
+            FollowingCarRight.gameObject.SetActive(false);
+
+            laneChangeTimer = 0;
+            accelTime = 0;
+            distanceTravelled = 0;
+            disableTime = 0;
+            wayPointTrigger = false;
+            eventStartBool = false;
+            Respawn = false;
+            gameObject.transform.position = startPos;
+            gameObject.transform.rotation = Quaternion.identity;
+            gameObject.SetActive(false);
         }
     }
             

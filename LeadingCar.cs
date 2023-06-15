@@ -23,6 +23,7 @@ public class LeadingCar : MonoBehaviour
     public int LaneChangeDirection = 0;
     Vector3 CarSpeed = new Vector3(-404,0,0);
     public bool enterTrigger = false;
+    public bool Respawn;
 
 
     void Start()
@@ -30,7 +31,6 @@ public class LeadingCar : MonoBehaviour
         _rb = GetComponent<Rigidbody>();
         startPos= gameObject.transform.position;
         gameObject.SetActive(false);
-
     }
 
     void Update()
@@ -47,12 +47,26 @@ public class LeadingCar : MonoBehaviour
             EventStart(DriverCar.taskCount);
         }
 
+        if (Respawn && DriverCar.respawnTrigger)
+        {
+            Debug.Log(Respawn);
+            overtake = 0;
+            distanceTravelled = 0;
+            disableTime = 0;
+            wayPointTrigger = false;
+            eventStartBool = false;
+            enterTrigger = false;
+            Respawn = false;
+            gameObject.transform.position = startPos;
+            gameObject.transform.rotation = Quaternion.identity;
+            gameObject.SetActive(false);
+        }
     }
 
     private void EventStart(int count)
     {
         overtake += Time.deltaTime;
-        if(overtake > 0 && overtake <= 5)
+        if (overtake > 0 && overtake <= 5)
         {
             gameObject.transform.localPosition = CarSpeed;
         }
@@ -76,10 +90,9 @@ public class LeadingCar : MonoBehaviour
         if (overtake >= 25 && (DriverCar.LaneChangeTime[count] != 0))
         {
             laneChangeTimer = 0;
-            gameObject.SetActive(false);
+            Respawn = true;
 
         }
-        
 
         if(wayPointTrigger == true || DriverCar.respawnTrigger)
         {
@@ -87,21 +100,11 @@ public class LeadingCar : MonoBehaviour
             transform.position = pathCreator.path.GetPointAtDistance(distanceTravelled);
             transform.rotation = pathCreator.path.GetRotationAtDistance(distanceTravelled);
             disableTime += Time.deltaTime;
-            if (disableTime > 20)
-            {
-                overtake = 0;
-                distanceTravelled = 0;
-                disableTime = 0;
-                wayPointTrigger = false;
-                eventStartBool = false;
-                enterTrigger = false;
-                gameObject.transform.position = startPos;
-                gameObject.transform.rotation = Quaternion.identity;
-                gameObject.SetActive(false);
 
-
-            }
+            if (disableTime > 20) { Respawn = true; }
         }
+
+
     }
 
     private void OnTriggerEnter(Collider other)

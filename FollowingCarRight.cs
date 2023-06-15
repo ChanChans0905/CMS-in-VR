@@ -5,11 +5,12 @@ using UnityEngine;
 
 public class FollowingCarRight : MonoBehaviour
 {
+    [SerializeField] DemoCarController DriverCar;
     Rigidbody _rb;
     public PathCreator pathCreator;
-    float distanceTravelled;
+    public float distanceTravelled;
     public bool wayPointTrigger = false;
-    float disableTime;
+    public float disableTime;
     Vector3 startPos;
 
     void Start()
@@ -26,15 +27,8 @@ public class FollowingCarRight : MonoBehaviour
             transform.position = pathCreator.path.GetPointAtDistance(distanceTravelled);
             transform.rotation = pathCreator.path.GetRotationAtDistance(distanceTravelled);
             disableTime += Time.deltaTime;
-            if (disableTime > 20)
-            {
-                gameObject.transform.position = startPos;
-                gameObject.transform.rotation = Quaternion.identity;
-                gameObject.SetActive(false);
-
-                wayPointTrigger = false;
-            }
         }
+
     }
 
     private void OnTriggerEnter(Collider other)
