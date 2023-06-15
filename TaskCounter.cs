@@ -47,7 +47,6 @@ public class TaskCounter : MonoBehaviour
         {
             FC1.Respawn = true; FC2.Respawn = true;
             LC1.Respawn = true; LC2.Respawn = true;
-            Debug.Log("C");
         }
         else if(DriverCar.respawnTrigger && DriverCar.TrialBool)
         {

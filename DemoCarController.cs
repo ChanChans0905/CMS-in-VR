@@ -21,8 +21,10 @@ public class DemoCarController : MonoBehaviour
     [SerializeField] private VolvoCars.Data.GearLeverIndication gearLeverIndication = default;
     [SerializeField] private VolvoCars.Data.DoorIsOpenR1L doorIsOpenR1L = default; // R1L stands for Row 1 Left.
     [SerializeField] private VolvoCars.Data.LampBrake lampBrake = default;
-    [SerializeField] LeadingCar LC;
-    [SerializeField] FollowingCar FC;
+    [SerializeField] LeadingCar LC1;
+    [SerializeField] LeadingCar2 LC2;
+    [SerializeField] FollowingCar FC1;
+    [SerializeField] FollowingCar2 FC2;
     [SerializeField] GetTrialCarPosition1 TC1;
     [SerializeField] GetTrialCarPosition2 TC2;
 
@@ -45,7 +47,7 @@ public class DemoCarController : MonoBehaviour
     public bool noticeBool = true;
     public float TrialTimeCount;
     public float NoticeTimer;
-    public float FCLposition, FCRposition, LCposition, DCposition;
+    public float FC1Lposition, FC1Rposition, LC1position, FC2Lposition, FC2Rposition, LC2position, DCposition;
     public bool FCLbool, FCRbool, LCbool, TCLbool, TCRbool;
     public bool ARbool;
     public bool GameStartNoticeBool;
@@ -53,6 +55,7 @@ public class DemoCarController : MonoBehaviour
     public int[] LaneChangeTime = new int[8]; // make the 2 dimension list by using counter-balance
     public int[] FollowingCarSpeed = new int[8];
     public int[] CMScombination = new int[7];
+    public int ARSignalActivateDistance;
 
     #region Private variables not shown in the inspector
     private VolvoCars.Data.Value.Public.WheelTorque wheelTorqueValue = new VolvoCars.Data.Value.Public.WheelTorque(); // This is the value type used by the wheelTorque data item.     
@@ -64,9 +67,10 @@ public class DemoCarController : MonoBehaviour
         
     private void Start()
     {
-        CMScombination = new int[] { 3, 6, 2, 5, 7, 4, 1 };
+        CMScombination = new int[] { 6, 3, 2, 5, 7, 4, 1 };
         LaneChangeTime = new int[] { 9, 5, 3, 7, 1, 0, 0, 0 };
         FollowingCarSpeed = new int[] { 0, 0, 0, 0, 1, 1, 1, 1 };
+        ARSignalActivateDistance = 10;
 
         GameStartNoticeBool = false;
         TrialBool = true;
@@ -129,35 +133,30 @@ public class DemoCarController : MonoBehaviour
                     TrialStartNotice.SetActive(false);
                 }
             }
-            LCposition = LC.gameObject.transform.position.z;
-            FCLposition = FC.carLeft.transform.position.z;
-            FCRposition = FC.carRight.transform.position.z;
-            DCposition = gameObject.transform.position.x;
 
-            if(ARbool)
+            if (ARbool)
             {
-                if (MathF.Abs(Mathf.Abs(DCposition) - Mathf.Abs(LCposition)) <= 15) { LCbool = true; }
-                else if (MathF.Abs(Mathf.Abs(DCposition) - Mathf.Abs(FCLposition)) <= 15) { FCLbool = true; }
-                else if (MathF.Abs(Mathf.Abs(DCposition) - Mathf.Abs(FCRposition)) <= 15) { FCRbool = true; }
+                LC1position = Mathf.Abs(LC1.gameObject.transform.position.z);
+                FC1Lposition = Mathf.Abs(FC1.carLeft.transform.position.z);
+                FC1Rposition = Mathf.Abs(FC1.carRight.transform.position.z);
+                LC2position = Mathf.Abs(LC2.gameObject.transform.position.z);
+                FC2Lposition = Mathf.Abs(FC2.carLeft.transform.position.z);
+                FC2Rposition = Mathf.Abs(FC2.carRight.transform.position.z);
+                DCposition = Mathf.Abs(VolvoCar.transform.position.z);
 
-                if (MathF.Abs(Mathf.Abs(DCposition) - Mathf.Abs(LCposition)) >= 15) { LCbool = false; }
-                else if (MathF.Abs(Mathf.Abs(DCposition) - Mathf.Abs(FCLposition)) >= 15) { FCLbool = false; }
-                else if (MathF.Abs(Mathf.Abs(DCposition) - Mathf.Abs(FCRposition)) >= 15) { FCRbool = false; }
-
+                if (MathF.Abs(DCposition - LC1position) <= ARSignalActivateDistance) { LCbool = true; } else { LCbool = false; }
+                if (MathF.Abs(DCposition - FC1Lposition) <= ARSignalActivateDistance) { FCLbool = true; } else { FCLbool = false; }
+                if (MathF.Abs(DCposition - FC1Rposition) <= ARSignalActivateDistance) { FCRbool = true; } else { FCRbool = false; }                
+                if (MathF.Abs(DCposition - LC2position) <= ARSignalActivateDistance) { LCbool = true; } else { LCbool = false; }
+                if (MathF.Abs(DCposition - FC2Lposition) <= ARSignalActivateDistance) { FCLbool = true; } else { FCLbool = false; }
+                if (MathF.Abs(DCposition - FC2Rposition) <= ARSignalActivateDistance) { FCRbool = true; } else { FCRbool = false; }
+                    
                 if (TrialBool)
                 {
-                    if (TC1.TC1bool || TC1.TC2bool || TC1.TC3bool) { FCLbool = true; }
-                    else { FCLbool = false; }
-
-                    if (TC1.TC4bool || TC1.TC5bool || TC1.TC6bool) { FCRbool = true; }
-                    else { FCRbool = false; }
-                    
-                    if (TC2.TC1bool || TC2.TC2bool || TC2.TC3bool) { FCLbool = true; }
-                    else { FCLbool = false; }
-
-                    if (TC2.TC4bool || TC2.TC5bool || TC2.TC6bool) { FCRbool = true; }
-                    else { FCRbool = false; }
-
+                    if (TC1.TC1bool || TC1.TC2bool || TC1.TC3bool) { FCLbool = true; } else { FCLbool = false; }
+                    if (TC1.TC4bool || TC1.TC5bool || TC1.TC6bool) { FCRbool = true; } else { FCRbool = false; }
+                    if (TC2.TC1bool || TC2.TC2bool || TC2.TC3bool) { FCLbool = true; } else { FCLbool = false; }
+                    if (TC2.TC4bool || TC2.TC5bool || TC2.TC6bool) { FCRbool = true; } else { FCRbool = false; }
                 }
             }
         }
@@ -177,7 +176,7 @@ public class DemoCarController : MonoBehaviour
 
     public void CMSchange()
     {
-        int[] CMScombination = { 3, 6, 2, 5, 7, 4, 1 };
+        int[] CMScombination = { 6, 3, 2, 5, 7, 4, 1 };
 
         taskCount = 0;
         CMSCenter.SetActive(false);
@@ -197,7 +196,6 @@ public class DemoCarController : MonoBehaviour
                     TraditionalMirrorRight.SetActive(true);
                     ARbool = false;
                     break;
-
                 }
             case 2: // CMS beside Traditional Mirror
                 {
