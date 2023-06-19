@@ -44,7 +44,6 @@ public class DemoCarController : MonoBehaviour
     public bool TrialBoolFilter;
     public int laneChangeDirection;
     public bool threshold = false;
-    public bool noticeBool = true;
     public float TrialTimeCount;
     public float NoticeTimer;
     public float FC1Lposition, FC1Rposition, LC1position, FC2Lposition, FC2Rposition, LC2position, DCposition;

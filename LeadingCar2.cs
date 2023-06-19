@@ -51,6 +51,7 @@ public class LeadingCar2 : MonoBehaviour
         {
             Debug.Log(Respawn);
             overtake = 0;
+            laneChangeTimer = 0;
             distanceTravelled = 0;
             disableTime = 0;
             wayPointTrigger = false;
@@ -89,7 +90,6 @@ public class LeadingCar2 : MonoBehaviour
 
         if (overtake >= 25 && (DriverCar.LaneChangeTime[count] != 0))
         {
-            laneChangeTimer = 0;
             Respawn = true;
 
         }

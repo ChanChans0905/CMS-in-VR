@@ -10,8 +10,7 @@ public class LeadingCar : MonoBehaviour
     Rigidbody _rb;
     public GameObject TargetCar;
     public GameObject ThisCar;
-    public float eventTimer;
-    public float overtake, laneChangeTimer;
+    public float eventTimer, overtake, laneChangeTimer;
     Vector3 velocity2 = new Vector3(0, 0, 0);
     [SerializeField] DemoCarController DriverCar;
     Vector3 startPos;
@@ -42,15 +41,13 @@ public class LeadingCar : MonoBehaviour
             gameObject.transform.localPosition = CarSpeed;
         }
 
-        if (eventStartBool == true)
-        {
-            EventStart(DriverCar.taskCount);
-        }
+        if (eventStartBool) { EventStart(DriverCar.taskCount);}
 
         if (Respawn && DriverCar.respawnTrigger)
         {
             Debug.Log(Respawn);
             overtake = 0;
+            laneChangeTimer = 0;
             distanceTravelled = 0;
             disableTime = 0;
             wayPointTrigger = false;
@@ -73,9 +70,9 @@ public class LeadingCar : MonoBehaviour
 
         if (overtake > 5 && overtake <= 8)
         {
-                laneChangeTimer += Time.deltaTime * 1.4f;
-                CarSpeed.x = laneChangeTimer - 404;
-                gameObject.transform.localPosition = CarSpeed;
+            laneChangeTimer += Time.deltaTime * 1.4f;
+            CarSpeed.x = laneChangeTimer - 404;
+            gameObject.transform.localPosition = CarSpeed;
         }
 
         if (overtake > 8 && (DriverCar.LaneChangeTime[count] == 0))
@@ -89,7 +86,6 @@ public class LeadingCar : MonoBehaviour
 
         if (overtake >= 25 && (DriverCar.LaneChangeTime[count] != 0))
         {
-            laneChangeTimer = 0;
             Respawn = true;
 
         }

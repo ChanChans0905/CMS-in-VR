@@ -76,7 +76,6 @@ public class Questionnaire : MonoBehaviour
                         {
                             QuestionnaireNumber++;
                         }
-
                         threshold_y = 0;
                     }
                 }
@@ -108,7 +107,7 @@ public class Questionnaire : MonoBehaviour
             }
             
             // if the user pull the right lever when the save notice object is activated, the survey result will be saved to csv file
-            if (SaveTrigger == true)
+            if (SaveTrigger)
             {
                 SaveToCSV();
 
@@ -121,10 +120,7 @@ public class Questionnaire : MonoBehaviour
                     DriverCar.respawnTrigger = false;
                 }
 
-                if (DriverCar.QuestionnaireCount == 7)
-                {
-                    FinalQuestionnaire.SetActive(true);
-                }
+                if (DriverCar.QuestionnaireCount == 7) { FinalQuestionnaire.SetActive(true);}
             }
         }
     }
@@ -132,12 +128,7 @@ public class Questionnaire : MonoBehaviour
     List<Transform> GetChildren(Transform parent)
     {
         List<Transform> children = new List<Transform>();
-
-        foreach (Transform child in parent)
-        {
-            children.Add(child);
-        }
-
+        foreach (Transform child in parent) { children.Add(child);}
         return children;
     }
 
@@ -157,32 +148,20 @@ public class Questionnaire : MonoBehaviour
 
     }
 
-    string GetDirectoryPath()
-    {
-        return Application.dataPath + "/" + csvDirectoryName;
-    }
+    string GetDirectoryPath() { return Application.dataPath + "/" + csvDirectoryName;}
 
-    string GetFilePath()
-    {
-        return GetDirectoryPath() + "/" + csvFileName;
-    }
+    string GetFilePath() { return GetDirectoryPath() + "/" + csvFileName;}
 
     void VerifyDirectory()
     {
         string dir = GetDirectoryPath();
-        if (!Directory.Exists(dir))
-        {
-            Directory.CreateDirectory(dir);
-        }
+        if (!Directory.Exists(dir)) { Directory.CreateDirectory(dir);}
     }
 
     void VerifyFile()
     {
         string file = GetFilePath();
-        if (!File.Exists(file))
-        {
-            CreateCsv();
-        }
+        if (!File.Exists(file)) { CreateCsv();}
     }
 
     public void CreateCsv()
@@ -193,10 +172,7 @@ public class Questionnaire : MonoBehaviour
             string finalString = "";
             for (int i = 0; i < csvHeaders.Length; i++)
             {
-                if (finalString != "")
-                {
-                    finalString += csvSeparator;
-                }
+                if (finalString != "") { finalString += csvSeparator;}
                 finalString += csvHeaders[i];
             }
             finalString += csvSeparator;
@@ -214,9 +190,7 @@ public class Questionnaire : MonoBehaviour
             for (int i = 0; i < floats.Length; i++)
             {
                 if (finalString != "")
-                {
-                    finalString += csvSeparator;
-                }
+                { finalString += csvSeparator;}
                 finalString += floats[i];
             }
             finalString += csvSeparator;

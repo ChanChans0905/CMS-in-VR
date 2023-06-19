@@ -8,8 +8,9 @@ public class FadeInOut : MonoBehaviour
     private Material _mat;
     public bool FadingEvent;
     [SerializeField] DemoCarController DriverCar;
-    public float noticeTime;
-    public GameObject QuestionnaireStartNotice;
+    [SerializeField] LeadingCar LC1;
+    [SerializeField] LeadingCar2 LC2;
+    public GameObject QuestionnaireStartNotice, TaskFailureNotice;
 
     void Start()
     {
@@ -19,17 +20,10 @@ public class FadeInOut : MonoBehaviour
 
     void Update()
     {
-        if (FadingEvent == true)
-        {
-            FadeIn(alpha);
-        }
-        else if (FadingEvent == false)
-        {
-            FadeOut(alpha);
-        }
+        if (FadingEvent == true) { FadeIn(alpha);}
+        else if (FadingEvent == false) { FadeOut(alpha);}
         Color nNew = new Color(0, 0, 0, alpha);
         _mat.SetColor("_BaseColor", nNew);
-
     }
 
     public void FadeIn(float degree)
@@ -48,20 +42,6 @@ public class FadeInOut : MonoBehaviour
             degree -= .01f;
             alpha = degree;
         }
-
-        if (DriverCar.taskCount == 0 && DriverCar.noticeBool == true)
-        {
-            noticeTime += Time.deltaTime;
-            if (noticeTime <= 10 && noticeTime > 0)
-            {
-                // new combination has been activated. try it for 3minutes from now.
-            }
-            else if (noticeTime > 7)
-            {
-                noticeTime = 0;
-                DriverCar.noticeBool = false;
-            }
-        }
     }
 
     private void OnTriggerEnter(Collider other)
@@ -70,6 +50,9 @@ public class FadeInOut : MonoBehaviour
         {
             FadingEvent = true;
             DriverCar.respawnTrigger = true;
+            TaskFailureNotice.SetActive(true);
+            if(LC1.eventStartBool == false) { DriverCar.taskCount--; }
+            if(LC2.eventStartBool == false) { DriverCar.taskCount--; }
         }
 
         if (other.gameObject.CompareTag("WayPoint") && DriverCar.taskCount == 2)
