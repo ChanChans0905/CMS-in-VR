@@ -48,34 +48,13 @@ public class Questionnaire : MonoBehaviour
             rec = LogitechGSDK.LogiGetStateUnity(0);
 
             // Get slider value from the steering wheel
-            if (rec.lX < -7500)
-            {
-                AnswerSlider.value = 1;
-            }
-            else if (rec.lX < -4500 && rec.lX > -7500)
-            {
-                AnswerSlider.value = 2;
-            }
-            else if (rec.lX < -1500 && rec.lX > -4500)
-            {
-                AnswerSlider.value = 3;
-            }
-            else if (rec.lX < 1500 && rec.lX > -1500)
-            {
-                AnswerSlider.value = 4;
-            }
-            else if (rec.lX > 1500 && rec.lX < 4500)
-            {
-                AnswerSlider.value = 5;
-            }
-            else if (rec.lX > 4500 && rec.lX < 7500)
-            {
-                AnswerSlider.value = 6;
-            }
-            else if (rec.lX > 7500)
-            {
-                AnswerSlider.value = 7;
-            }
+            if (rec.lX < -7500) { AnswerSlider.value = 1;}
+            else if (rec.lX < -4500 && rec.lX > -7500) { AnswerSlider.value = 2;}
+            else if (rec.lX < -1500 && rec.lX > -4500) { AnswerSlider.value = 3;}
+            else if (rec.lX < 1500 && rec.lX > -1500) { AnswerSlider.value = 4; }
+            else if (rec.lX > 1500 && rec.lX < 4500) { AnswerSlider.value = 5;}
+            else if (rec.lX > 4500 && rec.lX < 7500) { AnswerSlider.value = 6;}
+            else if (rec.lX > 7500) { AnswerSlider.value = 7;}
 
             // Functions below only works with the slider
             if (ButtonActivation)
