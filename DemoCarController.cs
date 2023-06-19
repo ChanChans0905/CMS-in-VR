@@ -143,19 +143,14 @@ public class DemoCarController : MonoBehaviour
                 FC2Rposition = Mathf.Abs(FC2.carRight.transform.position.z);
                 DCposition = Mathf.Abs(VolvoCar.transform.position.z);
 
-                if (MathF.Abs(DCposition - LC1position) <= ARSignalActivateDistance) { LCbool = true; } else { LCbool = false; }
-                if (MathF.Abs(DCposition - FC1Lposition) <= ARSignalActivateDistance) { FCLbool = true; } else { FCLbool = false; }
-                if (MathF.Abs(DCposition - FC1Rposition) <= ARSignalActivateDistance) { FCRbool = true; } else { FCRbool = false; }                
-                if (MathF.Abs(DCposition - LC2position) <= ARSignalActivateDistance) { LCbool = true; } else { LCbool = false; }
-                if (MathF.Abs(DCposition - FC2Lposition) <= ARSignalActivateDistance) { FCLbool = true; } else { FCLbool = false; }
-                if (MathF.Abs(DCposition - FC2Rposition) <= ARSignalActivateDistance) { FCRbool = true; } else { FCRbool = false; }
-                    
+                if (MathF.Abs(DCposition - LC1position) <= ARSignalActivateDistance || MathF.Abs(DCposition - LC2position) <= ARSignalActivateDistance) { LCbool = true; } else { LCbool = false; }
+                if (MathF.Abs(DCposition - FC1Lposition) <= ARSignalActivateDistance || MathF.Abs(DCposition - FC2Lposition) <= ARSignalActivateDistance) { FCLbool = true; } else { FCLbool = false; }
+                if (MathF.Abs(DCposition - FC1Rposition) <= ARSignalActivateDistance || MathF.Abs(DCposition - FC2Rposition) <= ARSignalActivateDistance) { FCRbool = true; } else { FCRbool = false; }                
+
                 if (TrialBool)
                 {
-                    if (TC1.TC1bool || TC1.TC2bool || TC1.TC3bool) { FCLbool = true; } else { FCLbool = false; }
-                    if (TC1.TC4bool || TC1.TC5bool || TC1.TC6bool) { FCRbool = true; } else { FCRbool = false; }
-                    if (TC2.TC1bool || TC2.TC2bool || TC2.TC3bool) { FCLbool = true; } else { FCLbool = false; }
-                    if (TC2.TC4bool || TC2.TC5bool || TC2.TC6bool) { FCRbool = true; } else { FCRbool = false; }
+                    if (TC1.TC1bool || TC1.TC2bool || TC1.TC3bool || TC2.TC1bool || TC2.TC2bool || TC2.TC3bool) { FCLbool = true; } else { FCLbool = false; }
+                    if (TC1.TC4bool || TC1.TC5bool || TC1.TC6bool || TC2.TC4bool || TC2.TC5bool || TC2.TC6bool) { FCRbool = true; } else { FCRbool = false; }
                 }
             }
         }
