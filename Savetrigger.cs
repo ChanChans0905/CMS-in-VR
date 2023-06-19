@@ -21,8 +21,8 @@ public class SaveTrigger : MonoBehaviour
             if (rec.rgbButtons[5] == 128 && DriverCar.FinalQuestionnaireBool == false) { Questionnaire.SaveTrigger = true; gameObject.SetActive(false); }
             else if (rec.rgbButtons[5] == 128 && DriverCar.FinalQuestionnaireBool == true) { FinalQuestionnaire.SaveTrigger = true; gameObject.SetActive(false); }
 
-            if (rec.rgbButtons[4] == 128 && DriverCar.FinalQuestionnaireBool == false) { Questionnaire.ButtonActivation = true; gameObject.SetActive(false); }
-            else if (rec.rgbButtons[4] == 128 && DriverCar.FinalQuestionnaireBool == true) { FinalQuestionnaire.ButtonActivation = true; gameObject.SetActive(false); }
+            //if (rec.rgbButtons[4] == 128 && DriverCar.FinalQuestionnaireBool == false) { Questionnaire.ButtonActivation = true; gameObject.SetActive(false); }
+            //else if (rec.rgbButtons[4] == 128 && DriverCar.FinalQuestionnaireBool == true) { FinalQuestionnaire.ButtonActivation = true; gameObject.SetActive(false); }
         }
     }
 }

@@ -45,7 +45,6 @@ public class LeadingCar : MonoBehaviour
 
         if (Respawn && DriverCar.respawnTrigger)
         {
-            Debug.Log(Respawn);
             overtake = 0;
             laneChangeTimer = 0;
             distanceTravelled = 0;

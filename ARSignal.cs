@@ -10,9 +10,9 @@ public class ARSignal : MonoBehaviour
     void Update()
     {
         if (DriverCar.FCLbool) { ARLbool = true;}
-        else if(DriverCar.FCLbool == false) { ARLbool = false;}
+        else { ARLbool = false;}
 
         if (DriverCar.FCRbool) { ARRbool = true;}
-        else if(DriverCar.FCRbool == false) { ARRbool = false;}
+        else { ARRbool = false;}
     }
 }

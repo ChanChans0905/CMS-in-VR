@@ -9,82 +9,116 @@ using UnityEngine.XR;
 
 public class FinalQuestionnaire : MonoBehaviour
 {
+    public bool SaveTriggerExit = false;
+    public GameObject SaveTriggerObject;
+    int threshold_y;
+    int threshold_z;
     [SerializeField] DemoCarController DriverCar;
     public int QuestionnaireNumber;
     [SerializeField] Slider AnswerSlider;
     private string csvSeparator = ",";
     public string csvFileName;
     private string[] csvHeaders = new string[2] { "Number", "Answer" };
-    private string csvDirectoryName = "Questionnaire";
+    private string csvDirectoryName = "FinalQuestionnaire";
     LogitechGSDK.LogiControllerPropertiesData properties;
     public bool SaveTrigger;
-    public GameObject GameEnd;
+    [SerializeField] FadeInOut FadeInOut;
     public bool ButtonActivation;
+    public GameObject GameEnd;
 
     private void Start()
     {
-        csvFileName = "FInalQuestionnaire.csv";
+        ButtonActivation = true;
         List<Transform> children = GetChildren(transform);
-        GameEnd.SetActive(false);
-
-        foreach (Transform child in children)
-        {
-            Debug.Log(child.name);
-        }
     }
 
     void Update()
     {
         List<Transform> children = GetChildren(transform);
-        LogitechGSDK.DIJOYSTATE2ENGINES rec;
-        rec = LogitechGSDK.LogiGetStateUnity(0);
-
-        if (rec.rgbButtons[4] == 128 || Input.GetKeyDown(KeyCode.M))
+        if (LogitechGSDK.LogiUpdate() && LogitechGSDK.LogiIsConnected(0))
         {
+            LogitechGSDK.DIJOYSTATE2ENGINES rec;
+            rec = LogitechGSDK.LogiGetStateUnity(0);
 
-            children[QuestionnaireNumber].gameObject.SetActive(true);
-            if (QuestionnaireNumber != 0)
-            {
-                children[QuestionnaireNumber - 1].gameObject.SetActive(false);
-            }
-            QuestionnaireNumber++;
-            if (Input.GetKeyDown(KeyCode.N)) // 마지막 저장 예 버튼 클릭시
-            {
-                SaveTrigger = true;
-            }
-        }
-        else if (rec.rgbButtons[5] == 128 || Input.GetKeyDown(KeyCode.N))
-        {
-            if (QuestionnaireNumber > 1)
-            {
-                QuestionnaireNumber--;
-                children[QuestionnaireNumber].gameObject.SetActive(false);
-                children[QuestionnaireNumber - 1].gameObject.SetActive(true);
-            }
-        }
+            // Get slider value from the steering wheel
+            if (rec.lX < -7500) { AnswerSlider.value = 1; }
+            else if (rec.lX < -4500 && rec.lX > -7500) { AnswerSlider.value = 2; }
+            else if (rec.lX < -1500 && rec.lX > -4500) { AnswerSlider.value = 3; }
+            else if (rec.lX < 1500 && rec.lX > -1500) { AnswerSlider.value = 4; }
+            else if (rec.lX > 1500 && rec.lX < 4500) { AnswerSlider.value = 5; }
+            else if (rec.lX > 4500 && rec.lX < 7500) { AnswerSlider.value = 6; }
+            else if (rec.lX > 7500) { AnswerSlider.value = 7; }
 
-        if (SaveTrigger == true)
-        {
-            SaveToCSV();
+            // Functions below only works with the slider
+            if (ButtonActivation)
+            {
+                // when the left lever is pulled, move to the next question
+                if (rec.rgbButtons[4] == 128)
+                {
+                    threshold_y++;
+                    if (threshold_y >= 25)
+                    {
+                        if (QuestionnaireNumber < 4)
+                        {
+                            QuestionnaireNumber++;
+                            children[QuestionnaireNumber].gameObject.SetActive(true);
+                            children[QuestionnaireNumber - 1].gameObject.SetActive(false);
+                            AnswerSlider = children[QuestionnaireNumber].GetComponent<Slider>();
+                        }
+                        else if (QuestionnaireNumber == 4)
+                        {
+                            QuestionnaireNumber++;
+                        }
+                        threshold_y = 0;
+                    }
+                }
 
-            GameEnd.SetActive(true);
+                // if it's the last question, turn the questions off and turn on the save notive for saving the survey result
+                if (QuestionnaireNumber == 5)
+                {
+                    children[QuestionnaireNumber - 1].gameObject.SetActive(false);
+                    SaveTriggerObject.SetActive(true);
+                    ButtonActivation = false;
+                }
+
+                // when the right leve is pulled, get back to the previous question
+                if (rec.rgbButtons[5] == 128)
+                {
+                    threshold_z++;
+                    if (threshold_z >= 25)
+                    {
+                        if (QuestionnaireNumber > 1)
+                        {
+                            children[QuestionnaireNumber].gameObject.SetActive(false);
+                            children[QuestionnaireNumber - 1].gameObject.SetActive(true);
+                            AnswerSlider = children[QuestionnaireNumber - 1].GetComponent<Slider>();
+                            QuestionnaireNumber--;
+                        }
+                        threshold_z = 0;
+                    }
+                }
+            }
+
+            // if the user pull the right lever when the save notice object is activated, the survey result will be saved to csv file
+            if (SaveTrigger)
+            {
+                SaveToCSV();
+                GameEnd.SetActive(true);
+            }
         }
     }
+
 
     List<Transform> GetChildren(Transform parent)
     {
         List<Transform> children = new List<Transform>();
-
-        foreach (Transform child in parent)
-        {
-            children.Add(child);
-        }
-
+        foreach (Transform child in parent) { children.Add(child); }
         return children;
     }
 
     public void SaveToCSV()
     {
+        csvFileName = "FInalQuestionnaire.csv";
         List<Transform> children = GetChildren(transform);
         for (int i = 0; i < children.Count; i++)
         {
@@ -97,32 +131,20 @@ public class FinalQuestionnaire : MonoBehaviour
 
     }
 
-    string GetDirectoryPath()
-    {
-        return Application.dataPath + "/" + csvDirectoryName;
-    }
+    string GetDirectoryPath() { return Application.dataPath + "/" + csvDirectoryName; }
 
-    string GetFilePath()
-    {
-        return GetDirectoryPath() + "/" + csvFileName;
-    }
+    string GetFilePath() { return GetDirectoryPath() + "/" + csvFileName; }
 
     void VerifyDirectory()
     {
         string dir = GetDirectoryPath();
-        if (!Directory.Exists(dir))
-        {
-            Directory.CreateDirectory(dir);
-        }
+        if (!Directory.Exists(dir)) { Directory.CreateDirectory(dir); }
     }
 
     void VerifyFile()
     {
         string file = GetFilePath();
-        if (!File.Exists(file))
-        {
-            CreateCsv();
-        }
+        if (!File.Exists(file)) { CreateCsv(); }
     }
 
     public void CreateCsv()
@@ -133,10 +155,7 @@ public class FinalQuestionnaire : MonoBehaviour
             string finalString = "";
             for (int i = 0; i < csvHeaders.Length; i++)
             {
-                if (finalString != "")
-                {
-                    finalString += csvSeparator;
-                }
+                if (finalString != "") { finalString += csvSeparator; }
                 finalString += csvHeaders[i];
             }
             finalString += csvSeparator;
@@ -161,7 +180,9 @@ public class FinalQuestionnaire : MonoBehaviour
             }
             finalString += csvSeparator;
             sw.WriteLine(finalString);
+
             gameObject.SetActive(false);
+
         }
     }
 }

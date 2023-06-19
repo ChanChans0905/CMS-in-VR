@@ -98,7 +98,7 @@ public class DemoCarController : MonoBehaviour
             totalTorque = (rec.lRz - rec.lY) / 15;
             if (velocity.Value >= 20.5)
             {
-                totalTorque = 0;
+                //totalTorque = 0;
             }
             ApplyWheelTorques(totalTorque);
 

@@ -11,7 +11,6 @@ public class Questionnaire : MonoBehaviour
 {
     public bool SaveTriggerExit = false;
     public GameObject SaveTriggerObject;
-    float x;
     int threshold_y;
     int threshold_z;
     [SerializeField] DemoCarController DriverCar;
@@ -24,19 +23,14 @@ public class Questionnaire : MonoBehaviour
     LogitechGSDK.LogiControllerPropertiesData properties;
     public bool SaveTrigger;
     [SerializeField] FadeInOut FadeInOut;
-    public GameObject FinalQuestionnaire;
     public bool ButtonActivation;
+    public GameObject FinalQuestionnaireStartNotice;
 
 
     void Start()
     {
         ButtonActivation = true;
         List<Transform> children = GetChildren(transform);
-
-        foreach (Transform child in children)
-        {
-            Debug.Log(child.name);
-        }
     }
 
     void Update()
@@ -111,7 +105,7 @@ public class Questionnaire : MonoBehaviour
             {
                 SaveToCSV();
 
-                if (DriverCar.QuestionnaireCount < 7)
+                if (DriverCar.QuestionnaireCount < 1)
                 {
                     DriverCar.CMSchangeBool = true;
                     DriverCar.TrialBool = true;
@@ -120,7 +114,11 @@ public class Questionnaire : MonoBehaviour
                     DriverCar.respawnTrigger = false;
                 }
 
-                if (DriverCar.QuestionnaireCount == 7) { FinalQuestionnaire.SetActive(true);}
+                if (DriverCar.QuestionnaireCount == 1) 
+                { 
+                    DriverCar.FinalQuestionnaireBool = true;
+                    FinalQuestionnaireStartNotice.SetActive(true);
+                }
             }
         }
     }
