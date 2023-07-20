@@ -12,46 +12,46 @@ public class TaskCounter : MonoBehaviour
     [SerializeField] FollowingCar2 FC2;
     [SerializeField] LeadingCar LC1;
     [SerializeField] LeadingCar2 LC2;
-    public float trialTime;
+    [SerializeField] TrialCar TC1;
+    [SerializeField] TrialCar TC2;
     [SerializeField] FadeInOut FadeInOut;
-    public bool TrialBoolLocal;
     public GameObject TrialStartNotive, TrialEndNotice;
 
 
     private void Update()
     {
-        if(TrialBoolLocal == true)
+        if (DriverCar.TrialBoolTaskCounter)
         {
-            trialTime += Time.deltaTime;
-            if (trialTime >= 10)
+            if (DriverCar.TrialTime>= 1)
             {
                 DriverCar.TrialBool = false;
                 FadeInOut.FadingEvent = true;
                 DriverCar.respawnTrigger = true;
                 TrialEndNotice.SetActive(true);
-                TrialCar1.SetActive(false); TrialCar2.SetActive(false);
+                TC1.ActivateTC = false;
+                TC2.ActivateTC = false;
             }
 
-            if (trialTime >= 17)
+            if (DriverCar.TrialTime>= 5)
             {
                 DriverCar.waitTimer = 0;
                 FadeInOut.FadingEvent = false;
                 DriverCar.respawnTrigger = false;
                 TrialEndNotice.SetActive(false);
-                trialTime = 0;
-                TrialBoolLocal = false;
+                DriverCar.TrialTime = 0;
+                DriverCar.TrialBoolTaskCounter= false;
             }
         }
 
         if(DriverCar.respawnTrigger && DriverCar.TrialBool == false)
         {
-            FC1.Respawn = true; FC2.Respawn = true;
-            LC1.Respawn = true; LC2.Respawn = true;
+            //FC1.Respawn = true; FC2.Respawn = true;
+            //LC1.Respawn = true; LC2.Respawn = true;
         }
         else if(DriverCar.respawnTrigger && DriverCar.TrialBool)
         {
-            TrialCar1.SetActive(false);
-            TrialCar2.SetActive(false);
+            TC1.ActivateTC = false;
+            TC2.ActivateTC = false;
         }
     }
 
@@ -66,7 +66,7 @@ public class TaskCounter : MonoBehaviour
             if(DriverCar.threshold == false)
             {
                 DriverCar.threshold = true;
-                Debug.Log(DriverCar.taskCount);
+                Debug.Log("Threshold" + DriverCar.taskCount);
             }
             else
             {
@@ -75,12 +75,15 @@ public class TaskCounter : MonoBehaviour
             }
 
         }
-
+         
         if(other.gameObject.CompareTag("DriverCar") && DriverCar.TrialBool)
         {
-            TrialCar1.SetActive(true);
-            TrialCar2.SetActive(true);
-            TrialBoolLocal = true;
+            TrialCar1.SetActive(true); TrialCar2.SetActive(true);
+            if(DriverCar.TrialBoolTaskCounter == false) DriverCar.TrialBoolTaskCounter = true;
+            TC1.ActivateTC = true;
+            TC2.ActivateTC = true;
+
+            
         }
     }
 }

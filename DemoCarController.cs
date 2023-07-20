@@ -26,7 +26,6 @@ public class DemoCarController : MonoBehaviour
     [SerializeField] FollowingCar FC1;
     [SerializeField] FollowingCar2 FC2;
     [SerializeField] GetTrialCarPosition1 TC1;
-    [SerializeField] GetTrialCarPosition2 TC2;
 
     public GameObject VolvoCar;
     public GameObject CMS_LD_SW, CMS_LD_TM, CMS_RD_SW, CMS_RD_TM, CMSCenter, CMSStitched, TraditionalMirrorLeft, TraditionalMirrorRight;
@@ -40,8 +39,7 @@ public class DemoCarController : MonoBehaviour
     public int QuestionnaireCount;
     public bool CMSchangeBool = false;
     public bool FinalQuestionnaireBool;
-    public bool TrialBool;
-    public bool TrialBoolFilter;
+    public bool TrialBool, TrialBoolFilter, TrialBoolTaskCounter;
     public int laneChangeDirection;
     public bool threshold = false;
     public float TrialTimeCount;
@@ -50,6 +48,8 @@ public class DemoCarController : MonoBehaviour
     public bool FCLbool, FCRbool, LCbool, TCLbool, TCRbool;
     public bool ARbool;
     public bool GameStartNoticeBool;
+    public float Acc, Br;
+    public float TrialTime;
 
     public int[] LaneChangeTime = new int[8]; // make the 2 dimension list by using counter-balance
     public int[] FollowingCarSpeed = new int[8];
@@ -81,10 +81,10 @@ public class DemoCarController : MonoBehaviour
 
     private void Update()
     {
-        if (LogitechGSDK.LogiUpdate() && LogitechGSDK.LogiIsConnected(0))
-        {
-            LogitechGSDK.DIJOYSTATE2ENGINES rec;
-            rec = LogitechGSDK.LogiGetStateUnity(0);
+        //if (LogitechGSDK.LogiUpdate() && LogitechGSDK.LogiIsConnected(0))
+        //{
+        //    LogitechGSDK.DIJOYSTATE2ENGINES rec;
+        //    rec = LogitechGSDK.LogiGetStateUnity(0);
 
             // Driving inputs 
             float rawSteeringInput = Input.GetAxis("Horizontal");
@@ -95,10 +95,87 @@ public class DemoCarController : MonoBehaviour
             steeringReduction = 1 - Mathf.Min(Mathf.Abs(velocity.Value) / 30f, 0.85f);
             userSteeringInput.Value = rawSteeringInput * steeringReduction;
 
-            totalTorque = (rec.lRz - rec.lY) / 15;
-            if (velocity.Value >= 20.5)
+            // ************ORG  ***************
+
+            if (parkInput > 0)
+            { // Park request ("hand brake")
+                if (Mathf.Abs(velocity.Value) > 5f / 3.6f)
+                {
+                    totalTorque = -MAX_BRAKE_TORQUE; // Regular brakes
+                }
+                else
+                {
+                    totalTorque = -9000; // Parking brake and/or gear P
+                    propulsiveDirection.Value = 0;
+                    gearLeverIndication.Value = 0;
+                }
+
+            }
+            else if (propulsiveDirection.Value == 1)
+            { // Forward
+
+                if (rawForwardInput >= 0 && velocity.Value > -1.5f)
+                {
+                    totalTorque = Mathf.Min(availableForwardTorque.Evaluate(Mathf.Abs(velocity.Value)), -1800 + 7900 * rawForwardInput - 9500 * rawForwardInput * rawForwardInput + 9200 * rawForwardInput * rawForwardInput * rawForwardInput);
+                }
+                else
+                {
+                    totalTorque = -Mathf.Abs(rawForwardInput) * MAX_BRAKE_TORQUE;
+                    if (Mathf.Abs(velocity.Value) < 0.01f && brakeToReverse)
+                    {
+                        propulsiveDirection.Value = -1;
+                        gearLeverIndication.Value = 1;
+                    }
+                }
+
+            }
+            else if (propulsiveDirection.Value == -1)
+            { // Reverse
+                if (rawForwardInput <= 0 && velocity.Value < 1.5f)
+                {
+                    float absInput = Mathf.Abs(rawForwardInput);
+                    totalTorque = Mathf.Min(availableReverseTorque.Evaluate(Mathf.Abs(velocity.Value)), -1800 + 7900 * absInput - 9500 * absInput * absInput + 9200 * absInput * absInput * absInput);
+                }
+                else
+                {
+                    totalTorque = -Mathf.Abs(rawForwardInput) * MAX_BRAKE_TORQUE;
+                    if (Mathf.Abs(velocity.Value) < 0.01f)
+                    {
+                        propulsiveDirection.Value = 1;
+                        gearLeverIndication.Value = 3;
+                    }
+                }
+
+            }
+            else
+            { // No direction (such as neutral gear or P)
+                totalTorque = 0;
+                if (Mathf.Abs(velocity.Value) < 1f)
+                {
+                    if (rawForwardInput > 0)
+                    {
+                        propulsiveDirection.Value = 1;
+                        gearLeverIndication.Value = 3;
+                    }
+                    else if (rawForwardInput < 0 && brakeToReverse)
+                    {
+                        propulsiveDirection.Value = -1;
+                        gearLeverIndication.Value = 1;
+                    }
+                }
+                else if (gearLeverIndication.Value == 0)
+                {
+                    totalTorque = -9000;
+                }
+            }
+
+        // *********** ORG ****************
+
+        //Acc = (32768f - rec.lY) / 65536f;
+        //Br = (rec.lRz - 32768f) / 65536f;
+        if (velocity.Value >= 27.7)
             {
-                //totalTorque = 0;
+                totalTorque = 0;
             }
             ApplyWheelTorques(totalTorque);
 
@@ -109,7 +186,7 @@ public class DemoCarController : MonoBehaviour
                 {
                     velocity.Value = 0;
                     wheelTorque.Value = wheelTorqueValue;
-                    VolvoCar.transform.localPosition = new Vector3(0, 0, 0);
+                    VolvoCar.transform.localPosition = new Vector3(-2166, 0, 2300);
                     VolvoCar.transform.rotation = Quaternion.Slerp(VolvoCar.transform.rotation, transform.rotation, 0.5f * Time.deltaTime);
                 }
             }
@@ -120,7 +197,8 @@ public class DemoCarController : MonoBehaviour
                 CMSchange();
             }
 
-            
+        if (TrialBoolTaskCounter) TrialTime += Time.deltaTime;
+
             if(TrialBool && TrialBoolFilter && GameStartNoticeBool)
             {
                 TrialStartNotice.SetActive(true);
@@ -135,25 +213,25 @@ public class DemoCarController : MonoBehaviour
 
             if (ARbool)
             {
-                LC1position = Mathf.Abs(LC1.gameObject.transform.position.z);
-                FC1Lposition = Mathf.Abs(FC1.carLeft.transform.position.z);
-                FC1Rposition = Mathf.Abs(FC1.carRight.transform.position.z);
-                LC2position = Mathf.Abs(LC2.gameObject.transform.position.z);
-                FC2Lposition = Mathf.Abs(FC2.carLeft.transform.position.z);
-                FC2Rposition = Mathf.Abs(FC2.carRight.transform.position.z);
-                DCposition = Mathf.Abs(VolvoCar.transform.position.z);
+            LC1position = Mathf.Abs(LC1.gameObject.transform.position.z);
+            FC1Lposition = Mathf.Abs(FC1.carLeft.transform.position.z);
+            FC1Rposition = Mathf.Abs(FC1.carRight.transform.position.z);
+            LC2position = Mathf.Abs(LC2.gameObject.transform.position.z);
+            FC2Lposition = Mathf.Abs(FC2.carLeft.transform.position.z);
+            FC2Rposition = Mathf.Abs(FC2.carRight.transform.position.z);
+            DCposition = Mathf.Abs(VolvoCar.transform.position.z);
 
-                if (MathF.Abs(DCposition - LC1position) <= ARSignalActivateDistance || MathF.Abs(DCposition - LC2position) <= ARSignalActivateDistance) { LCbool = true; } else { LCbool = false; }
-                if (MathF.Abs(DCposition - FC1Lposition) <= ARSignalActivateDistance || MathF.Abs(DCposition - FC2Lposition) <= ARSignalActivateDistance) { FCLbool = true; } else { FCLbool = false; }
-                if (MathF.Abs(DCposition - FC1Rposition) <= ARSignalActivateDistance || MathF.Abs(DCposition - FC2Rposition) <= ARSignalActivateDistance) { FCRbool = true; } else { FCRbool = false; }                
+            if (MathF.Abs(DCposition - LC1position) <= ARSignalActivateDistance || MathF.Abs(DCposition - LC2position) <= ARSignalActivateDistance) { LCbool = true; } else { LCbool = false; }
+            if (MathF.Abs(DCposition - FC1Lposition) <= ARSignalActivateDistance || MathF.Abs(DCposition - FC2Lposition) <= ARSignalActivateDistance) { FCLbool = true; } else { FCLbool = false; }
+            if (MathF.Abs(DCposition - FC1Rposition) <= ARSignalActivateDistance || MathF.Abs(DCposition - FC2Rposition) <= ARSignalActivateDistance) { FCRbool = true; } else { FCRbool = false; }
 
-                if (TrialBool)
+            if (TrialBool)
                 {
-                    if (TC1.TC1bool || TC1.TC2bool || TC1.TC3bool || TC2.TC1bool || TC2.TC2bool || TC2.TC3bool) { FCLbool = true; } else { FCLbool = false; }
-                    if (TC1.TC4bool || TC1.TC5bool || TC1.TC6bool || TC2.TC4bool || TC2.TC5bool || TC2.TC6bool) { FCRbool = true; } else { FCRbool = false; }
+                    if (TC1.TC1bool || TC1.TC2bool || TC1.TC3bool)  FCLbool = true; else  FCLbool = false; 
+                    if (TC1.TC4bool || TC1.TC5bool || TC1.TC6bool)  FCRbool = true; else  FCRbool = false; 
                 }
             }
-        }
+        //}
     }
 
     private void ApplyWheelTorques(float totalWheelTorque)
@@ -170,9 +248,9 @@ public class DemoCarController : MonoBehaviour
 
     public void CMSchange()
     {
-        int[] CMScombination = { 6, 3, 2, 5, 7, 4, 1 };
+        int[] CMScombination = { 3, 6, 2, 5, 7, 4, 1 };
 
-        taskCount = 0;
+        taskCount = 1;
         CMSCenter.SetActive(false);
         CMS_LD_SW.SetActive(false);
         CMS_LD_TM.SetActive(false);

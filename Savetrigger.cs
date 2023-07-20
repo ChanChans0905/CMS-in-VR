@@ -8,21 +8,24 @@ public class SaveTrigger : MonoBehaviour
     [SerializeField] DemoCarController DriverCar;
     [SerializeField] Questionnaire Questionnaire;
     [SerializeField] FinalQuestionnaire FinalQuestionnaire;
-    LogitechGSDK.LogiControllerPropertiesData properties;
+    //LogitechGSDK.LogiControllerPropertiesData properties;
     public bool SaveButton = false;
 
     void Update()
     {
-        if (LogitechGSDK.LogiUpdate() && LogitechGSDK.LogiIsConnected(0))
-        {
-            LogitechGSDK.DIJOYSTATE2ENGINES rec;
-            rec = LogitechGSDK.LogiGetStateUnity(0);
+        //if (LogitechGSDK.LogiUpdate() && LogitechGSDK.LogiIsConnected(0))
+        //{
+        //    LogitechGSDK.DIJOYSTATE2ENGINES rec;
+        //    rec = LogitechGSDK.LogiGetStateUnity(0);
 
-            if (rec.rgbButtons[5] == 128 && DriverCar.FinalQuestionnaireBool == false) { Questionnaire.SaveTrigger = true; gameObject.SetActive(false); }
-            else if (rec.rgbButtons[5] == 128 && DriverCar.FinalQuestionnaireBool == true) { FinalQuestionnaire.SaveTrigger = true; gameObject.SetActive(false); }
+            //if (rec.rgbButtons[5] == 128 && DriverCar.FinalQuestionnaireBool == false) { Questionnaire.SaveTrigger = true; gameObject.SetActive(false); }
+            //else if (rec.rgbButtons[5] == 128 && DriverCar.FinalQuestionnaireBool == true) { FinalQuestionnaire.SaveTrigger = true; gameObject.SetActive(false); }
+
+            if (Input.GetKeyDown(KeyCode.O) && DriverCar.FinalQuestionnaireBool == false) { Questionnaire.SaveTrigger = true; gameObject.SetActive(false); }
+            else if (Input.GetKeyDown(KeyCode.O) && DriverCar.FinalQuestionnaireBool == true) { FinalQuestionnaire.SaveTrigger = true; gameObject.SetActive(false); }
 
             //if (rec.rgbButtons[4] == 128 && DriverCar.FinalQuestionnaireBool == false) { Questionnaire.ButtonActivation = true; gameObject.SetActive(false); }
             //else if (rec.rgbButtons[4] == 128 && DriverCar.FinalQuestionnaireBool == true) { FinalQuestionnaire.ButtonActivation = true; gameObject.SetActive(false); }
-        }
+        //}
     }
 }

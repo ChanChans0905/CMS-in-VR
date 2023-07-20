@@ -11,8 +11,6 @@ public class FollowingCar2 : MonoBehaviour
     public PathCreator pathCreator;
     float distanceTravelled;
     public bool wayPointTrigger = false;
-    Vector3 velocityLeft = new Vector3(0, 0, 0);
-    Vector3 velocityRight = new Vector3(0, 0, 0);
     float disableTime;
     Vector3 startPos;
     [SerializeField] DemoCarController DriverCar;
@@ -21,8 +19,8 @@ public class FollowingCar2 : MonoBehaviour
     public GameObject carLeft, carRight;
     public bool eventStartBool = false;
     public float accelTime;
-    public Vector3 CarSpeedLeft1 = new Vector3(-404, 0, 0);//
-    public Vector3 CarSpeedRight1 = new Vector3(-395, 0, 0);//
+    Vector3 CarSpeedLeft1 = new Vector3(1107,0,2080);//
+    Vector3 CarSpeedRight1 = new Vector3(1094,0,2080);//
     public float laneChangeTimer;
     public float distance = 25;
     public bool Respawn;
@@ -37,8 +35,8 @@ public class FollowingCar2 : MonoBehaviour
 
     void Update()
     {
-        carLeft.transform.localPosition = CarSpeedLeft1;
-        carRight.transform.localPosition = CarSpeedRight1;
+        carLeft.transform.position = CarSpeedLeft1;
+        carRight.transform.position = CarSpeedRight1;
 
         if (LeadingCar.eventStartBool)
         {
@@ -50,33 +48,33 @@ public class FollowingCar2 : MonoBehaviour
                     if (DriverCar.FollowingCarSpeed[DriverCar.taskCount] == 1)
                     {
                         laneChangeTimer += Time.deltaTime;
-                        CarSpeedLeft1.z = (TargetCar.transform.localPosition.x + distance) + laneChangeTimer * 2f;
-                        CarSpeedRight1.z = (TargetCar.transform.localPosition.x + distance) + laneChangeTimer * 3f;
+                        CarSpeedLeft1.z = TargetCar.transform.position.z + distance - laneChangeTimer * 2f;
+                        CarSpeedRight1.z = TargetCar.transform.position.z + distance - laneChangeTimer * 3f;
                     }
                     else
                     {
                         laneChangeTimer += Time.deltaTime;
-                        CarSpeedLeft1.z = (TargetCar.transform.localPosition.x + distance) + laneChangeTimer * 3f; 
-                        CarSpeedRight1.z = (TargetCar.transform.localPosition.x + distance) + laneChangeTimer * 2f; 
+                        CarSpeedLeft1.z = TargetCar.transform.position.z + distance - laneChangeTimer * 3f; 
+                        CarSpeedRight1.z = TargetCar.transform.position.z + distance - laneChangeTimer * 2f; 
                     }
                 }
                 else if (accelTime <= 8 + DriverCar.LaneChangeTime[DriverCar.taskCount])
                 {
-                    CarSpeedLeft1.z = TargetCar.transform.localPosition.x + distance; 
-                    CarSpeedRight1.z = TargetCar.transform.localPosition.x + distance;
+                    CarSpeedLeft1.z = TargetCar.transform.position.z + distance; 
+                    CarSpeedRight1.z = TargetCar.transform.position.z + distance;
                 }
             }
             else if (DriverCar.LaneChangeTime[DriverCar.taskCount] == 0)
             {
 
-                CarSpeedLeft1.z = TargetCar.transform.localPosition.x + distance;
-                CarSpeedRight1.z = TargetCar.transform.localPosition.x + distance;
+                CarSpeedLeft1.z = TargetCar.transform.position.z + distance;
+                CarSpeedRight1.z = TargetCar.transform.position.z + distance;
             }
         }
         else if (eventStartBool == false)
         {
-            CarSpeedLeft1.z = TargetCar.transform.localPosition.x + distance;
-            CarSpeedRight1.z = TargetCar.transform.localPosition.x + distance;
+            CarSpeedLeft1.z = TargetCar.transform.position.z + distance;
+            CarSpeedRight1.z = TargetCar.transform.position.z + distance;
         }
 
         if (wayPointTrigger == true || DriverCar.respawnTrigger)
@@ -90,7 +88,7 @@ public class FollowingCar2 : MonoBehaviour
 
         }
 
-        if (Respawn && DriverCar.respawnTrigger)
+        if (Respawn || DriverCar.respawnTrigger)
         {
             FollowingCarRight.transform.position = startPos;
             FollowingCarRight.transform.rotation = Quaternion.identity;
