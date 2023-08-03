@@ -16,6 +16,7 @@ public class TaskCounter : MonoBehaviour
     [SerializeField] TrialCar TC2;
     [SerializeField] FadeInOut FadeInOut;
     public GameObject TrialStartNotive, TrialEndNotice;
+    public bool TaskStartBool;
 
 
     private void Update()
@@ -32,7 +33,7 @@ public class TaskCounter : MonoBehaviour
                 TC2.ActivateTC = false;
             }
 
-            if (DriverCar.TrialTime>= 5)
+            if (DriverCar.TrialTime>= 7)
             {
                 DriverCar.waitTimer = 0;
                 FadeInOut.FadingEvent = false;

@@ -31,10 +31,10 @@ public class DemoCarController : MonoBehaviour
     public GameObject CMS_LD_SW, CMS_LD_TM, CMS_RD_SW, CMS_RD_TM, CMSCenter, CMSStitched, TraditionalMirrorLeft, TraditionalMirrorRight;
     public GameObject TrialStartNotice;
 
-    public bool respawnTrigger = false;
+    public bool respawnTrigger, CollisionWithCar, CollisionWithGuardRail;
 
     public float waitTimer;
-    public int taskCount;
+    public int taskCount, NumOfCollisionWithCar, NumOfCollisionWithGuardRail;
     public int CMSchangeCount;
     public int QuestionnaireCount;
     public bool CMSchangeBool = false;
@@ -46,9 +46,8 @@ public class DemoCarController : MonoBehaviour
     public float NoticeTimer;
     public float FC1Lposition, FC1Rposition, LC1position, FC2Lposition, FC2Rposition, LC2position, DCposition;
     public bool FCLbool, FCRbool, LCbool, TCLbool, TCRbool;
-    public bool ARbool;
-    public bool GameStartNoticeBool;
-    public float Acc, Br;
+    public bool ARbool, GameStartNoticeBool, MainTask, TaskEndBool;
+    public float Acc, Br, SteeringInput;
     public float TrialTime;
 
     public int[] LaneChangeTime = new int[8]; // make the 2 dimension list by using counter-balance
@@ -94,80 +93,82 @@ public class DemoCarController : MonoBehaviour
             // Steering
             steeringReduction = 1 - Mathf.Min(Mathf.Abs(velocity.Value) / 30f, 0.85f);
             userSteeringInput.Value = rawSteeringInput * steeringReduction;
+        SteeringInput = userSteeringInput.Value;
 
-            // ************ORG  ***************
+        // ************ORG  ***************
 
-            if (parkInput > 0)
-            { // Park request ("hand brake")
-                if (Mathf.Abs(velocity.Value) > 5f / 3.6f)
-                {
-                    totalTorque = -MAX_BRAKE_TORQUE; // Regular brakes
-                }
-                else
-                {
-                    totalTorque = -9000; // Parking brake and/or gear P
-                    propulsiveDirection.Value = 0;
-                    gearLeverIndication.Value = 0;
-                }
-
-            }
-            else if (propulsiveDirection.Value == 1)
-            { // Forward
-
-                if (rawForwardInput >= 0 && velocity.Value > -1.5f)
-                {
-                    totalTorque = Mathf.Min(availableForwardTorque.Evaluate(Mathf.Abs(velocity.Value)), -1800 + 7900 * rawForwardInput - 9500 * rawForwardInput * rawForwardInput + 9200 * rawForwardInput * rawForwardInput * rawForwardInput);
-                }
-                else
-                {
-                    totalTorque = -Mathf.Abs(rawForwardInput) * MAX_BRAKE_TORQUE;
-                    if (Mathf.Abs(velocity.Value) < 0.01f && brakeToReverse)
-                    {
-                        propulsiveDirection.Value = -1;
-                        gearLeverIndication.Value = 1;
-                    }
-                }
-
-            }
-            else if (propulsiveDirection.Value == -1)
-            { // Reverse
-                if (rawForwardInput <= 0 && velocity.Value < 1.5f)
-                {
-                    float absInput = Mathf.Abs(rawForwardInput);
-                    totalTorque = Mathf.Min(availableReverseTorque.Evaluate(Mathf.Abs(velocity.Value)), -1800 + 7900 * absInput - 9500 * absInput * absInput + 9200 * absInput * absInput * absInput);
-                }
-                else
-                {
-                    totalTorque = -Mathf.Abs(rawForwardInput) * MAX_BRAKE_TORQUE;
-                    if (Mathf.Abs(velocity.Value) < 0.01f)
-                    {
-                        propulsiveDirection.Value = 1;
-                        gearLeverIndication.Value = 3;
-                    }
-                }
-
+        if (parkInput > 0)
+        { // Park request ("hand brake")
+            if (Mathf.Abs(velocity.Value) > 5f / 3.6f)
+            {
+                totalTorque = -MAX_BRAKE_TORQUE; // Regular brakes
             }
             else
-            { // No direction (such as neutral gear or P)
-                totalTorque = 0;
-                if (Mathf.Abs(velocity.Value) < 1f)
+            {
+                totalTorque = -9000; // Parking brake and/or gear P
+                propulsiveDirection.Value = 0;
+                gearLeverIndication.Value = 0;
+            }
+
+        }
+        else if (propulsiveDirection.Value == 1)
+        { // Forward
+
+            if (rawForwardInput >= 0 && velocity.Value > -1.5f)
+            {
+                totalTorque = Mathf.Min(availableForwardTorque.Evaluate(Mathf.Abs(velocity.Value)), -1800 + 7900 * rawForwardInput - 9500 * rawForwardInput * rawForwardInput + 9200 * rawForwardInput * rawForwardInput * rawForwardInput);
+            }
+            else
+            {
+                totalTorque = -Mathf.Abs(rawForwardInput) * MAX_BRAKE_TORQUE;
+                if (Mathf.Abs(velocity.Value) < 0.01f && brakeToReverse)
                 {
-                    if (rawForwardInput > 0)
-                    {
-                        propulsiveDirection.Value = 1;
-                        gearLeverIndication.Value = 3;
-                    }
-                    else if (rawForwardInput < 0 && brakeToReverse)
-                    {
-                        propulsiveDirection.Value = -1;
-                        gearLeverIndication.Value = 1;
-                    }
-                }
-                else if (gearLeverIndication.Value == 0)
-                {
-                    totalTorque = -9000;
+                    propulsiveDirection.Value = -1;
+                    gearLeverIndication.Value = 1;
                 }
             }
+
+        }
+        else if (propulsiveDirection.Value == -1)
+        { // Reverse
+            if (rawForwardInput <= 0 && velocity.Value < 1.5f)
+            {
+                float absInput = Mathf.Abs(rawForwardInput);
+                totalTorque = Mathf.Min(availableReverseTorque.Evaluate(Mathf.Abs(velocity.Value)), -1800 + 7900 * absInput - 9500 * absInput * absInput + 9200 * absInput * absInput * absInput);
+            }
+            else
+            {
+                totalTorque = -Mathf.Abs(rawForwardInput) * MAX_BRAKE_TORQUE;
+                if (Mathf.Abs(velocity.Value) < 0.01f)
+                {
+                    propulsiveDirection.Value = 1;
+                    gearLeverIndication.Value = 3;
+                }
+            }
+
+        }
+        else if (respawnTrigger == true) totalTorque = -9000;
+        else
+        { // No direction (such as neutral gear or P)
+            totalTorque = 0;
+            if (Mathf.Abs(velocity.Value) < 1f)
+            {
+                if (rawForwardInput > 0)
+                {
+                    propulsiveDirection.Value = 1;
+                    gearLeverIndication.Value = 3;
+                }
+                else if (rawForwardInput < 0 && brakeToReverse)
+                {
+                    propulsiveDirection.Value = -1;
+                    gearLeverIndication.Value = 1;
+                }
+            }
+            else if (gearLeverIndication.Value == 0)
+            {
+                totalTorque = -9000;
+            }
+        }
 
         // *********** ORG ****************
 
@@ -187,8 +188,8 @@ public class DemoCarController : MonoBehaviour
                     velocity.Value = 0;
                     wheelTorque.Value = wheelTorqueValue;
                     VolvoCar.transform.localPosition = new Vector3(-2166, 0, 2300);
-                    VolvoCar.transform.rotation = Quaternion.Slerp(VolvoCar.transform.rotation, transform.rotation, 0.5f * Time.deltaTime);
-                }
+                    VolvoCar.transform.rotation = Quaternion.Slerp(VolvoCar.transform.rotation, Quaternion.AngleAxis(-90,Vector3.up), 3f * Time.deltaTime);
+            }
             }
             else if(respawnTrigger == false && waitTimer > 0) { waitTimer = 0; }
 
@@ -231,6 +232,7 @@ public class DemoCarController : MonoBehaviour
                     if (TC1.TC4bool || TC1.TC5bool || TC1.TC6bool)  FCRbool = true; else  FCRbool = false; 
                 }
             }
+
         //}
     }
 
@@ -248,7 +250,7 @@ public class DemoCarController : MonoBehaviour
 
     public void CMSchange()
     {
-        int[] CMScombination = { 3, 6, 2, 5, 7, 4, 1 };
+        int[] CMScombination = { 1, 6, 2, 5, 7, 4, 1 };
 
         taskCount = 1;
         CMSCenter.SetActive(false);
@@ -317,24 +319,4 @@ public class DemoCarController : MonoBehaviour
         CMSchangeCount++;
         CMSchangeBool = false;
     }
-
-    /*static public T[] ShuffleArray<T>(T[] array)
-    {
-        int random1, random2;
-        T temp;
-
-        for (int i = 0; i < array.Length; ++i)
-        {
-
-            random1 = UnityEngine.Random.Range(0, array.Length);
-            random2 = UnityEngine.Random.Range(0, array.Length);
-
-            temp = array[random1];
-            array[random1] = array[random2];
-            array[random2] = temp;
-        }
-
-        return array;
-    }*/
-
 }

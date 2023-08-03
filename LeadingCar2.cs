@@ -7,6 +7,8 @@ using UnityEngine;
 
 public class LeadingCar2 : MonoBehaviour
 {
+    [SerializeField] TimeLogger TImeLogger;
+
     Rigidbody _rb;
     public GameObject TargetCar;
     public GameObject ThisCar;
@@ -88,10 +90,16 @@ public class LeadingCar2 : MonoBehaviour
             gameObject.transform.position = CarSpeed;
         }
 
+        if (overtake >= 8 + DriverCar.LaneChangeTime[count] && (DriverCar.LaneChangeTime[count] != 0))
+        {
+            TImeLogger.EventBool = true;
+            TImeLogger.LeadingCarStopTime += Time.deltaTime;
+        }
+
         if (overtake >= 25 && (DriverCar.LaneChangeTime[count] != 0))
         {
+            TImeLogger.LeadingCarStopTime = 0;
             Respawn = true;
-
         }
 
         if (wayPointTrigger == true || DriverCar.respawnTrigger)
