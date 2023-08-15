@@ -50,6 +50,7 @@ public class DemoCarController : MonoBehaviour
     public float Acc, Br, SteeringInput;
     public float TrialTime;
 
+    public int[] TaskScenario = new int[6];
     public int[] LaneChangeTime = new int[8]; // make the 2 dimension list by using counter-balance
     public int[] FollowingCarSpeed = new int[8];
     public int[] CMScombination = new int[7];
@@ -65,6 +66,7 @@ public class DemoCarController : MonoBehaviour
         
     private void Start()
     {
+        TaskScenario = new int[] { 1, 1, 2, 2, 3, 3 };
         CMScombination = new int[] { 6, 3, 2, 5, 7, 4, 1 };
         LaneChangeTime = new int[] { 9, 5, 3, 7, 1, 0, 0, 0 };
         FollowingCarSpeed = new int[] { 0, 0, 0, 0, 1, 1, 1, 1 };
@@ -250,7 +252,7 @@ public class DemoCarController : MonoBehaviour
 
     public void CMSchange()
     {
-        int[] CMScombination = { 1, 6, 2, 5, 7, 4, 1 };
+        int[] CMScombination = { 3, 6, 2, 5, 7, 4, 1 };
 
         taskCount = 1;
         CMSCenter.SetActive(false);

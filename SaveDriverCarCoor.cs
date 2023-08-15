@@ -11,19 +11,21 @@ public class SaveDriverCarCoor : MonoBehaviour
     public GameObject VolvoCar;
     private string csvSeparator = ",";
     private string csvFileName = "DriverCarCoor.csv";
-    private string[] csvHeaders = new string[4] {"Time", "X", "Y", "Z" };
+    private string[] csvHeaders = new string[8] {"Time", "Position_X", "Position_Y", "Position_Z", "Rotation_X", "Rotation_Y", "Rotation_Z", "Rotation_W" };
     private string csvDirectoryName = "Data";
 
     void FixedUpdate()
     {
-        // Add x,y,z coordinates to the list
-        float[] DriverCarCoor = new float[4];
+        float[] DriverCarCoor = new float[8];
         DriverCarCoor[0] = TimeLogger.TimeNumber;
         DriverCarCoor[1] = VolvoCar.transform.position.x;
         DriverCarCoor[2] = VolvoCar.transform.position.y;
         DriverCarCoor[3] = VolvoCar.transform.position.z;
+        DriverCarCoor[4] = VolvoCar.transform.rotation.x;
+        DriverCarCoor[5] = VolvoCar.transform.rotation.y;
+        DriverCarCoor[6] = VolvoCar.transform.rotation.z;
+        DriverCarCoor[7] = VolvoCar.transform.rotation.w;
         AppendToCsv(DriverCarCoor);
-        //print("Time : " + GazeBoxCoor[0] + "X : " + GazeBoxCoor[1] + "Y : " + GazeBoxCoor[2] + "Z : " + GazeBoxCoor[3]);
     }
 
     string GetDirectoryPath()

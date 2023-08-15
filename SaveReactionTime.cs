@@ -13,16 +13,21 @@ public class SaveReactionTime : MonoBehaviour
     private string csvFileName = "ReactionTIme.csv";
     private string[] csvHeaders = new string[1] { "Time" };
     private string csvDirectoryName = "Data";
+    bool FirstReact;
 
     void FixedUpdate()
     {
-        // Add x,y,z coordinates to the list
         float[] ReactionTime = new float[1];
-        ReactionTime[0] = TimeLogger.LeadingCarStopTime;
 
-        if (TimeLogger.EventBool && ( DriverCar.Br >= -0.1 || DriverCar.SteeringInput < 3000 )) // not fixed
+        if (TimeLogger.EventBool )
         {
-            AppendToCsv(ReactionTime);
+            ReactionTime[0] = TimeLogger.LeadingCarStopTime;
+
+            if ((DriverCar.Br >= -0.1 || DriverCar.SteeringInput < 3000)) FirstReact = true; // not fixed
+            if (FirstReact)
+            {
+                AppendToCsv(ReactionTime);
+            }
         }
     }
 

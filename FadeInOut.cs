@@ -28,10 +28,8 @@ public class FadeInOut : MonoBehaviour
         Color nNew = new Color(0, 0, 0, alpha);
         _mat.SetColor("_BaseColor", nNew);
 
-        if(OutofLaneTime >= 3)
-        {
-            KeepLaneNotice.gameObject.SetActive(true);
-        }
+        if(OutofLaneTime >= 3) KeepLaneNotice.gameObject.SetActive(true);
+        if (OutofLaneTime == 0) KeepLaneNotice.gameObject.SetActive(false);
     }
 
     public void FadeIn(float degree)
@@ -62,6 +60,7 @@ public class FadeInOut : MonoBehaviour
             if(LC1.eventStartBool == false) { DriverCar.taskCount--; }
             if(LC2.eventStartBool == false) { DriverCar.taskCount--; }
             DriverCar.TaskEndBool = true;
+            TimeLogger.EventBool = false;
         }
 
         if (other.gameObject.CompareTag("Car"))
@@ -76,6 +75,7 @@ public class FadeInOut : MonoBehaviour
         if (other.gameObject.CompareTag("WayPoint"))
         {
             DriverCar.TaskEndBool = true;
+            TimeLogger.EventBool = false;
 
             if(DriverCar.taskCount == 2)
             {

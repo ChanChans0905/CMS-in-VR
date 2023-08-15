@@ -19,8 +19,8 @@ public class SaveNumberOfCollisionWithCarAndGuardRail : MonoBehaviour
         {
             float[] SaveNum = new float[4];
             SaveNum[0] = TimeLogger.TimeNumber;
-            SaveNum[1] = DriverCar.taskCount;
-            SaveNum[2] = DriverCar.CMSchangeCount;
+            SaveNum[1] = DriverCar.CMSchangeCount;
+            SaveNum[2] = DriverCar.taskCount;
             SaveNum[3] = DriverCar.NumOfCollisionWithCar;
             SaveNum[4] = DriverCar.NumOfCollisionWithGuardRail;
 
