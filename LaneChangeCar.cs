@@ -12,14 +12,14 @@ public class LaneChangeCar : MonoBehaviour
     float OvertakeTimer;
     int StoppingDistance;
     Vector3 StartPos;
-    bool TaskStart;
+    public bool TaskStart;
     bool WayPointTrigger;
     float DistanceTravelled;
     public PathCreator PathCreator;
     float DisableTime;
     bool RespawnTrigger;
     bool StartScenario_LaneChangeThenStop, StartScenario_LaneChangeWithLowSpeed, StartScenario_Obstacle;
-    bool BeforeTaskStart;
+    public bool BeforeTaskStart;
 
     private void Start()
     {
@@ -30,7 +30,6 @@ public class LaneChangeCar : MonoBehaviour
     private void FixedUpdate()
     {
         TargetCarVelocity.z = TargetCar.GetComponent<Rigidbody>().velocity.z;
-        LeadingCarVelocity.z = gameObject.GetComponent<Rigidbody>().velocity.z;
 
         if (TaskStart)
         {
@@ -49,9 +48,11 @@ public class LaneChangeCar : MonoBehaviour
             TaskStart = false;
             BeforeTaskStart = false;
         }
+        else
+            BeforeTaskStart = true;
         
         if(BeforeTaskStart)
-            LeadingCarVelocity.z = TargetCarVelocity.z;
+            gameObject.GetComponent<Rigidbody>().velocity = TargetCarVelocity;
 
         if (StartScenario_LaneChangeThenStop)
             LaneChangeThenStop(DriverCar.taskCount);
@@ -71,6 +72,7 @@ public class LaneChangeCar : MonoBehaviour
 
     private void LaneChangeThenStop(int taskCount)
     {
+        Debug.Log("Stop");
         OvertakeTimer += Time.deltaTime;
 
         int TaskStartTime = DriverCar.LaneChangeTime[taskCount];
@@ -82,6 +84,7 @@ public class LaneChangeCar : MonoBehaviour
         // slows down and change the lane to the 2nd
         if (OvertakeTimer >= 5 && OvertakeTimer <= 8)
         {
+            Debug.Log(OvertakeTimer);
             // slow down
             if (Mathf.Abs(TargetCar.transform.position.z - gameObject.transform.position.z) > StoppingDistance) TargetCarVelocity.z *= 0.3f;
             else TargetCarVelocity.z *= 2f;
@@ -90,20 +93,29 @@ public class LaneChangeCar : MonoBehaviour
             TargetCarVelocity.x = 2f;
         }
 
+        // delete lane changing velocity
+        if (OvertakeTimer > 8 && OvertakeTimer <= 8 + TaskStartTime)
+            TargetCarVelocity.x = 0;
+
         // stop
         if (OvertakeTimer > 8 + TaskStartTime && TaskStartTime != 0)
+        {
             TargetCarVelocity.z = 0;
+        }
+            
+        
 
         // disable
         if (OvertakeTimer >= 20 && TaskStartTime != 0)
             RespawnTrigger = true;
 
         // apply the velocity to the car
-        LeadingCarVelocity.z = TargetCarVelocity.z;
+        gameObject.GetComponent<Rigidbody>().velocity = TargetCarVelocity;
     }
 
     private void LaneChangeWithLowSpeed(int taskCount)
     {
+        Debug.Log("LowSpeed");
         OvertakeTimer += Time.deltaTime;
 
         int TaskStartTime = DriverCar.LaneChangeTime[taskCount];
@@ -125,11 +137,12 @@ public class LaneChangeCar : MonoBehaviour
         if (OvertakeTimer >= 20 && TaskStartTime != 0)
             RespawnTrigger = true;
 
-        LeadingCarVelocity.z = TargetCarVelocity.z;
+        gameObject.GetComponent<Rigidbody>().velocity = TargetCarVelocity;
     }
 
     private void LaneChangeWithObstacle(int taskCount)
     {
+        Debug.Log("Obstacle");
         OvertakeTimer += Time.deltaTime;
 
         int TaskStartTime = DriverCar.LaneChangeTime[taskCount];
@@ -166,7 +179,7 @@ public class LaneChangeCar : MonoBehaviour
             RespawnTrigger = true;
 
         // apply the velocity to the car
-        LeadingCarVelocity.z = TargetCarVelocity.z;
+        gameObject.GetComponent<Rigidbody>().velocity = TargetCarVelocity;
     }
 
     private void WayPointDriving()
