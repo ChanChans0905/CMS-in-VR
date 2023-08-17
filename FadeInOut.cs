@@ -8,17 +8,18 @@ public class FadeInOut : MonoBehaviour
     private Material _mat;
     public bool FadingEvent;
     [SerializeField] DemoCarController DriverCar;
-    [SerializeField] LeadingCar LC1;
-    [SerializeField] LeadingCar2 LC2;
     [SerializeField] TimeLogger TimeLogger;
+    [SerializeField] LaneChangeCar LaneChangeCar;
     public GameObject QuestionnaireStartNotice, TaskFailureNotice, KeepLaneNotice;
     float OutofLaneTime;
     public bool LaneChangeComplete;
+    public bool GetLeadingCarDirection;
 
     void Start()
     {
         Renderer nRend = GetComponent<Renderer>();
         _mat = nRend.material;
+
     }
 
     void Update()
@@ -52,18 +53,18 @@ public class FadeInOut : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        if (other.gameObject.CompareTag("Car") || other.gameObject.CompareTag("OutOfRoad"))
+        if (other.gameObject.CompareTag("FC") || other.gameObject.CompareTag("LC") || other.gameObject.CompareTag("OutOfRoad"))
         {
             FadingEvent = true;
             DriverCar.respawnTrigger = true;
             TaskFailureNotice.SetActive(true);
-            if(LC1.eventStartBool == false) { DriverCar.taskCount--; }
-            if(LC2.eventStartBool == false) { DriverCar.taskCount--; }
+            //if(LC1.eventStartBool == false) { DriverCar.taskCount--; }
+            //if(LC2.eventStartBool == false) { DriverCar.taskCount--; }
             DriverCar.TaskEndBool = true;
             TimeLogger.EventBool = false;
         }
 
-        if (other.gameObject.CompareTag("Car"))
+        if (other.gameObject.CompareTag("LC") || other.gameObject.CompareTag("FC"))
         {
             DriverCar.NumOfCollisionWithCar = 1;
         }
@@ -86,6 +87,15 @@ public class FadeInOut : MonoBehaviour
                 DriverCar.threshold = false;
             }
         }
+
+        if (other.gameObject.CompareTag("TaskCounter1"))
+            GetLeadingCarDirection = true;
+
+        if (other.gameObject.CompareTag("TaskCounter2"))
+            GetLeadingCarDirection = false;
+
+        if (other.gameObject.CompareTag("TaskStartPoint"))
+            LaneChangeCar.TaskStart = true;
     }
 
     private void OnTriggerStay(Collider other)

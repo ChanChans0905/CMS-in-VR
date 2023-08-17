@@ -8,14 +8,8 @@ public class GetTrialCarPosition1 : MonoBehaviour
 {
     [SerializeField] DemoCarController DriverCar;
     public GameObject TC1,TC2,TC3,TC4,TC5,TC6, TC7, TC8;
-    public float TC1position, TC2position, TC3position,TC4position,TC5position,TC6position, TC7position, TC8position, DCPosition;
+    float TC1position, TC2position, TC3position,TC4position,TC5position,TC6position, TC7position, TC8position, DCPosition;
     public bool TC1bool, TC2bool, TC3bool, TC4bool, TC5bool, TC6bool, TC7bool, TC8bool;
-
-
-    private void Start()
-    {
-        Debug.Log(TC1bool);
-    }
 
     void Update()
     {

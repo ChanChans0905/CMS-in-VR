@@ -66,7 +66,7 @@ public class DemoCarController : MonoBehaviour
         
     private void Start()
     {
-        TaskScenario = new int[] { 1, 1, 2, 2, 3, 3 };
+        TaskScenario = new int[] { 3, 3, 2, 1, 2, 3 };
         CMScombination = new int[] { 6, 3, 2, 5, 7, 4, 1 };
         LaneChangeTime = new int[] { 9, 5, 3, 7, 1, 0, 0, 0 };
         FollowingCarSpeed = new int[] { 0, 0, 0, 0, 1, 1, 1, 1 };

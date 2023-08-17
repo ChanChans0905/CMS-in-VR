@@ -8,10 +8,6 @@ public class TaskCounter : MonoBehaviour
 {
     public GameObject FollowingCarLeft, FollowingCarRight, LaneChangingCar, TrialCar1, TrialCar2;
     [SerializeField] DemoCarController DriverCar;
-    [SerializeField] FollowingCar FC1;
-    [SerializeField] FollowingCar2 FC2;
-    [SerializeField] LeadingCar LC1;
-    [SerializeField] LeadingCar2 LC2;
     [SerializeField] TrialCar TC1;
     [SerializeField] TrialCar TC2;
     [SerializeField] FadeInOut FadeInOut;

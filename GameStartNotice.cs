@@ -7,6 +7,11 @@ public class GameStartNotice : MonoBehaviour
     [SerializeField] DemoCarController DriverCar;
     [SerializeField] FadeInOut FadeInOut;
 
+    public GameObject WelcomeNotice, KeepLaneNotice;
+
+    int Threshold;
+    int Next;
+
     void Start()
     {
         FadeInOut.FadingEvent = true;
@@ -18,12 +23,29 @@ public class GameStartNotice : MonoBehaviour
         //{
         //    LogitechGSDK.DIJOYSTATE2ENGINES rec;
         //    rec = LogitechGSDK.LogiGetStateUnity(0);
-            if (/*rec.rgbButtons[5] == 128 ||*/ Input.GetKeyDown(KeyCode.O))
+        if (/*rec.rgbButtons[5] == 128 ||*/ Input.GetKey(KeyCode.O))
+        {
+            Threshold++;
+            if (Threshold > 20)
             {
-                FadeInOut.FadingEvent=false;
-                DriverCar.GameStartNoticeBool = true;
-                gameObject.SetActive(false);
-            } 
-        //}
+                Threshold = 0;
+                Next++;
+            }
+
+            switch (Next)
+            {
+                case 1:
+                    WelcomeNotice.SetActive(false);
+                    KeepLaneNotice.SetActive(true);
+                    break;
+
+                case 2:
+                    FadeInOut.FadingEvent = false;
+                    DriverCar.GameStartNoticeBool = true;
+                    KeepLaneNotice.SetActive(false);
+                    break;
+            }
+        }
     }
+    //}
 }

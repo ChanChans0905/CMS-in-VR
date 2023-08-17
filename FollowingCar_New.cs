@@ -7,35 +7,60 @@ public class FollowingCar_New : MonoBehaviour
 {
     [SerializeField] DemoCarController DriverCar;
     [SerializeField] LaneChangeCar LaneChangeCar;
-    public GameObject CarLeft, CarRight;
+    public GameObject FCL_1, FCR_1, FCL_2, FCR_2;
     public Transform TargetCar;
     Vector3 TargetCarVelocity;
-    Vector3 CarLeftVelocity, CarRightVelocity;
+    GameObject FCL_Velocity, FCR_Velocity;
     public float OvertakeTimer;
-    bool StopOvertake;
+    public bool StopOvertake;
     bool WayPointTrigger;
-    float DistanceTravelledForCarLeft, DistanceTravelledForCarRight;
-    public PathCreator PathCreatorForCarLeft;
-    public PathCreator PathCreatorForCarRight;
+    float LC_DistanceTravelled, RC_DistanceTravelled;
+    public PathCreator PathCreator_LC;
+    public PathCreator PathCreator_RC;
     float DisableTime;
     bool RespawnTrigger;
-    Vector3 StartPos;
+    Vector3 StartPos_FCL_1, StartPos_FCL_2, StartPos_FCR_1, StartPos_FCR_2;
+    bool StartAceel;
+
+    private void Start()
+    {
+        StartPos_FCL_1 = FCL_1.transform.position;
+        StartPos_FCL_2 = FCL_2.transform.position;
+        StartPos_FCR_1 = FCR_1.transform.position;
+        StartPos_FCR_2 = FCR_2.transform.position;
+    }
 
     private void FixedUpdate()
     {
         TargetCarVelocity.z = TargetCar.GetComponent<Rigidbody>().velocity.z;
 
+        if(LaneChangeCar.DrivingDirection == 1)
+        {
+            FCL_Velocity = FCL_1;
+            FCR_Velocity = FCR_1;
+        }
+        else
+        {
+            FCL_Velocity = FCL_2;
+            FCR_Velocity = FCR_2;
+        }
+
         if (LaneChangeCar.TaskStart)
+            StartAceel = true;
+        else
+        {
+            FCL_Velocity.GetComponent<Rigidbody>().velocity = TargetCarVelocity;
+            FCR_Velocity.GetComponent<Rigidbody>().velocity = TargetCarVelocity;
+        }
+
+        if(StartAceel && LaneChangeCar.TaskStartTime != 0)
             Accel(DriverCar.taskCount);
+
+        if (StopOvertake)
+            TargetCarVelocity.z = 0;
 
         //if (WayPointTrigger)
         //    WayPointDrivingForCarLeft();
-
-        if(LaneChangeCar.BeforeTaskStart)
-        {
-            CarLeft.GetComponent<Rigidbody>().velocity = TargetCarVelocity;
-            CarRight.GetComponent<Rigidbody>().velocity = TargetCarVelocity;
-        }
 
         if (DriverCar.respawnTrigger)
             Respawn();
@@ -50,8 +75,8 @@ public class FollowingCar_New : MonoBehaviour
 
         if(OvertakeTimer < 8 + StoppingTime && StoppingTime != 0)
         {
-            CarLeft.GetComponent<Rigidbody>().velocity = TargetCarVelocity;
-            CarRight.GetComponent<Rigidbody>().velocity = TargetCarVelocity;
+            FCL_Velocity.GetComponent<Rigidbody>().velocity = TargetCarVelocity;
+            FCR_Velocity.GetComponent<Rigidbody>().velocity = TargetCarVelocity;
         }
 
         // accel
@@ -59,20 +84,20 @@ public class FollowingCar_New : MonoBehaviour
         {
             if(AccelSpeed == 1)
             {
-                CarLeft.GetComponent<Rigidbody>().velocity = TargetCarVelocity * 1.3f;
-                CarRight.GetComponent<Rigidbody>().velocity = TargetCarVelocity * 1.1f;
+                FCL_Velocity.GetComponent<Rigidbody>().velocity = TargetCarVelocity * 1.5f;
+                FCR_Velocity.GetComponent<Rigidbody>().velocity = TargetCarVelocity * 1.3f;
             }
             else
             {
-                CarLeft.GetComponent<Rigidbody>().velocity = TargetCarVelocity * 1.1f;
-                CarRight.GetComponent<Rigidbody>().velocity = TargetCarVelocity * 1.3f;
+                FCL_Velocity.GetComponent<Rigidbody>().velocity = TargetCarVelocity * 1.3f;
+                FCR_Velocity.GetComponent<Rigidbody>().velocity = TargetCarVelocity * 1.5f;
             }
         }
 
         if(StoppingTime == 0)
         {
-            CarLeft.GetComponent<Rigidbody>().velocity = TargetCarVelocity;
-            CarRight.GetComponent<Rigidbody>().velocity = TargetCarVelocity;
+            FCL_Velocity.GetComponent<Rigidbody>().velocity = TargetCarVelocity;
+            FCR_Velocity.GetComponent<Rigidbody>().velocity = TargetCarVelocity;
         }
     }
 
@@ -90,15 +115,17 @@ public class FollowingCar_New : MonoBehaviour
     private void Respawn()
     {
         OvertakeTimer = 0;
-        DistanceTravelledForCarLeft = 0;
-        DistanceTravelledForCarRight = 0;
+        LC_DistanceTravelled = 0;
+        RC_DistanceTravelled = 0;
         DisableTime = 0;
         WayPointTrigger = false;
         RespawnTrigger = false;
         StopOvertake = false;
-        gameObject.transform.position = StartPos;
-        gameObject.transform.rotation = Quaternion.identity;
-        gameObject.SetActive(false);
+        FCL_1.transform.position = StartPos_FCL_1;
+        FCL_2.transform.position = StartPos_FCL_2;
+        FCR_1.transform.position = StartPos_FCR_1;
+        FCR_2.transform.position = StartPos_FCR_2;
+        //gameObject.SetActive(false);
     }
 }
 
