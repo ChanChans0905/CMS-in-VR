@@ -139,9 +139,10 @@ public class Questionnaire : MonoBehaviour
         for (int i = 0; i < children.Count; i++)
         {
             AnswerSlider = children[i].GetComponent<Slider>();
-            float[] Data = new float[2];
-            Data[0] = i + 1;
-            Data[1] = AnswerSlider.value;
+            string[] QuestionnaireSubject = { "1", "2" };
+            string[] Data = new string[2];
+            Data[0] = QuestionnaireSubject[i];
+            Data[1] = AnswerSlider.value.ToString();
             AppendToCsv(Data);
         }
 
@@ -179,7 +180,7 @@ public class Questionnaire : MonoBehaviour
         }
     }
 
-    public void AppendToCsv(float[] floats)
+    public void AppendToCsv(string[] floats)
     {
         VerifyDirectory();
         VerifyFile();
