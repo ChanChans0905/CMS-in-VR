@@ -30,7 +30,12 @@ public class LaneChangeCar : MonoBehaviour
     private void Start()
     {
         // Set distance between DC and LC
-        StoppingDistance = 60;
+        if (TargetCarVelocity > 25)
+            StoppingDistance = 60;
+        else if (TargetCarVelocity > 23)
+            StoppingDistance = 55;
+        else if (TargetCarVelocity > 20)
+            StoppingDistance = 50;
 
         // Get original position and rotation of LC_1 and LC_2
         StartPos_LC_1 = LeadingCar_1.transform.position;
