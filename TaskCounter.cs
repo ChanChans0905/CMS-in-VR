@@ -19,7 +19,7 @@ public class TaskCounter : MonoBehaviour
     {
         if (DriverCar.TrialBoolTaskCounter)
         {
-            if (DriverCar.TrialTime>= 1)
+            if (DriverCar.TrialTime>= 60)
             {
                 DriverCar.TrialBool = false;
                 FadeInOut.FadingEvent = true;
@@ -29,7 +29,7 @@ public class TaskCounter : MonoBehaviour
                 TC2.ActivateTC = false;
             }
 
-            if (DriverCar.TrialTime>= 7)
+            if (DriverCar.TrialTime>= 67)
             {
                 DriverCar.waitTimer = 0;
                 FadeInOut.FadingEvent = false;

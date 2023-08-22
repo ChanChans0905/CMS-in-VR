@@ -59,11 +59,13 @@ public class LaneChangeCar : MonoBehaviour
         TargetCarVelocity.z = TargetCar.GetComponent<Rigidbody>().velocity.z;
 
         if (TargetCarVelocity.z > 27)
-            StoppingDistance = 60;
+            StoppingDistance = 80;
         else if (TargetCarVelocity.z > 25)
             StoppingDistance = 55;
-        else if (TargetCarVelocity.z > 22.2)
-            StoppingDistance = 50;
+        else if (TargetCarVelocity.z > 22)
+            StoppingDistance = 40;
+        else if (TargetCarVelocity.z > 19)
+            StoppingDistance = 30;
 
         if (TaskStart)
         {
