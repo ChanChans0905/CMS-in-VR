@@ -66,7 +66,7 @@ public class DemoCarController : MonoBehaviour
         
     private void Start()
     {
-        TaskScenario = new int[] { 3, 3, 2, 1, 2, 3 };
+        TaskScenario = new int[] { 3, 1, 2, 1, 2, 3 };
         CMScombination = new int[] { 6, 3, 2, 5, 7, 4, 1 };
         LaneChangeTime = new int[] { 9, 5, 3, 7, 1, 0, 0, 0 };
         FollowingCarSpeed = new int[] { 0, 0, 0, 0, 1, 1, 1, 1 };
@@ -176,7 +176,7 @@ public class DemoCarController : MonoBehaviour
 
         //Acc = (32768f - rec.lY) / 65536f;
         //Br = (rec.lRz - 32768f) / 65536f;
-        if (velocity.Value >= 27.7)
+        if (velocity.Value >= 22.2)
             {
                 totalTorque = 0;
             }

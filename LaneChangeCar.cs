@@ -30,12 +30,7 @@ public class LaneChangeCar : MonoBehaviour
     private void Start()
     {
         // Set distance between DC and LC
-        if (TargetCarVelocity > 25)
-            StoppingDistance = 60;
-        else if (TargetCarVelocity > 23)
-            StoppingDistance = 55;
-        else if (TargetCarVelocity > 20)
-            StoppingDistance = 50;
+        StoppingDistance = 60;
 
         // Get original position and rotation of LC_1 and LC_2
         StartPos_LC_1 = LeadingCar_1.transform.position;
@@ -63,6 +58,12 @@ public class LaneChangeCar : MonoBehaviour
 
         TargetCarVelocity.z = TargetCar.GetComponent<Rigidbody>().velocity.z;
 
+        if (TargetCarVelocity.z > 27)
+            StoppingDistance = 60;
+        else if (TargetCarVelocity.z > 25)
+            StoppingDistance = 55;
+        else if (TargetCarVelocity.z > 22.2)
+            StoppingDistance = 50;
 
         if (TaskStart)
         {
@@ -115,21 +116,17 @@ public class LaneChangeCar : MonoBehaviour
         Debug.Log("Stop");
         OvertakeTimer += Time.deltaTime;
 
-        // overtake
-        if (OvertakeTimer <= 5)
-            TargetCarVelocity.z *= 2f;
-
-        // slows down and change the lane to the 2nd
-        if (OvertakeTimer >= 5 && OvertakeTimer <= 8)
+        // overtake, slows down and change the lane to the 2nd
+        if (OvertakeTimer <= 8)
         {
             // slow down
-            if (Mathf.Abs(TargetCar.transform.position.z - LeadingCarPosition.z) > StoppingDistance) 
-                TargetCarVelocity.z *= 0.5f;
+            if (TargetCar.transform.position.z - LeadingCarPosition.z < -1*StoppingDistance) 
+                TargetCarVelocity.z *= 0.9f;
             else 
-                TargetCarVelocity.z *= 2f;
-
+                TargetCarVelocity.z *= 1.5f;
             // lane changing
-            TargetCarVelocity.x = 2f;
+            if (OvertakeTimer >= 4)
+                TargetCarVelocity.x = 1.5f;
         }
 
         // delete lane changing velocity
@@ -155,27 +152,24 @@ public class LaneChangeCar : MonoBehaviour
         Debug.Log("LowSpeed");
         OvertakeTimer += Time.deltaTime;
 
-        if (OvertakeTimer < 7)
-            TargetCarVelocity.z *= 1.2f;
-
         // overtake
-        if (OvertakeTimer >= 7 + TaskStartTime && OvertakeTimer <= 10 + TaskStartTime)
+        if (OvertakeTimer <= 10 + TaskStartTime)
         {
             float DistanceBetween_DC_LC = TargetCar.transform.position.z - LeadingCarPosition.z;
 
             if(LeadingCarPosition.x < 1000)
             {
-                if(DistanceBetween_DC_LC > -40)
-                    TargetCarVelocity.z *= 1.5f;
+                if(DistanceBetween_DC_LC > -38)
+                    TargetCarVelocity.z *= 1.2f;
                 else
-                    TargetCarVelocity.z *= 0.3f;
+                    TargetCarVelocity.z *= 0.9f;
             }
             else
             {
-                if (DistanceBetween_DC_LC < -40)
-                    TargetCarVelocity.z *= 1.5f;
+                if (DistanceBetween_DC_LC < -38)
+                    TargetCarVelocity.z *= 1.2f;
                 else
-                    TargetCarVelocity.z *= 0.3f;
+                    TargetCarVelocity.z *= 0.9f;
             }
 
             //if (Mathf.Abs(TargetCar.transform.position.z - LeadingCarPosition.z) < 40) 
@@ -183,17 +177,17 @@ public class LaneChangeCar : MonoBehaviour
             //else 
             //    TargetCarVelocity.z *= 2f;
 
-            Debug.Log(Mathf.Abs(TargetCar.transform.position.z - LeadingCarPosition.z));
+            //Debug.Log(Mathf.Abs(TargetCar.transform.position.z - LeadingCarPosition.z));
         }
 
         // slows down and change the lane to the 2nd
-        if (OvertakeTimer > 10 + TaskStartTime && OvertakeTimer <= 13 + TaskStartTime)
+        if (OvertakeTimer > 10 + TaskStartTime && OvertakeTimer <= 12 + TaskStartTime)
         {
-            TargetCarVelocity.z *= 0.6f;
-            TargetCarVelocity.x = 2f;
+            TargetCarVelocity.z *= 0.4f;
+            TargetCarVelocity.x = 3f;
         }
 
-        if (OvertakeTimer > 13 + TaskStartTime)
+        if (OvertakeTimer > 12 + TaskStartTime)
         {
             TargetCarVelocity.z = 0;
             TargetCarVelocity.x = 0;
@@ -210,21 +204,17 @@ public class LaneChangeCar : MonoBehaviour
         Debug.Log("Obstacle");
         OvertakeTimer += Time.deltaTime;
 
-        // overtake
-        if (OvertakeTimer <= 5)
-            TargetCarVelocity.z *= 1.5f;
-
-        // slows down and change the lane to the 2nd
-        if (OvertakeTimer >= 5 && OvertakeTimer <= 8)
+        // over slows down and change the lane to the 2nd
+        if (OvertakeTimer <= 8)
         {
             // slow down
             if (Mathf.Abs(TargetCar.transform.position.z - LeadingCarPosition.z) > StoppingDistance) 
                 TargetCarVelocity.z *= 0.6f;
             else 
-                TargetCarVelocity.z *= 2f;
-
+                TargetCarVelocity.z *= 1.4f;
             // lane changing
-            TargetCarVelocity.x = 2f;
+            if (OvertakeTimer >= 4)
+                TargetCarVelocity.x = 1.5f;
         }
 
         if (OvertakeTimer > 8 && OvertakeTimer <= 8 + TaskStartTime)
@@ -337,5 +327,4 @@ public class LaneChangeCar : MonoBehaviour
         LeadingCar_1.SetActive(false);
         LeadingCar_2.SetActive(false);
     }
-
 }
