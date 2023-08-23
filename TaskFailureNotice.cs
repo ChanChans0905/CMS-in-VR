@@ -14,16 +14,16 @@ public class TaskFailureNotice : MonoBehaviour
 
     void Update()
     {
-        //if (LogitechGSDK.LogiUpdate() && LogitechGSDK.LogiIsConnected(0))
-        //{
-        //    LogitechGSDK.DIJOYSTATE2ENGINES rec;
-        //    rec = LogitechGSDK.LogiGetStateUnity(0);
-            if (/*rec.rgbButtons[5] == 128 ||*/ Input.GetKeyDown(KeyCode.O))
+        if (LogitechGSDK.LogiUpdate() && LogitechGSDK.LogiIsConnected(0))
+        {
+            LogitechGSDK.DIJOYSTATE2ENGINES rec;
+            rec = LogitechGSDK.LogiGetStateUnity(0);
+            if (rec.rgbButtons[5] == 128)
             {
                 FadeInOut.FadingEvent = false;
                 DriverCar.respawnTrigger = false;
                 gameObject.SetActive(false);
-            //}
+            }
         }
     }
 }

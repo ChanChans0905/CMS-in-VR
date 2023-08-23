@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class TimeLogger : MonoBehaviour
 {
-    public float TimeNumber, LeadingCarStopTime, LaneChangeEndTime;
+    public float TimeNumber, LaneChangeEndTime;
     public bool EventBool, LaneChangeComplete;
 
     void FixedUpdate()

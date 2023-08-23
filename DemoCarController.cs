@@ -100,9 +100,10 @@ public class DemoCarController : MonoBehaviour
 
             // Steering
             steeringReduction = 1 - Mathf.Min(Mathf.Abs(velocity.Value) / 30f, 0.85f);
-            Debug.Log(rawSteeringInput);
+
             userSteeringInput.Value = rawSteeringInput * steeringReduction*2f;
             SteeringInput = userSteeringInput.Value;
+            Debug.Log(SteeringInput);
 
             // ************ORG  ***************
 

@@ -5,96 +5,50 @@ using UnityEngine;
 
 public class SaveReactionTime : MonoBehaviour
 {
-
     [SerializeField] TimeLogger TimeLogger;
     [SerializeField] DemoCarController DriverCar;
+    [SerializeField] CSV_Save CSV;
 
-    private string csvSeparator = ",";
-    private string csvFileName = "ReactionTIme.csv";
-    private string[] csvHeaders = new string[1] { "Time" };
-    private string csvDirectoryName = "Data";
-    bool FirstReact;
+    private string csvFileName;
+    private string[] csvHeaders = new string[6] { "Time", "Steering Wheel", "Acc", "Br", "ReactionStarted", "EventStartTime" };
+    bool ChangeName;
+    float ReactionStarted;
+
+    private void Start()
+    {
+        csvFileName = "ReactionTime" + "_" + DriverCar.CMScombination[DriverCar.CMSchangeCount] + "_" + DriverCar.taskCount + ".csv";
+    }
 
     void FixedUpdate()
     {
-        float[] ReactionTime = new float[1];
-
-        if (TimeLogger.EventBool )
+        if (TimeLogger.EventBool)
         {
-            ReactionTime[0] = TimeLogger.LeadingCarStopTime;
-
-            if ((DriverCar.Br >= -0.1 || DriverCar.SteeringInput < 3000)) FirstReact = true; // not fixed
-            if (FirstReact)
+            if(ChangeName)
             {
-                AppendToCsv(ReactionTime);
+                csvFileName = "ReactionTime" + "_" + DriverCar.CMScombination[DriverCar.CMSchangeCount] + "_" + DriverCar.taskCount + ".csv";
+                ChangeName = false;
             }
+
+            float[] ReactionTime = new float[6];
+
+            ReactionTime[0] = TimeLogger.TimeNumber;
+            ReactionTime[1] = DriverCar.SteeringInput;
+            ReactionTime[2] = DriverCar.Acc;
+            ReactionTime[3] = DriverCar.Br;
+            ReactionTime[4] = ReactionStarted;
+            ReactionTime[5] = DriverCar.LaneChangeTime[DriverCar.taskCount];
+
+            if ((DriverCar.Br <= -0.7 || Mathf.Abs(DriverCar.SteeringInput) > 0.02f))
+                ReactionStarted = 1;
+
+            CSV.AppendToCsv(ReactionTime, csvFileName, csvHeaders);
+
         }
-    }
-
-    string GetDirectoryPath()
-    {
-        return Application.dataPath + "/" + csvDirectoryName;
-    }
-
-    string GetFilePath()
-    {
-        return GetDirectoryPath() + "/" + csvFileName;
-    }
-
-    void VerifyDirectory()
-    {
-        string dir = GetDirectoryPath();
-        if (!Directory.Exists(dir))
+        else
         {
-            Directory.CreateDirectory(dir);
+            ReactionStarted = 0;
+            ChangeName = true;
         }
-    }
-
-    void VerifyFile()
-    {
-        string file = GetFilePath();
-        if (!File.Exists(file))
-        {
-            CreateCsv();
-        }
-    }
-
-    public void CreateCsv()
-    {
-        VerifyDirectory();
-        using (StreamWriter sw = File.CreateText(GetFilePath()))
-        {
-            string finalString = "";
-            for (int i = 0; i < csvHeaders.Length; i++)
-            {
-                if (finalString != "")
-                {
-                    finalString += csvSeparator;
-                }
-                finalString += csvHeaders[i];
-            }
-            finalString += csvSeparator;
-            sw.WriteLine(finalString);
-        }
-    }
-
-    public void AppendToCsv(float[] floats)
-    {
-        VerifyDirectory();
-        VerifyFile();
-        using (StreamWriter sw = File.AppendText(GetFilePath()))
-        {
-            string finalString = "";
-            for (int i = 0; i < floats.Length; i++)
-            {
-                if (finalString != "")
-                {
-                    finalString += csvSeparator;
-                }
-                finalString += floats[i];
-            }
-            finalString += csvSeparator;
-            sw.WriteLine(finalString);
-        }
+            
     }
 }

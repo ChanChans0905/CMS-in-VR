@@ -93,12 +93,10 @@ public class LeadingCar2 : MonoBehaviour
         if (overtake >= 8 + DriverCar.LaneChangeTime[count] && (DriverCar.LaneChangeTime[count] != 0))
         {
             TImeLogger.EventBool = true;
-            TImeLogger.LeadingCarStopTime += Time.deltaTime;
         }
 
         if (overtake >= 25 && (DriverCar.LaneChangeTime[count] != 0))
         {
-            TImeLogger.LeadingCarStopTime = 0;
             Respawn = true;
         }
 

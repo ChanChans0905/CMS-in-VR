@@ -20,7 +20,7 @@ public class FinalQuestionnaire : MonoBehaviour
     public string csvFileName;
     private string[] csvHeaders = new string[2] { "Number", "Answer" };
     private string csvDirectoryName = "FinalQuestionnaire";
-    //LogitechGSDK.LogiControllerPropertiesData properties;
+    LogitechGSDK.LogiControllerPropertiesData properties;
     public bool SaveTrigger;
     [SerializeField] FadeInOut FadeInOut;
     public bool ButtonActivation;
@@ -35,30 +35,30 @@ public class FinalQuestionnaire : MonoBehaviour
     void Update()
     {
         List<Transform> children = GetChildren(transform);
-        //if (LogitechGSDK.LogiUpdate() && LogitechGSDK.LogiIsConnected(0))
-        //{
-        //    LogitechGSDK.DIJOYSTATE2ENGINES rec;
-        //    rec = LogitechGSDK.LogiGetStateUnity(0);
+        if (LogitechGSDK.LogiUpdate() && LogitechGSDK.LogiIsConnected(0))
+        {
+            LogitechGSDK.DIJOYSTATE2ENGINES rec;
+            rec = LogitechGSDK.LogiGetStateUnity(0);
 
             // Get slider value from the steering wheel
 
-            //if (rec.lX < -7500) { AnswerSlider.value = 1; }
-            //else if (rec.lX < -4500 && rec.lX > -7500) { AnswerSlider.value = 2; }
-            //else if (rec.lX < -1500 && rec.lX > -4500) { AnswerSlider.value = 3; }
-            //else if (rec.lX < 1500 && rec.lX > -1500) { AnswerSlider.value = 4; }
-            //else if (rec.lX > 1500 && rec.lX < 4500) { AnswerSlider.value = 5; }
-            //else if (rec.lX > 4500 && rec.lX < 7500) { AnswerSlider.value = 6; }
+            if (rec.lX < -7500) { AnswerSlider.value = 1; }
+            else if (rec.lX < -4500 && rec.lX > -7500) { AnswerSlider.value = 2; }
+            else if (rec.lX < -1500 && rec.lX > -4500) { AnswerSlider.value = 3; }
+            else if (rec.lX < 1500 && rec.lX > -1500) { AnswerSlider.value = 4; }
+            else if (rec.lX > 1500 && rec.lX < 4500) { AnswerSlider.value = 5; }
+            else if (rec.lX > 4500 && rec.lX < 7500) { AnswerSlider.value = 6; }
             //else if (rec.lX > 7500) { AnswerSlider.value = 7; }
 
             // Functions below only works with the slider
             if (ButtonActivation)
             {
                 // when the left lever is pulled, move to the next question
-                if (/*rec.rgbButtons[4] == 128 ||*/ Input.GetKeyDown(KeyCode.P))
+                if (rec.rgbButtons[4] == 128)
                 {
-                    //threshold_y++;
-                    //if (threshold_y >= 25)
-                    //{
+                    threshold_y++;
+                    if (threshold_y >= 25)
+                    {
                         if (QuestionnaireNumber < 6)
                         {
                             QuestionnaireNumber++;
@@ -70,8 +70,8 @@ public class FinalQuestionnaire : MonoBehaviour
                         {
                             QuestionnaireNumber++;
                         }
-                    //    threshold_y = 0;
-                    //}
+                        threshold_y = 0;
+                    }
                 }
 
                 // if it's the last question, turn the questions off and turn on the save notive for saving the survey result
@@ -83,11 +83,11 @@ public class FinalQuestionnaire : MonoBehaviour
                 }
 
                 // when the right leve is pulled, get back to the previous question
-                if (/*rec.rgbButtons[5] == 128 || */Input.GetKeyDown(KeyCode.O))
+                if (rec.rgbButtons[5] == 128)
                 {
-                    //threshold_z++;
-                    //if (threshold_z >= 25)
-                    //{
+                    threshold_z++;
+                    if (threshold_z >= 25)
+                    {
                         if (QuestionnaireNumber > 1)
                         {
                             children[QuestionnaireNumber].gameObject.SetActive(false);
@@ -95,8 +95,8 @@ public class FinalQuestionnaire : MonoBehaviour
                             AnswerSlider = children[QuestionnaireNumber - 1].GetComponent<Slider>();
                             QuestionnaireNumber--;
                         }
-                    //    threshold_z = 0;
-                    //}
+                        threshold_z = 0;
+                    }
                 }
             }
 
@@ -106,7 +106,7 @@ public class FinalQuestionnaire : MonoBehaviour
                 SaveToCSV();
                 GameEnd.SetActive(true);
             }
-        //}
+        }
     }
 
 

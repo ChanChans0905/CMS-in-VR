@@ -48,7 +48,7 @@ public class LaneChangeCar : MonoBehaviour
             LeadingCarVelocity = LeadingCar_1;
             Debug.Log(LeadingCarVelocity);
         }
-        else if(!FadeInOut.GetLeadingCarDirection) 
+        else if (!FadeInOut.GetLeadingCarDirection)
         {
             Debug.Log(LeadingCarVelocity);
             DrivingDirection = -1;
@@ -91,7 +91,7 @@ public class LaneChangeCar : MonoBehaviour
 
             TaskStart = false;
         }
-        else if(!WayPointTrigger)
+        else if (!WayPointTrigger)
             LeadingCarVelocity.GetComponent<Rigidbody>().velocity = TargetCarVelocity;
 
         if (StartScenario_LaneChangeThenStop)
@@ -100,7 +100,7 @@ public class LaneChangeCar : MonoBehaviour
         if (StartScenario_LaneChangeWithLowSpeed)
             LaneChangeWithLowSpeed();
 
-        if(StartScenario_Obstacle)
+        if (StartScenario_Obstacle)
             LaneChangeWithObstacle();
 
         if (StartScenarioNone)
@@ -122,9 +122,9 @@ public class LaneChangeCar : MonoBehaviour
         if (OvertakeTimer <= 8)
         {
             // slow down
-            if (TargetCar.transform.position.z - LeadingCarPosition.z < -1*StoppingDistance) 
+            if (TargetCar.transform.position.z - LeadingCarPosition.z < -1 * StoppingDistance)
                 TargetCarVelocity.z *= 0.9f;
-            else 
+            else
                 TargetCarVelocity.z *= 1.5f;
             // lane changing
             if (OvertakeTimer >= 4)
@@ -159,9 +159,9 @@ public class LaneChangeCar : MonoBehaviour
         {
             float DistanceBetween_DC_LC = TargetCar.transform.position.z - LeadingCarPosition.z;
 
-            if(LeadingCarPosition.x < 1000)
+            if (LeadingCarPosition.x < 1000)
             {
-                if(DistanceBetween_DC_LC > -38)
+                if (DistanceBetween_DC_LC > -38)
                     TargetCarVelocity.z *= 1.2f;
                 else
                     TargetCarVelocity.z *= 0.9f;
@@ -210,9 +210,9 @@ public class LaneChangeCar : MonoBehaviour
         if (OvertakeTimer <= 8)
         {
             // slow down
-            if (Mathf.Abs(TargetCar.transform.position.z - LeadingCarPosition.z) > StoppingDistance) 
+            if (Mathf.Abs(TargetCar.transform.position.z - LeadingCarPosition.z) > StoppingDistance)
                 TargetCarVelocity.z *= 0.6f;
-            else 
+            else
                 TargetCarVelocity.z *= 1.4f;
             // lane changing
             if (OvertakeTimer >= 4)
@@ -232,7 +232,7 @@ public class LaneChangeCar : MonoBehaviour
             TargetCarVelocity.x = 2f;
             if (OvertakeTimer <= 10 + TaskStartTime)
             {
-                
+
                 Obstacle.SetActive(true);
             }
         }
@@ -270,13 +270,13 @@ public class LaneChangeCar : MonoBehaviour
             TargetCarVelocity.x = 2f;
         }
 
-        if(OvertakeTimer > 8)
+        if (OvertakeTimer > 8)
         {
             TargetCarVelocity.z *= 1f;
             TargetCarVelocity.x = 0;
         }
 
-        if(WayPointTrigger)
+        if (WayPointTrigger)
             TargetCarVelocity.z = 0;
 
         // apply the velocity to the car
@@ -287,7 +287,7 @@ public class LaneChangeCar : MonoBehaviour
 
     private void WayPointDriving()
     {
-        if(DrivingDirection == 1)
+        if (DrivingDirection == 1)
         {
             DistanceTravelled += Time.deltaTime * 20;
             LeadingCar_1.transform.position = PathCreator_1.path.GetPointAtDistance(DistanceTravelled);

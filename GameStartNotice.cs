@@ -19,33 +19,33 @@ public class GameStartNotice : MonoBehaviour
 
     void Update()
     {
-        //if (LogitechGSDK.LogiUpdate() && LogitechGSDK.LogiIsConnected(0))
-        //{
-        //    LogitechGSDK.DIJOYSTATE2ENGINES rec;
-        //    rec = LogitechGSDK.LogiGetStateUnity(0);
-        if (/*rec.rgbButtons[5] == 128 ||*/ Input.GetKey(KeyCode.O))
+        if (LogitechGSDK.LogiUpdate() && LogitechGSDK.LogiIsConnected(0))
         {
-            Threshold++;
-            if (Threshold > 20)
+            LogitechGSDK.DIJOYSTATE2ENGINES rec;
+            rec = LogitechGSDK.LogiGetStateUnity(0);
+            if (rec.rgbButtons[5] == 128)
             {
-                Threshold = 0;
-                Next++;
-            }
+                Threshold++;
+                if (Threshold > 20)
+                {
+                    Threshold = 0;
+                    Next++;
+                }
 
-            switch (Next)
-            {
-                case 1:
-                    WelcomeNotice.SetActive(false);
-                    KeepLaneNotice.SetActive(true);
-                    break;
+                switch (Next)
+                {
+                    case 1:
+                        WelcomeNotice.SetActive(false);
+                        KeepLaneNotice.SetActive(true);
+                        break;
 
-                case 2:
-                    FadeInOut.FadingEvent = false;
-                    DriverCar.GameStartNoticeBool = true;
-                    KeepLaneNotice.SetActive(false);
-                    break;
+                    case 2:
+                        FadeInOut.FadingEvent = false;
+                        DriverCar.GameStartNoticeBool = true;
+                        KeepLaneNotice.SetActive(false);
+                        break;
+                }
             }
         }
     }
-    //}
 }
