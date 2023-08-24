@@ -6,10 +6,10 @@ using UnityEngine.UIElements;
 
 public class TaskCounter : MonoBehaviour
 {
-    public GameObject FollowingCarLeft, FollowingCarRight, LaneChangingCar, TrialCar1, TrialCar2;
+    public GameObject FollowingCarLeft, FollowingCarRight, LaneChangingCar, TCParent, WayPoint_LC;
     [SerializeField] DemoCarController DriverCar;
-    [SerializeField] TrialCar TC1;
-    [SerializeField] TrialCar TC2;
+    [SerializeField] TrialCar TC_Left;
+    [SerializeField] TrialCar TC_Right;
     [SerializeField] FadeInOut FadeInOut;
     public GameObject TrialStartNotive, TrialEndNotice;
     public bool TaskStartBool;
@@ -25,8 +25,7 @@ public class TaskCounter : MonoBehaviour
                 FadeInOut.FadingEvent = true;
                 DriverCar.respawnTrigger = true;
                 TrialEndNotice.SetActive(true);
-                TC1.ActivateTC = false;
-                TC2.ActivateTC = false;
+                TCParent.SetActive(false); 
             }
 
             if (DriverCar.TrialTime>= 67)
@@ -39,17 +38,6 @@ public class TaskCounter : MonoBehaviour
                 DriverCar.TrialBoolTaskCounter= false;
             }
         }
-
-        if(DriverCar.respawnTrigger && DriverCar.TrialBool == false)
-        {
-            //FC1.Respawn = true; FC2.Respawn = true;
-            //LC1.Respawn = true; LC2.Respawn = true;
-        }
-        else if(DriverCar.respawnTrigger && DriverCar.TrialBool)
-        {
-            TC1.ActivateTC = false;
-            TC2.ActivateTC = false;
-        }
     }
 
     private void OnTriggerEnter(Collider other)
@@ -59,6 +47,7 @@ public class TaskCounter : MonoBehaviour
             FollowingCarLeft.SetActive(true);
             FollowingCarRight.SetActive(true);
             LaneChangingCar.SetActive(true);
+            WayPoint_LC.SetActive(true);
 
             if(DriverCar.threshold == false)
             {
@@ -75,12 +64,10 @@ public class TaskCounter : MonoBehaviour
          
         if(other.gameObject.CompareTag("DriverCar") && DriverCar.TrialBool)
         {
-            TrialCar1.SetActive(true); TrialCar2.SetActive(true);
-            if(DriverCar.TrialBoolTaskCounter == false) DriverCar.TrialBoolTaskCounter = true;
-            TC1.ActivateTC = true;
-            TC2.ActivateTC = true;
-
-            
+            TCParent.SetActive(true);
+            TC_Left.TC1Distance = 0;
+            if(DriverCar.TrialBoolTaskCounter == false) 
+                DriverCar.TrialBoolTaskCounter = true;
         }
     }
 }
