@@ -93,6 +93,8 @@ public class FadeInOut : MonoBehaviour
 
         if (other.gameObject.CompareTag("TaskCounter2"))
             GetLeadingCarDirection = false;
+                
+            
 
         if (other.gameObject.CompareTag("TaskStartPoint"))
             LC.TaskStart = true;

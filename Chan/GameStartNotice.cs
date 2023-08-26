@@ -23,6 +23,7 @@ public class GameStartNotice : MonoBehaviour
         {
             LogitechGSDK.DIJOYSTATE2ENGINES rec;
             rec = LogitechGSDK.LogiGetStateUnity(0);
+
             if (rec.rgbButtons[5] == 128)
             {
                 Threshold++;

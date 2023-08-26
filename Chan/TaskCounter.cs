@@ -8,10 +8,9 @@ public class TaskCounter : MonoBehaviour
 {
     public GameObject FollowingCarLeft, FollowingCarRight, LaneChangingCar, TCParent, WayPoint_LC;
     [SerializeField] DemoCarController DriverCar;
-    [SerializeField] TrialCar TC_Left;
-    [SerializeField] TrialCar TC_Right;
+    [SerializeField] TrialCar TC;
     [SerializeField] FadeInOut FadeInOut;
-    public GameObject TrialStartNotive, TrialEndNotice;
+    public GameObject TrialEndNotice;
     public bool TaskStartBool;
 
 
@@ -19,7 +18,7 @@ public class TaskCounter : MonoBehaviour
     {
         if (DriverCar.TrialBoolTaskCounter)
         {
-            if (DriverCar.TrialTime>= 60)
+            if (DriverCar.TrialTime>= 90)
             {
                 DriverCar.TrialBool = false;
                 FadeInOut.FadingEvent = true;
@@ -28,7 +27,7 @@ public class TaskCounter : MonoBehaviour
                 TCParent.SetActive(false); 
             }
 
-            if (DriverCar.TrialTime>= 67)
+            if (DriverCar.TrialTime>= 97)
             {
                 DriverCar.waitTimer = 0;
                 FadeInOut.FadingEvent = false;
@@ -50,22 +49,17 @@ public class TaskCounter : MonoBehaviour
             WayPoint_LC.SetActive(true);
 
             if(!DriverCar.threshold)
-            {
                 DriverCar.threshold = true;
-                Debug.Log("Threshold" + DriverCar.taskCount);
-            }
             else
-            {
                 DriverCar.taskCount++;
-                Debug.Log("TaskCOunt Added" + DriverCar.taskCount);
-            }
         }
          
         if(other.gameObject.CompareTag("DriverCar") && DriverCar.TrialBool)
         {
             TCParent.SetActive(true);
-            TC_Left.TC1Distance = 0;
-            if(DriverCar.TrialBoolTaskCounter == false) 
+            TC.TC1Distance = 0;
+            TC.TrialStartNoticeTimer = 0;
+            if (DriverCar.TrialBoolTaskCounter == false)
                 DriverCar.TrialBoolTaskCounter = true;
         }
     }

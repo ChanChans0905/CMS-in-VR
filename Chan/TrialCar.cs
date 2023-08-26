@@ -6,13 +6,21 @@ using UnityEngine;
 public class TrialCar : MonoBehaviour
 {
     public PathCreator pathCreator;
-    public float TC1Distance;
+    public float TC1Distance, TrialStartNoticeTimer;
 
     public GameObject TC1, TC2, TC3, TC4;
+    public GameObject TrialStartNotice;
 
     void Update()
     {
+        TrialStartNoticeTimer += Time.deltaTime;
         TC1Distance += Time.deltaTime * 50;
+
+        if (TrialStartNoticeTimer > 0.1 && TrialStartNoticeTimer <= 7)
+            TrialStartNotice.SetActive(true);
+        else if (TrialStartNoticeTimer > 7)
+            TrialStartNotice.SetActive(false);
+
 
         TC1.transform.position = pathCreator.path.GetPointAtDistance(TC1Distance);
         //TC1.transform.rotation = pathCreator.path.GetRotationAtDistance(TC1Distance);        
