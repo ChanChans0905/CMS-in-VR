@@ -7,7 +7,6 @@ public class TrialCar : MonoBehaviour
 {
     public PathCreator pathCreator;
     public float TC1Distance;
-    float TC2Distance, TC3Distance, TC4Distance;
 
     public GameObject TC1, TC2, TC3, TC4;
 
@@ -17,7 +16,6 @@ public class TrialCar : MonoBehaviour
 
         TC1.transform.position = pathCreator.path.GetPointAtDistance(TC1Distance);
         //TC1.transform.rotation = pathCreator.path.GetRotationAtDistance(TC1Distance);        
-
         TC2.transform.position = pathCreator.path.GetPointAtDistance(TC1Distance*0.9f);
         //TC2.transform.rotation = pathCreator.path.GetRotationAtDistance(TC1Distance*0.9f);
         TC3.transform.position = pathCreator.path.GetPointAtDistance(TC1Distance * 0.8f);

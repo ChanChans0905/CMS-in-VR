@@ -21,21 +21,19 @@ public class DemoCarController : MonoBehaviour
     [SerializeField] private VolvoCars.Data.GearLeverIndication gearLeverIndication = default;
     [SerializeField] private VolvoCars.Data.DoorIsOpenR1L doorIsOpenR1L = default; // R1L stands for Row 1 Left.
     [SerializeField] private VolvoCars.Data.LampBrake lampBrake = default;
-    [SerializeField] LeadingCar LC1;
-    [SerializeField] LeadingCar2 LC2;
-    [SerializeField] FollowingCar FC1;
-    [SerializeField] FollowingCar2 FC2;
+
     [SerializeField] GetTrialCarPosition1 TC1;
+    [SerializeField] LaneChangeCar LC;
 
     public GameObject VolvoCar;
     public GameObject CMS_LD_SW, CMS_LD_TM, CMS_RD_SW, CMS_RD_TM, CMSCenter, CMSStitched, TraditionalMirrorLeft, TraditionalMirrorRight;
     public GameObject TrialStartNotice;
+    public GameObject CSV_SaveObject;
 
     public bool respawnTrigger;
-    bool CollisionWithCar, CollisionWithGuardRail;
 
     public float waitTimer;
-    public int taskCount, NumOfCollisionWithCar, NumOfCollisionWithGuardRail;
+    public int taskCount, NumOfCollision;
     public int CMSchangeCount;
     public int QuestionnaireCount;
     public bool CMSchangeBool;
@@ -47,15 +45,22 @@ public class DemoCarController : MonoBehaviour
     public float NoticeTimer;
     public float FC1Lposition, FC1Rposition, LC1position, FC2Lposition, FC2Rposition, LC2position, DCposition;
     public bool FCLbool, FCRbool, LCbool, TCLbool, TCRbool;
-    public bool ARbool, GameStartNoticeBool, MainTask, TaskEndBool;
+    public bool ARbool, GameStartNoticeBool, MainTask;
     public float Acc, Br, SteeringInput;
     public float TrialTime;
+    int ReactionStarted, ReactionNoCount ;
+    public int TotalFirstReactionValue;
 
     public int[] TaskScenario = new int[6];
     public int[] LaneChangeTime = new int[8]; // make the 2 dimension list by using counter-balance
     public int[] FollowingCarSpeed = new int[8];
     public int[] CMScombination = new int[7];
     public int ARSignalActivateDistance;
+
+    float FirstReactionTimer;
+    public int SampleNumber;
+    public bool SampleSelection;
+    public int LaneChangeComplete;
 
     #region Private variables not shown in the inspector
     private VolvoCars.Data.Value.Public.WheelTorque wheelTorqueValue = new VolvoCars.Data.Value.Public.WheelTorque(); // This is the value type used by the wheelTorque data item.     
@@ -77,8 +82,6 @@ public class DemoCarController : MonoBehaviour
         TrialBool = true;
         TrialBoolFilter = true;
         CMSchange();
-
-        taskCount = 1;
     }
 
     private void Update()
@@ -192,18 +195,45 @@ public class DemoCarController : MonoBehaviour
             }
             ApplyWheelTorques(totalTorque);
 
+            if(SampleSelection)
+            {
+                CSV_SaveObject.SetActive(true);
+            }
+
+
+
+            if(LC.LC_StoppingTime ==1)
+            {
+                FirstReactionTimer += Time.deltaTime;
+                if (FirstReactionTimer <= 0.1f && (Br <= -0.7 || Mathf.Abs(SteeringInput) > 0.02f))
+                    ReactionNoCount = 1;
+
+                if (FirstReactionTimer >= 0.1f && (Br <= -0.7 || Mathf.Abs(SteeringInput) > 0.02f))
+                    ReactionStarted = 1;
+
+                TotalFirstReactionValue = ReactionStarted - ReactionNoCount;
+            }
+
+
             if (respawnTrigger)
             {
                 waitTimer += Time.deltaTime;
                 if (waitTimer > 1.5)
                 {
+                    ReactionStarted = 0;
+                    ReactionNoCount = 0;
+                    TotalFirstReactionValue = 0;
+                    NumOfCollision = 0;
+                    LaneChangeComplete = 0;
+
                     velocity.Value = 0;
                     wheelTorque.Value = wheelTorqueValue;
                     VolvoCar.transform.localPosition = new Vector3(-2166, 0, 2300);
                     VolvoCar.transform.rotation = Quaternion.Slerp(VolvoCar.transform.rotation, Quaternion.AngleAxis(-90, Vector3.up), 3f * Time.deltaTime);
                 }
             }
-            else if (respawnTrigger == false && waitTimer > 0) { waitTimer = 0; }
+            else if (!respawnTrigger) 
+                waitTimer = 0;
 
             if (CMSchangeBool)
             {
@@ -226,12 +256,12 @@ public class DemoCarController : MonoBehaviour
 
             if (ARbool)
             {
-                LC1position = Mathf.Abs(LC1.gameObject.transform.position.z);
-                FC1Lposition = Mathf.Abs(FC1.carLeft.transform.position.z);
-                FC1Rposition = Mathf.Abs(FC1.carRight.transform.position.z);
-                LC2position = Mathf.Abs(LC2.gameObject.transform.position.z);
-                FC2Lposition = Mathf.Abs(FC2.carLeft.transform.position.z);
-                FC2Rposition = Mathf.Abs(FC2.carRight.transform.position.z);
+                //LC1position = Mathf.Abs(LC1.gameObject.transform.position.z);
+                //FC1Lposition = Mathf.Abs(FC1.carLeft.transform.position.z);
+                //FC1Rposition = Mathf.Abs(FC1.carRight.transform.position.z);
+                //LC2position = Mathf.Abs(LC2.gameObject.transform.position.z);
+                //FC2Lposition = Mathf.Abs(FC2.carLeft.transform.position.z);
+                //FC2Rposition = Mathf.Abs(FC2.carRight.transform.position.z);
                 DCposition = Mathf.Abs(VolvoCar.transform.position.z);
 
                 if (MathF.Abs(DCposition - LC1position) <= ARSignalActivateDistance || MathF.Abs(DCposition - LC2position) <= ARSignalActivateDistance) { LCbool = true; } else { LCbool = false; }
@@ -264,7 +294,6 @@ public class DemoCarController : MonoBehaviour
     {
         int[] CMScombination = { 3, 6, 2, 5, 7, 4, 1 };
 
-        taskCount = 1;
         CMSCenter.SetActive(false);
         CMS_LD_SW.SetActive(false);
         CMS_LD_TM.SetActive(false);

@@ -7,13 +7,12 @@ public class FadeInOut : MonoBehaviour
     public float alpha = 0;
     private Material _mat;
     public bool FadingEvent;
-    [SerializeField] DemoCarController DriverCar;
-    [SerializeField] TimeLogger TimeLogger;
-    [SerializeField] LaneChangeCar LaneChangeCar;
-    public GameObject QuestionnaireStartNotice, TaskFailureNotice, KeepLaneNotice;
-    float OutofLaneTime;
-    public bool LaneChangeComplete;
+    [SerializeField] DemoCarController DC;
+    [SerializeField] LaneChangeCar LC;
+    public GameObject QuestionnaireStartNotice, TaskFailureNotice/*,KeepLaneNotice*/;
+    //float OutofLaneTime;
     public bool GetLeadingCarDirection;
+    bool DrivingIn2ndLane;
 
     void Start()
     {
@@ -24,13 +23,18 @@ public class FadeInOut : MonoBehaviour
 
     void Update()
     {
-        if (FadingEvent == true) { FadeIn(alpha);}
-        else if (FadingEvent == false) { FadeOut(alpha);}
-        Color nNew = new Color(0, 0, 0, alpha);
-        _mat.SetColor("_BaseColor", nNew);
+        //if(OutofLaneTime >= 3) KeepLaneNotice.gameObject.SetActive(true);
+        //if (OutofLaneTime == 0) KeepLaneNotice.gameObject.SetActive(false);
 
-        if(OutofLaneTime >= 3) KeepLaneNotice.gameObject.SetActive(true);
-        if (OutofLaneTime == 0) KeepLaneNotice.gameObject.SetActive(false);
+        if (DC.respawnTrigger)
+        {
+            if (FadingEvent == true) { FadeIn(alpha); }
+            else if (FadingEvent == false) { FadeOut(alpha); }
+            Color nNew = new Color(0, 0, 0, alpha);
+            _mat.SetColor("_BaseColor", nNew);
+            //OutofLaneTime = 0;
+            DrivingIn2ndLane = false;
+        }
     }
 
     public void FadeIn(float degree)
@@ -56,35 +60,31 @@ public class FadeInOut : MonoBehaviour
         if (other.gameObject.CompareTag("FC") || other.gameObject.CompareTag("LC") || other.gameObject.CompareTag("OutOfRoad"))
         {
             FadingEvent = true;
-            DriverCar.respawnTrigger = true;
+            DC.respawnTrigger = true;
             TaskFailureNotice.SetActive(true);
-            //if(LC1.eventStartBool == false) { DriverCar.taskCount--; }
-            //if(LC2.eventStartBool == false) { DriverCar.taskCount--; }
-            DriverCar.TaskEndBool = true;
-            TimeLogger.EventBool = false;
+            if(!LC.TaskStart && DC.taskCount != 0) 
+                DC.taskCount--;
         }
 
         if (other.gameObject.CompareTag("LC") || other.gameObject.CompareTag("FC"))
         {
-            DriverCar.NumOfCollisionWithCar = 1;
+            DC.NumOfCollision = 1;
         }
 
         if (other.gameObject.CompareTag("OutOfRoad"))
         {
-            DriverCar.NumOfCollisionWithGuardRail = 1;
+            DC.NumOfCollision = 2;
         }
         if (other.gameObject.CompareTag("WayPoint"))
         {
-            DriverCar.TaskEndBool = true;
-            TimeLogger.EventBool = false;
 
-            if(DriverCar.taskCount == 2)
+            if(DC.taskCount == 2)
             {
                 FadingEvent = true;
-                DriverCar.respawnTrigger = true;
+                DC.respawnTrigger = true;
                 QuestionnaireStartNotice.SetActive(true);
-                DriverCar.taskCount = 0;
-                DriverCar.threshold = false;
+                DC.taskCount = 0;
+                DC.threshold = false;
             }
         }
 
@@ -95,28 +95,31 @@ public class FadeInOut : MonoBehaviour
             GetLeadingCarDirection = false;
 
         if (other.gameObject.CompareTag("TaskStartPoint"))
-            LaneChangeCar.TaskStart = true;
+            LC.TaskStart = true;
     }
 
     private void OnTriggerStay(Collider other)
     {
-        if (other.gameObject.CompareTag("KeepLaneNoticeArea"))
-        {
-            OutofLaneTime += Time.deltaTime;
-        }
+        //if (other.gameObject.CompareTag("KeepLaneNoticeArea"))
+        //{
+        //    OutofLaneTime += Time.deltaTime;
+        //}
+
+        if(other.tag == "LaneChangeTimeCalculator" && !DrivingIn2ndLane)
+            DrivingIn2ndLane = true;
     }
 
     private void OnTriggerExit(Collider other)
     {
-        if (other.gameObject.CompareTag("KeepLaneNoticeArea"))
-        {
-            OutofLaneTime = 0;
-            KeepLaneNotice.SetActive(false);
-        }
+        //if (other.gameObject.CompareTag("KeepLaneNoticeArea"))
+        //{
+        //    OutofLaneTime = 0;
+        //    KeepLaneNotice.SetActive(false);
+        //}
 
-        if (other.gameObject.CompareTag("LaneChangeTimeCalculator"))
+        if (other.tag == ("LaneChangeTimeCalculator") && DrivingIn2ndLane)
         {
-            TimeLogger.LaneChangeComplete = true;
+                DC.LaneChangeComplete = 1;
         }
     }
 }

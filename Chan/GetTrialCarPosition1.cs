@@ -34,8 +34,5 @@ public class GetTrialCarPosition1 : MonoBehaviour
             if (MathF.Abs(DCPosition - TC7position) <= 10) TC5bool = true; else TC7bool = false;
             if (MathF.Abs(DCPosition - TC8position)  <= 10) TC6bool = true; else TC8bool = false;
         }
-
-
-
     }
 }

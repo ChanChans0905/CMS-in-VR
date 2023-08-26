@@ -42,14 +42,14 @@ public class TaskCounter : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        if(other.gameObject.CompareTag("DriverCar") && DriverCar.TrialBool == false)
+        if(other.gameObject.CompareTag("DriverCar") && !DriverCar.TrialBool)
         {
             FollowingCarLeft.SetActive(true);
             FollowingCarRight.SetActive(true);
             LaneChangingCar.SetActive(true);
             WayPoint_LC.SetActive(true);
 
-            if(DriverCar.threshold == false)
+            if(!DriverCar.threshold)
             {
                 DriverCar.threshold = true;
                 Debug.Log("Threshold" + DriverCar.taskCount);
@@ -59,7 +59,6 @@ public class TaskCounter : MonoBehaviour
                 DriverCar.taskCount++;
                 Debug.Log("TaskCOunt Added" + DriverCar.taskCount);
             }
-
         }
          
         if(other.gameObject.CompareTag("DriverCar") && DriverCar.TrialBool)

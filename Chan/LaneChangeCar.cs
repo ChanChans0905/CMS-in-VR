@@ -10,22 +10,25 @@ public class LaneChangeCar : MonoBehaviour
     public Transform TargetCar;
     public GameObject Obstacle;
     public GameObject LeadingCar_1, LeadingCar_2;
-    Vector3 TargetCarVelocity;
+    public PathCreator PathCreator_1, PathCreator_2;
     GameObject LeadingCarVelocity;
+    Vector3 TargetCarVelocity;
+    Vector3 StartPos_LC_1, StartPos_LC_2;
+    Vector3 LeadingCarPosition;
+    quaternion StartRot_LC_1, StartRot_LC_2;
     float OvertakeTimer;
     float StoppingDistance;
-    Vector3 StartPos_LC_1, StartPos_LC_2;
-    quaternion StartRot_LC_1, StartRot_LC_2;
     public bool TaskStart;
     public bool WayPointTrigger;
     float DistanceTravelled;
-    public PathCreator PathCreator_1, PathCreator_2;
+
     float DisableTime;
     bool RespawnTrigger;
-    bool StartScenario_LaneChangeThenStop, StartScenario_LaneChangeWithLowSpeed, StartScenario_Obstacle, StartScenarioNone;
+    bool StartScenario_LaneChangeThenStop, StartScenario_LaneChangeWithLowSpeed, StartScenario_Obstacle, StartScenario_None;
     public float DrivingDirection;
-    Vector3 LeadingCarPosition;
+
     public int TaskStartTime;
+    public int LC_StoppingTime;
 
     private void Start()
     {
@@ -33,10 +36,10 @@ public class LaneChangeCar : MonoBehaviour
         StoppingDistance = 60;
 
         // Get original position and rotation of LC_1 and LC_2
-        StartPos_LC_1 = LeadingCar_1.transform.position;
-        StartPos_LC_2 = LeadingCar_2.transform.position;
-        StartRot_LC_1 = LeadingCar_1.transform.rotation;
-        StartRot_LC_2 = LeadingCar_2.transform.rotation;
+        StartPos_LC_1 = LeadingCar_1.transform.localPosition;
+        StartPos_LC_2 = LeadingCar_2.transform.localPosition;
+        StartRot_LC_1 = LeadingCar_1.transform.localRotation;
+        StartRot_LC_2 = LeadingCar_2.transform.localRotation;
     }
 
     private void FixedUpdate()
@@ -87,7 +90,7 @@ public class LaneChangeCar : MonoBehaviour
                 }
             }
             else
-                StartScenarioNone = true;
+                StartScenario_None = true;
 
             TaskStart = false;
         }
@@ -103,13 +106,16 @@ public class LaneChangeCar : MonoBehaviour
         if (StartScenario_Obstacle)
             LaneChangeWithObstacle();
 
-        if (StartScenarioNone)
+        if (StartScenario_None)
             None();
 
         if (WayPointTrigger)
             WayPointDriving();
 
         if (DriverCar.respawnTrigger)
+            RespawnTrigger = true;
+
+        if (RespawnTrigger)
             Respawn();
     }
 
@@ -138,6 +144,7 @@ public class LaneChangeCar : MonoBehaviour
         // stop
         if (OvertakeTimer > 8 + TaskStartTime)
         {
+            LC_StoppingTime = 1;
             TargetCarVelocity.z = 0;
         }
 
@@ -191,6 +198,7 @@ public class LaneChangeCar : MonoBehaviour
 
         if (OvertakeTimer > 12 + TaskStartTime)
         {
+            LC_StoppingTime = 1;
             TargetCarVelocity.z = 0;
             TargetCarVelocity.x = 0;
         }
@@ -238,7 +246,11 @@ public class LaneChangeCar : MonoBehaviour
         }
 
         if (OvertakeTimer > 11 + TaskStartTime)
+        {
+            LC_StoppingTime = 1;
             TargetCarVelocity.x = 0;
+        }
+            
 
         // disable
         if (OvertakeTimer >= 20)
@@ -281,15 +293,13 @@ public class LaneChangeCar : MonoBehaviour
 
         // apply the velocity to the car
         gameObject.GetComponent<Rigidbody>().velocity = TargetCarVelocity * DrivingDirection;
-
-        StartScenarioNone = false;
     }
 
     private void WayPointDriving()
     {
         if (DrivingDirection == 1)
         {
-            DistanceTravelled += Time.deltaTime * 20;
+            DistanceTravelled += Time.deltaTime * 10;
             LeadingCar_1.transform.position = PathCreator_1.path.GetPointAtDistance(DistanceTravelled);
             LeadingCar_1.transform.rotation = PathCreator_1.path.GetRotationAtDistance(DistanceTravelled);
             DisableTime += Time.deltaTime;
@@ -300,7 +310,7 @@ public class LaneChangeCar : MonoBehaviour
 
         if (DrivingDirection == -1)
         {
-            DistanceTravelled += Time.deltaTime * 20;
+            DistanceTravelled += Time.deltaTime * 10;
             LeadingCar_2.transform.position = PathCreator_2.path.GetPointAtDistance(DistanceTravelled);
             LeadingCar_2.transform.rotation = PathCreator_2.path.GetRotationAtDistance(DistanceTravelled);
             DisableTime += Time.deltaTime;
@@ -315,18 +325,20 @@ public class LaneChangeCar : MonoBehaviour
         OvertakeTimer = 0;
         DistanceTravelled = 0;
         DisableTime = 0;
+        LC_StoppingTime = 0;
         WayPointTrigger = false;
         TaskStart = false;
         RespawnTrigger = false;
         StartScenario_LaneChangeThenStop = false;
         StartScenario_LaneChangeWithLowSpeed = false;
         StartScenario_Obstacle = false;
-        StartScenarioNone = false;
-        LeadingCar_1.transform.position = StartPos_LC_1;
-        LeadingCar_2.transform.position = StartPos_LC_2;
-        LeadingCar_1.transform.rotation = StartRot_LC_1;
-        LeadingCar_2.transform.rotation = StartRot_LC_2;
+        StartScenario_None = false;
+        LeadingCar_1.transform.localPosition = StartPos_LC_1;
+        LeadingCar_2.transform.localPosition = StartPos_LC_2;
+        LeadingCar_1.transform.localRotation = StartRot_LC_1;
+        LeadingCar_2.transform.localRotation = StartRot_LC_2;
         LeadingCar_1.SetActive(false);
         LeadingCar_2.SetActive(false);
+        RespawnTrigger = false;
     }
 }

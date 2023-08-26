@@ -9,7 +9,7 @@ using UnityEngine.XR;
 
 public class Questionnaire : MonoBehaviour
 {
-    public bool SaveTriggerExit = false;
+    public bool SaveTriggerExit;
     public GameObject SaveTriggerObject;
     int threshold_y;
     int threshold_z;

@@ -5,14 +5,14 @@ using System.Collections.Generic;
 using System.Threading;
 using UnityEngine;
 
-public class LeadingCar : MonoBehaviour
+public class LeadingCar2 : MonoBehaviour
 {
-    [SerializeField] TimeLogger TImeLogger;
 
     Rigidbody _rb;
     public GameObject TargetCar;
     public GameObject ThisCar;
-    public float eventTimer, overtake, laneChangeTimer;
+    public float eventTimer;
+    public float overtake, laneChangeTimer;
     [SerializeField] DemoCarController DriverCar;
     Vector3 startPos;
     float disableTime;
@@ -21,7 +21,7 @@ public class LeadingCar : MonoBehaviour
     public bool wayPointTrigger = false;
     public bool eventStartBool = false;
     public int LaneChangeDirection = 0;
-    Vector3 CarSpeed = new Vector3(794.06f,0,0);
+    Vector3 CarSpeed = new Vector3(1107,0,2081.5f);
     public bool enterTrigger = false;
     public bool Respawn;
 
@@ -29,24 +29,27 @@ public class LeadingCar : MonoBehaviour
     void Start()
     {
         _rb = GetComponent<Rigidbody>();
-        startPos= gameObject.transform.position;
+        startPos = gameObject.transform.position;
         gameObject.SetActive(false);
     }
 
-    void FixedUpdate()
+    void Update()
     {
-        CarSpeed.z = TargetCar.transform.position.z + 80;
-        
-        if(enterTrigger == false)
+        CarSpeed.z = TargetCar.transform.position.z - 80;
+
+        if (enterTrigger == false)
         {
             gameObject.transform.position = CarSpeed;
         }
 
-        if (eventStartBool) { EventStart(DriverCar.taskCount);}
+        if (eventStartBool == true)
+        {
+            EventStart(DriverCar.taskCount);
+        }
 
         if (Respawn && DriverCar.respawnTrigger)
         {
-            CarSpeed = new Vector3(794.06f, 0, 0);
+            CarSpeed = new Vector3(1107, 0, 2081.5f);
             overtake = 0;
             laneChangeTimer = 0;
             distanceTravelled = 0;
@@ -57,6 +60,7 @@ public class LeadingCar : MonoBehaviour
             Respawn = false;
             gameObject.transform.position = startPos;
             gameObject.transform.rotation = Quaternion.identity;
+            gameObject.transform.localEulerAngles = new Vector3(0, 180, 0);
             gameObject.SetActive(false);
         }
     }
@@ -64,7 +68,6 @@ public class LeadingCar : MonoBehaviour
     private void EventStart(int count)
     {
         overtake += Time.deltaTime;
-
         if (overtake > 0 && overtake <= 5)
         {
             gameObject.transform.position = CarSpeed;
@@ -73,7 +76,7 @@ public class LeadingCar : MonoBehaviour
         if (overtake > 5 && overtake <= 8)
         {
             //laneChangeTimer += (overtake-5) * 0.04f;
-            CarSpeed.x += (overtake - 5) * 0.043f /*+ 794.06f*/;
+            CarSpeed.x -= (overtake - 5) * 0.043f /*+ 794.06f*/;
             gameObject.transform.position = CarSpeed;
         }
 
@@ -88,7 +91,6 @@ public class LeadingCar : MonoBehaviour
 
         if (overtake >= 8 + DriverCar.LaneChangeTime[count] && (DriverCar.LaneChangeTime[count] != 0))
         {
-            TImeLogger.EventBool = true;
         }
 
         if (overtake >= 25 && (DriverCar.LaneChangeTime[count] != 0))
@@ -96,7 +98,7 @@ public class LeadingCar : MonoBehaviour
             Respawn = true;
         }
 
-        if(wayPointTrigger)
+        if (wayPointTrigger == true || DriverCar.respawnTrigger)
         {
             distanceTravelled += Time.deltaTime * 20;
             transform.position = pathCreator.path.GetPointAtDistance(distanceTravelled);
@@ -105,13 +107,15 @@ public class LeadingCar : MonoBehaviour
 
             if (disableTime > 20) { Respawn = true; }
         }
+
+
     }
 
     private void OnTriggerEnter(Collider other)
     {
-        if(other.gameObject.CompareTag("TaskStartPoint1"))
+        if (other.gameObject.CompareTag("TaskStartPoint2"))
         {
-            eventStartBool= true;
+            eventStartBool = true;
             enterTrigger = true;
         }
 
