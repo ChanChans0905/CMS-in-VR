@@ -13,12 +13,8 @@ public class FollowingCar_New : MonoBehaviour
     GameObject FCL_Velocity, FCR_Velocity;
     public float OvertakeTimer;
     public bool StopOvertake;
-    bool WayPointTrigger;
-    float LC_DistanceTravelled, RC_DistanceTravelled;
     public PathCreator PathCreator_LC;
     public PathCreator PathCreator_RC;
-    float DisableTime;
-    bool RespawnTrigger;
     Vector3 StartPos_FCL_1, StartPos_FCL_2, StartPos_FCR_1, StartPos_FCR_2;
     bool StartAceel;
 
@@ -59,8 +55,6 @@ public class FollowingCar_New : MonoBehaviour
         if (StopOvertake)
             TargetCarVelocity.z = 0;
 
-        //if (WayPointTrigger)
-        //    WayPointDrivingForCarLeft();
 
         if (DriverCar.respawnTrigger)
             Respawn();
@@ -101,25 +95,9 @@ public class FollowingCar_New : MonoBehaviour
         }
     }
 
-    //private void WayPointDrivingForCarLeft()
-    //{
-    //    DistanceTravelledForCarLeft += Time.deltaTime * 20;
-    //    transform.position = PathCreatorForCarLeft.path.GetPointAtDistance(DistanceTravelledForCarLeft);
-    //    transform.rotation = PathCreatorForCarLeft.path.GetRotationAtDistance(DistanceTravelledForCarLeft);
-    //    DisableTime += Time.deltaTime;
-
-    //    if (DisableTime > 20)
-    //        RespawnTrigger = true;
-    //}
-
     private void Respawn()
     {
         OvertakeTimer = 0;
-        LC_DistanceTravelled = 0;
-        RC_DistanceTravelled = 0;
-        DisableTime = 0;
-        WayPointTrigger = false;
-        RespawnTrigger = false;
         StopOvertake = false;
         FCL_1.transform.position = StartPos_FCL_1;
         FCL_2.transform.position = StartPos_FCL_2;

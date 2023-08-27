@@ -6,10 +6,11 @@ using VolvoCars.Data;
 public class LaneChangeCar : MonoBehaviour
 {
     [SerializeField] DemoCarController DriverCar;
-    [SerializeField] FadeInOut FadeInOut;
+    [SerializeField] DC_Collidor DC_C;
     public Transform TargetCar;
     public GameObject Obstacle;
     public GameObject LeadingCar_1, LeadingCar_2;
+    public GameObject FCL_1, FCR_1, FCB_1, FCL_2, FCR_2, FCB_2;
     public PathCreator PathCreator_1, PathCreator_2;
     GameObject LeadingCarVelocity;
     Vector3 TargetCarVelocity;
@@ -21,6 +22,9 @@ public class LaneChangeCar : MonoBehaviour
     public bool TaskStart;
     public bool WayPointTrigger;
     float DistanceTravelled;
+
+    public int GetLeadingCarDirection;
+    public int TurnOn_LC_FC;
 
     float DisableTime;
     bool RespawnTrigger;
@@ -44,14 +48,31 @@ public class LaneChangeCar : MonoBehaviour
 
     private void FixedUpdate()
     {
-        if (FadeInOut.GetLeadingCarDirection)
+        if(TurnOn_LC_FC == 1)
+        {
+            LeadingCar_1.SetActive(true); 
+            FCL_1.SetActive(true);
+            FCR_1.SetActive(true);
+            FCB_1.SetActive(true);
+            TurnOn_LC_FC = 0;
+        }
+        else if(TurnOn_LC_FC == 2)
+        {
+            LeadingCar_2.SetActive(true);
+            FCL_2.SetActive(true);
+            FCR_2.SetActive(true);
+            FCB_2.SetActive(true);
+            TurnOn_LC_FC = 0;
+        }
+
+        if (GetLeadingCarDirection == 1)
         {
             DrivingDirection = 1;
             LeadingCarPosition = LeadingCar_1.transform.position;
             LeadingCarVelocity = LeadingCar_1;
             Debug.Log(LeadingCarVelocity);
         }
-        else if (!FadeInOut.GetLeadingCarDirection)
+        else if (GetLeadingCarDirection == 2)
         {
             Debug.Log(LeadingCarVelocity);
             DrivingDirection = -1;

@@ -14,6 +14,7 @@ public class Questionnaire : MonoBehaviour
     int threshold_y;
     int threshold_z;
     [SerializeField] DemoCarController DriverCar;
+    [SerializeField] TrialManager TM;
     public int QuestionnaireNumber;
     [SerializeField] Slider AnswerSlider;
     private string csvSeparator = ",";
@@ -109,8 +110,8 @@ public class Questionnaire : MonoBehaviour
                 if (DriverCar.QuestionnaireCount < 2)
                 {
                     DriverCar.CMSchangeBool = true;
-                    DriverCar.TrialBool = true;
-                    DriverCar.TrialBoolFilter = true;
+                    TM.TrialTask = true;
+                    TM.TurnOnTrialStartNotice = true;
                     FadeInOut.FadingEvent = false;
                     DriverCar.respawnTrigger = false;
                 }

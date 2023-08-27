@@ -2,57 +2,49 @@ using System.Collections;
 using UnityEngine;
 using UnityEngine.Rendering.HighDefinition;
 
-public class FadeInOut : MonoBehaviour
+public class DC_Collidor : MonoBehaviour
 {
     public float alpha = 0;
     private Material _mat;
     public bool FadingEvent;
     [SerializeField] DemoCarController DC;
     [SerializeField] LaneChangeCar LC;
+    [SerializeField] TrialManager TM;
     public GameObject QuestionnaireStartNotice, TaskFailureNotice/*,KeepLaneNotice*/;
     //float OutofLaneTime;
-    public bool GetLeadingCarDirection;
+
     bool DrivingIn2ndLane;
+    float TaskCountThreshold;
 
     void Start()
     {
         Renderer nRend = GetComponent<Renderer>();
         _mat = nRend.material;
-
     }
 
-    void Update()
+    void FixedUpdate()
     {
         //if(OutofLaneTime >= 3) KeepLaneNotice.gameObject.SetActive(true);
         //if (OutofLaneTime == 0) KeepLaneNotice.gameObject.SetActive(false);
 
         if (DC.respawnTrigger)
         {
-            if (FadingEvent == true) { FadeIn(alpha); }
-            else if (FadingEvent == false) { FadeOut(alpha); }
+            LC.GetLeadingCarDirection = 0;
+
+            if (FadingEvent && alpha <= 1) 
+                alpha += .01f;
+
+            else if (!FadingEvent && alpha >= 0) 
+                alpha -= .01f;
+
             Color nNew = new Color(0, 0, 0, alpha);
             _mat.SetColor("_BaseColor", nNew);
             //OutofLaneTime = 0;
-            DrivingIn2ndLane = false;
+            //DrivingIn2ndLane = false;
         }
-    }
 
-    public void FadeIn(float degree)
-    {
-        if (alpha <= 1)
-        {
-            degree += .01f;
-            alpha = degree;
-        }
-    }
-
-    public void FadeOut(float degree)
-    {
-        if (alpha >= 0)
-        {
-            degree -= .01f;
-            alpha = degree;
-        }
+        if (TaskCountThreshold < 3)
+            TaskCountThreshold += Time.deltaTime;
     }
 
     private void OnTriggerEnter(Collider other)
@@ -84,20 +76,63 @@ public class FadeInOut : MonoBehaviour
                 DC.respawnTrigger = true;
                 QuestionnaireStartNotice.SetActive(true);
                 DC.taskCount = 0;
-                DC.threshold = false;
+                DC.FirstTaskCountThreshold = false;
             }
         }
 
-        if (other.gameObject.CompareTag("TaskCounter1"))
-            GetLeadingCarDirection = true;
-
-        if (other.gameObject.CompareTag("TaskCounter2"))
-            GetLeadingCarDirection = false;
+        if (other.gameObject.CompareTag("TaskStartPoint_1"))
+        {
+            if (DC.MainTask)
+            {
+                LC.TurnOn_LC_FC = 1;
+                LC.GetLeadingCarDirection = 1;
+                LC.TaskStart = true;
                 
-            
+                if(TaskCountThreshold > 2)
+                {
+                    if(DC.FirstTaskCountThreshold)
+                        DC.taskCount++;
+                    else 
+                        DC.FirstTaskCountThreshold = true;
 
-        if (other.gameObject.CompareTag("TaskStartPoint"))
-            LC.TaskStart = true;
+                    TaskCountThreshold = 0;
+                }
+            }
+ 
+            if (TM.TrialTask)
+            {
+                TM.TurnOnTrialCars = 1;
+                TM.TurnOnAndMoveTrialCar = 1;
+                TM.ActivateTC_Speed = true;
+            }
+        }
+
+        if (other.gameObject.CompareTag("TaskStartPoint_2"))
+        {
+            if (DC.MainTask)
+            {
+                LC.TurnOn_LC_FC = 2;
+                LC.GetLeadingCarDirection = 2;
+                LC.TaskStart = true;
+
+                if (TaskCountThreshold > 2)
+                {
+                    if (DC.FirstTaskCountThreshold)
+                        DC.taskCount++;
+                    else
+                        DC.FirstTaskCountThreshold = true;
+
+                    TaskCountThreshold = 0;
+                }
+            }
+
+            if (TM.TrialTask)
+            {
+                TM.TurnOnTrialCars = 2;
+                TM.TurnOnAndMoveTrialCar = 2;
+                TM.ActivateTC_Speed = true;
+            }
+        }
     }
 
     private void OnTriggerStay(Collider other)

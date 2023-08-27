@@ -22,12 +22,11 @@ public class DemoCarController : MonoBehaviour
     [SerializeField] private VolvoCars.Data.DoorIsOpenR1L doorIsOpenR1L = default; // R1L stands for Row 1 Left.
     [SerializeField] private VolvoCars.Data.LampBrake lampBrake = default;
 
-    [SerializeField] GetTrialCarPosition1 TC1;
     [SerializeField] LaneChangeCar LC;
 
     public GameObject VolvoCar;
     public GameObject CMS_LD_SW, CMS_LD_TM, CMS_RD_SW, CMS_RD_TM, CMSCenter, CMSStitched, TraditionalMirrorLeft, TraditionalMirrorRight;
-    public GameObject TrialStartNotice;
+
     public GameObject CSV_SaveObject;
 
     public bool respawnTrigger;
@@ -38,16 +37,16 @@ public class DemoCarController : MonoBehaviour
     public int QuestionnaireCount;
     public bool CMSchangeBool;
     public bool FinalQuestionnaireBool;
-    public bool TrialBool, TrialBoolFilter, TrialBoolTaskCounter;
+
     public int laneChangeDirection;
-    public bool threshold;
-    public float TrialTimeCount;
-    public float NoticeTimer;
+    public bool FirstTaskCountThreshold;
+
     public float FC1Lposition, FC1Rposition, LC1position, FC2Lposition, FC2Rposition, LC2position, DCposition;
     public bool FCLbool, FCRbool, LCbool, TCLbool, TCRbool;
-    public bool ARbool, GameStartNoticeBool, MainTask;
+    public bool ARbool,MainTask;
     public float Acc, Br, SteeringInput;
-    public float TrialTime;
+    //bool GameStartNoticeBool;
+
     int ReactionStarted, ReactionNoCount ;
     public int TotalFirstReactionValue;
 
@@ -78,9 +77,6 @@ public class DemoCarController : MonoBehaviour
         FollowingCarSpeed = new int[] { 0, 0, 0, 0, 1, 1, 1, 1 };
         ARSignalActivateDistance = 10;
 
-        GameStartNoticeBool = false;
-        TrialBool = true;
-        TrialBoolFilter = true;
         CMSchange();
     }
 
@@ -230,51 +226,14 @@ public class DemoCarController : MonoBehaviour
                     wheelTorque.Value = wheelTorqueValue;
                     VolvoCar.transform.localPosition = new Vector3(-2166, 0, 2300);
                     VolvoCar.transform.rotation = Quaternion.Slerp(VolvoCar.transform.rotation, Quaternion.AngleAxis(-90, Vector3.up), 3f * Time.deltaTime);
+                    waitTimer = 0;
                 }
             }
-            else if (!respawnTrigger) 
-                waitTimer = 0;
 
             if (CMSchangeBool)
             {
                 CMSchange();
             }
-
-            if (TrialBoolTaskCounter) TrialTime += Time.deltaTime;
-
-            if (TrialBool && TrialBoolFilter && GameStartNoticeBool)
-            {
-                TrialStartNotice.SetActive(true);
-                NoticeTimer += Time.deltaTime;
-                if (NoticeTimer > 5)
-                {
-                    NoticeTimer = 0;
-                    TrialBoolFilter = false;
-                    TrialStartNotice.SetActive(false);
-                }
-            }
-
-            if (ARbool)
-            {
-                //LC1position = Mathf.Abs(LC1.gameObject.transform.position.z);
-                //FC1Lposition = Mathf.Abs(FC1.carLeft.transform.position.z);
-                //FC1Rposition = Mathf.Abs(FC1.carRight.transform.position.z);
-                //LC2position = Mathf.Abs(LC2.gameObject.transform.position.z);
-                //FC2Lposition = Mathf.Abs(FC2.carLeft.transform.position.z);
-                //FC2Rposition = Mathf.Abs(FC2.carRight.transform.position.z);
-                DCposition = Mathf.Abs(VolvoCar.transform.position.z);
-
-                if (MathF.Abs(DCposition - LC1position) <= ARSignalActivateDistance || MathF.Abs(DCposition - LC2position) <= ARSignalActivateDistance) { LCbool = true; } else { LCbool = false; }
-                if (MathF.Abs(DCposition - FC1Lposition) <= ARSignalActivateDistance || MathF.Abs(DCposition - FC2Lposition) <= ARSignalActivateDistance) { FCLbool = true; } else { FCLbool = false; }
-                if (MathF.Abs(DCposition - FC1Rposition) <= ARSignalActivateDistance || MathF.Abs(DCposition - FC2Rposition) <= ARSignalActivateDistance) { FCRbool = true; } else { FCRbool = false; }
-
-                if (TrialBool)
-                {
-                    if (TC1.TC1bool || TC1.TC2bool || TC1.TC3bool) FCLbool = true; else FCLbool = false;
-                    if (TC1.TC4bool || TC1.TC5bool || TC1.TC6bool) FCRbool = true; else FCRbool = false;
-                }
-            }
-
         }
     }
 

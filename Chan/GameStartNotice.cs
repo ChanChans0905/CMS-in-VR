@@ -4,8 +4,8 @@ using UnityEngine;
 
 public class GameStartNotice : MonoBehaviour
 {
-    [SerializeField] DemoCarController DriverCar;
-    [SerializeField] FadeInOut FadeInOut;
+    [SerializeField] DC_Collidor DC_C;
+    [SerializeField] TrialManager TM;
 
     public GameObject WelcomeNotice, KeepLaneNotice;
 
@@ -14,7 +14,7 @@ public class GameStartNotice : MonoBehaviour
 
     void Start()
     {
-        FadeInOut.FadingEvent = true;
+        DC_C.FadingEvent = true;
     }
 
     void Update()
@@ -41,9 +41,10 @@ public class GameStartNotice : MonoBehaviour
                         break;
 
                     case 2:
-                        FadeInOut.FadingEvent = false;
-                        DriverCar.GameStartNoticeBool = true;
-                        KeepLaneNotice.SetActive(false);
+                        DC_C.FadingEvent = false;
+                        TM.TrialTask = true;
+                        TM.TurnOnTrialStartNotice = true;
+                        gameObject.SetActive(false);
                         break;
                 }
             }

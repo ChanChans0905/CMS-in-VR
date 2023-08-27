@@ -4,13 +4,8 @@ using UnityEngine;
 
 public class TaskFailureNotice : MonoBehaviour
 {
-    [SerializeField] DemoCarController DriverCar;
-    [SerializeField] FadeInOut FadeInOut;
-
-    void Start()
-    {
-        FadeInOut.FadingEvent = true;
-    }
+    [SerializeField] DemoCarController DC;
+    [SerializeField] DC_Collidor DC_C;
 
     void Update()
     {
@@ -20,8 +15,8 @@ public class TaskFailureNotice : MonoBehaviour
             rec = LogitechGSDK.LogiGetStateUnity(0);
             if (rec.rgbButtons[5] == 128)
             {
-                FadeInOut.FadingEvent = false;
-                DriverCar.respawnTrigger = false;
+                DC_C.FadingEvent = false;
+                DC.respawnTrigger = false;
                 gameObject.SetActive(false);
             }
         }
