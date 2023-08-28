@@ -8,41 +8,32 @@ public class TrialManager : MonoBehaviour
     [SerializeField] DemoCarController DC;
     [SerializeField] DC_Collidor DC_C;
 
-    public PathCreator pathCreator;
+    public PathCreator PathCreator_1_L, PathCreator_1_R, PathCreator_2_L, PathCreator_2_R;
 
     public GameObject TC_1_L1, TC_1_L2, TC_1_L3, TC_1_L4, TC_1_R1, TC_1_R2, TC_1_R3, TC_1_R4;
     public GameObject TC_2_L1, TC_2_L2, TC_2_L3, TC_2_L4, TC_2_R1, TC_2_R2, TC_2_R3, TC_2_R4;
     
     public GameObject TrialStartNotice, TrialEndNotice;
 
-    public int TurnOnAndMoveTrialCar, TurnOnTrialCars;
-    public bool TrialTask, ActivateTC_Speed, TurnOnTrialStartNotice;
-    bool CountTrialTime;
+    public int MoveTrialCar, TurnOnTrialCars;
+    public bool TrialTask, ActivateTC_Speed;
     float TrialTaskTimer, TC_Speed;
-    float TrialStartNoticeTimer;
+    bool TurnOffTrialCars;
 
     void FixedUpdate()
     {
         if (TrialTask)
         {
-            if (CountTrialTime)
-                TrialTaskTimer += Time.deltaTime;
+            TrialTaskTimer += Time.deltaTime;
 
             if(ActivateTC_Speed)
                 TC_Speed += Time.deltaTime * 50;
 
-            if (TrialTask && TurnOnTrialStartNotice)
-            {
+            if (TrialTaskTimer <= 7)
                 TrialStartNotice.SetActive(true);
-                TrialStartNoticeTimer += Time.deltaTime;
-                if (TrialStartNoticeTimer > 7)
-                {
-                    CountTrialTime = true;
-                    TrialStartNoticeTimer = 0;
-                    TurnOnTrialStartNotice = false;
-                    TrialStartNotice.SetActive(false);
-                }
-            }
+
+            if (TrialTaskTimer > 7 && TrialTaskTimer < 8)
+                TrialStartNotice.SetActive(false);
 
             if (TurnOnTrialCars == 1)
             {
@@ -69,28 +60,48 @@ public class TrialManager : MonoBehaviour
                 TurnOnTrialCars = 0;
             }
 
-            if (TurnOnAndMoveTrialCar == 1)
+            if (MoveTrialCar == 1)
                 MoveTrialCarLeft();
-                
-            else if (TurnOnAndMoveTrialCar == 2)
+            else if (MoveTrialCar == 2)
                 MoveTrialCarRight();
-
-            if (TrialTaskTimer >= 90)
-            {
-                TurnOnAndMoveTrialCar = 0;
-                DC_C.FadingEvent = true;
-                DC.respawnTrigger = true;
-                TrialEndNotice.SetActive(true);
-            }
 
             if (TrialTaskTimer >= 97)
             {
-                CountTrialTime = false;
+                MoveTrialCar = 0;
+                DC_C.FadingEvent = true;
+                DC.respawnTrigger = true;
+                TurnOffTrialCars = true;
+                TrialEndNotice.SetActive(true);
+            }
+
+            if (TrialTaskTimer >= 104)
+            {
                 TC_Speed = 0;
+                TurnOffTrialCars = false;
                 DC_C.FadingEvent = false;
                 TrialTaskTimer = 0;
                 TrialEndNotice.SetActive(false);
                 TrialTask = false;
+            }
+
+            if (TurnOffTrialCars)
+            {
+                TC_1_L1.SetActive(false);
+                TC_1_L2.SetActive(false);
+                TC_1_L3.SetActive(false);
+                TC_1_L4.SetActive(false);
+                TC_1_R1.SetActive(false);
+                TC_1_R2.SetActive(false);
+                TC_1_R3.SetActive(false);
+                TC_1_R4.SetActive(false);
+                TC_2_L1.SetActive(false);
+                TC_2_L2.SetActive(false);
+                TC_2_L3.SetActive(false);
+                TC_2_L4.SetActive(false);
+                TC_2_R1.SetActive(false);
+                TC_2_R2.SetActive(false);
+                TC_2_R3.SetActive(false);
+                TC_2_R4.SetActive(false);
             }
         }
     }
@@ -99,25 +110,25 @@ public class TrialManager : MonoBehaviour
 
     void MoveTrialCarLeft()
     {
-        TC_1_L1.transform.position = pathCreator.path.GetPointAtDistance(TC_Speed);
-        TC_1_R2.transform.position = pathCreator.path.GetPointAtDistance(TC_Speed * 0.9f);
-        TC_1_L2.transform.position = pathCreator.path.GetPointAtDistance(TC_Speed * 0.85f);
-        TC_1_R2.transform.position = pathCreator.path.GetPointAtDistance(TC_Speed * 0.8f);
-        TC_1_L3.transform.position = pathCreator.path.GetPointAtDistance(TC_Speed * 0.75f);
-        TC_1_R3.transform.position = pathCreator.path.GetPointAtDistance(TC_Speed * 0.7f);
-        TC_1_L4.transform.position = pathCreator.path.GetPointAtDistance(TC_Speed * 0.65f);
-        TC_1_R4.transform.position = pathCreator.path.GetPointAtDistance(TC_Speed * 0.6f);
+        TC_1_L1.transform.position = PathCreator_1_L.path.GetPointAtDistance(TC_Speed);
+        TC_1_R2.transform.position = PathCreator_1_R.path.GetPointAtDistance(TC_Speed * 0.9f);
+        TC_1_L2.transform.position = PathCreator_1_L.path.GetPointAtDistance(TC_Speed * 0.85f);
+        TC_1_R2.transform.position = PathCreator_1_R.path.GetPointAtDistance(TC_Speed * 0.8f);
+        TC_1_L3.transform.position = PathCreator_1_L.path.GetPointAtDistance(TC_Speed * 0.75f);
+        TC_1_R3.transform.position = PathCreator_1_R.path.GetPointAtDistance(TC_Speed * 0.7f);
+        TC_1_L4.transform.position = PathCreator_1_L.path.GetPointAtDistance(TC_Speed * 0.65f);
+        TC_1_R4.transform.position = PathCreator_1_R.path.GetPointAtDistance(TC_Speed * 0.6f);
     }
 
     void MoveTrialCarRight()
     {
-        TC_2_L1.transform.position = pathCreator.path.GetPointAtDistance(TC_Speed);
-        TC_2_R2.transform.position = pathCreator.path.GetPointAtDistance(TC_Speed * 0.9f);
-        TC_2_L2.transform.position = pathCreator.path.GetPointAtDistance(TC_Speed * 0.85f);
-        TC_2_R2.transform.position = pathCreator.path.GetPointAtDistance(TC_Speed * 0.8f);
-        TC_2_L3.transform.position = pathCreator.path.GetPointAtDistance(TC_Speed * 0.75f);
-        TC_2_R3.transform.position = pathCreator.path.GetPointAtDistance(TC_Speed * 0.7f);
-        TC_2_L4.transform.position = pathCreator.path.GetPointAtDistance(TC_Speed * 0.65f);
-        TC_2_R4.transform.position = pathCreator.path.GetPointAtDistance(TC_Speed * 0.6f);
+        TC_2_L1.transform.position = PathCreator_2_L.path.GetPointAtDistance(TC_Speed);
+        TC_2_R2.transform.position = PathCreator_2_R.path.GetPointAtDistance(TC_Speed * 0.9f);
+        TC_2_L2.transform.position = PathCreator_2_L.path.GetPointAtDistance(TC_Speed * 0.85f);
+        TC_2_R2.transform.position = PathCreator_2_R.path.GetPointAtDistance(TC_Speed * 0.8f);
+        TC_2_L3.transform.position = PathCreator_2_L.path.GetPointAtDistance(TC_Speed * 0.75f);
+        TC_2_R3.transform.position = PathCreator_2_R.path.GetPointAtDistance(TC_Speed * 0.7f);
+        TC_2_L4.transform.position = PathCreator_2_L.path.GetPointAtDistance(TC_Speed * 0.65f);
+        TC_2_R4.transform.position = PathCreator_2_R.path.GetPointAtDistance(TC_Speed * 0.6f);
     }
 }

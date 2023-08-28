@@ -1,38 +1,75 @@
-//using System;
-//using System.Collections;
-//using System.Collections.Generic;
-//using UnityEngine;
+using System;
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
 
-//public class AR_Manager : MonoBehaviour
-//{
-//    // Start is called before the first frame update
-//    void Start()
-//    {
-        
-//    }
+public class AR_Manager : MonoBehaviour
+{
+    [SerializeField] DemoCarController DC;
 
-//    // Update is called once per frame
-//    void Update()
-//    {
-//        if (ARbool)
-//        {
-//            //LC1position = Mathf.Abs(LC1.gameObject.transform.position.z);
-//            //FC1Lposition = Mathf.Abs(FC1.carLeft.transform.position.z);
-//            //FC1Rposition = Mathf.Abs(FC1.carRight.transform.position.z);    
-//            //LC2position = Mathf.Abs(LC2.gameObject.transform.position.z);
-//            //FC2Lposition = Mathf.Abs(FC2.carLeft.transform.position.z);
-//            //FC2Rposition = Mathf.Abs(FC2.carRight.transform.position.z);
-//            DCposition = Mathf.Abs(VolvoCar.transform.position.z);
+    public GameObject AR_Signal_CMS_5_L, AR_Signal_CMS_5_R, AR_Signal_CMS_6_L, AR_Signal_CMS_6_R, AR_Signal_CMS_7_L, AR_Signal_CMS_7_R;
 
-//            if (MathF.Abs(DCposition - LC1position) <= ARSignalActivateDistance || MathF.Abs(DCposition - LC2position) <= ARSignalActivateDistance) { LCbool = true; } else { LCbool = false; }
-//            if (MathF.Abs(DCposition - FC1Lposition) <= ARSignalActivateDistance || MathF.Abs(DCposition - FC2Lposition) <= ARSignalActivateDistance) { FCLbool = true; } else { FCLbool = false; }
-//            if (MathF.Abs(DCposition - FC1Rposition) <= ARSignalActivateDistance || MathF.Abs(DCposition - FC2Rposition) <= ARSignalActivateDistance) { FCRbool = true; } else { FCRbool = false; }
+    int TurnOn_AR_Signal_L, TurnOn_AR_Signal_R;
 
-//            if (TrialBool)
-//            {
-//                if (TC1.TC1bool || TC1.TC2bool || TC1.TC3bool) FCLbool = true; else FCLbool = false;
-//                if (TC1.TC4bool || TC1.TC5bool || TC1.TC6bool) FCRbool = true; else FCRbool = false;
-//            }
-//        }
-//    }
-//}
+    void Update()
+    {
+        if(TurnOn_AR_Signal_L == 1)
+        {
+            AR_Signal_CMS_5_L.SetActive(true);
+            AR_Signal_CMS_6_L.SetActive(true);
+            AR_Signal_CMS_7_L.SetActive(true);
+        }
+        else if(TurnOn_AR_Signal_L == 2)
+        {
+            AR_Signal_CMS_5_L.SetActive(false);
+            AR_Signal_CMS_6_L.SetActive(false);
+            AR_Signal_CMS_7_L.SetActive(false);
+            TurnOn_AR_Signal_L = 0;
+        }
+
+        if(TurnOn_AR_Signal_R == 1)
+        {
+            AR_Signal_CMS_5_R.SetActive(true);
+            AR_Signal_CMS_6_R.SetActive(true);
+            AR_Signal_CMS_7_R.SetActive(true);
+        }
+        else if(TurnOn_AR_Signal_R == 2)
+        {
+            AR_Signal_CMS_5_R.SetActive(false);
+            AR_Signal_CMS_6_R.SetActive(false);
+            AR_Signal_CMS_7_R.SetActive(false);
+            TurnOn_AR_Signal_R = 0;
+        }
+
+        if (DC.respawnTrigger)
+        {
+            TurnOn_AR_Signal_L = 0;
+            TurnOn_AR_Signal_R = 0;
+            AR_Signal_CMS_5_L.SetActive(false);
+            AR_Signal_CMS_6_L.SetActive(false);
+            AR_Signal_CMS_7_L.SetActive(false);
+            AR_Signal_CMS_5_R.SetActive(false);
+            AR_Signal_CMS_6_R.SetActive(false);
+            AR_Signal_CMS_7_R.SetActive(false);
+            gameObject.SetActive(false);
+        }
+    }
+
+    private void OnTriggerStay(Collider other)
+    {
+        if(other.tag == "AR_Signal_L")
+            TurnOn_AR_Signal_L = 1;
+
+        if(other.tag == "AR_Signal_R")
+            TurnOn_AR_Signal_R = 1;
+    }
+
+    private void OnTriggerExit(Collider other)
+    {
+        if (other.tag == "AR_Signal_L")
+            TurnOn_AR_Signal_L = 2;
+
+        if (other.tag == "AR_Signal_R")
+            TurnOn_AR_Signal_R = 2;
+    }
+}

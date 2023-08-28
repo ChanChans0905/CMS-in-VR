@@ -43,7 +43,6 @@ public class GameStartNotice : MonoBehaviour
                     case 2:
                         DC_C.FadingEvent = false;
                         TM.TrialTask = true;
-                        TM.TurnOnTrialStartNotice = true;
                         gameObject.SetActive(false);
                         break;
                 }

@@ -22,10 +22,11 @@ public class DemoCarController : MonoBehaviour
     [SerializeField] private VolvoCars.Data.DoorIsOpenR1L doorIsOpenR1L = default; // R1L stands for Row 1 Left.
     [SerializeField] private VolvoCars.Data.LampBrake lampBrake = default;
 
-    [SerializeField] LaneChangeCar LC;
+    [SerializeField] LeadingCar LC;
 
     public GameObject VolvoCar;
     public GameObject CMS_LD_SW, CMS_LD_TM, CMS_RD_SW, CMS_RD_TM, CMSCenter, CMSStitched, TraditionalMirrorLeft, TraditionalMirrorRight;
+    public GameObject AR_Manager;
 
     public GameObject CSV_SaveObject;
 
@@ -43,7 +44,7 @@ public class DemoCarController : MonoBehaviour
 
     public float FC1Lposition, FC1Rposition, LC1position, FC2Lposition, FC2Rposition, LC2position, DCposition;
     public bool FCLbool, FCRbool, LCbool, TCLbool, TCRbool;
-    public bool ARbool,MainTask;
+    public bool UsingAR,MainTask;
     public float Acc, Br, SteeringInput;
     //bool GameStartNoticeBool;
 
@@ -268,15 +269,13 @@ public class DemoCarController : MonoBehaviour
                 {
                     TraditionalMirrorLeft.SetActive(true);
                     TraditionalMirrorRight.SetActive(true);
-                    ARbool = false;
                     break;
                 }
-            case 2: // CMS beside Traditional Mirror
+            case 2: // CMS under A-pillar
                 {
                     CMSCenter.SetActive(true);
                     CMS_LD_TM.SetActive(true);
                     CMS_RD_TM.SetActive(true);
-                    ARbool = false;
                     break;
                 }
             case 3: // CMS near the Steering Wheel
@@ -284,21 +283,19 @@ public class DemoCarController : MonoBehaviour
                     CMSCenter.SetActive(true);
                     CMS_LD_SW.SetActive(true);
                     CMS_RD_SW.SetActive(true);
-                    ARbool = false;
                     break;
                 }
             case 4: // CMS Stitched
                 {
                     CMSStitched.SetActive(true);
-                    ARbool = false;
                     break;
                 }
-            case 5: // CMS beside Traditional Mirror with AR signal
+            case 5: // CMS under A-pillar with AR signal
                 {
                     CMSCenter.SetActive(true);
                     CMS_LD_TM.SetActive(true);
                     CMS_RD_TM.SetActive(true);
-                    ARbool = true;
+                    AR_Manager.SetActive(true);
                     break;
                 }
             case 6: // CMS near the Steering Wheel with AR signal
@@ -306,13 +303,13 @@ public class DemoCarController : MonoBehaviour
                     CMSCenter.SetActive(true);
                     CMS_LD_SW.SetActive(true);
                     CMS_RD_SW.SetActive(true);
-                    ARbool = true;
+                    AR_Manager.SetActive(true);
                     break;
                 }
             case 7: // CMS Stitched with AR signal
                 {
                     CMSStitched.SetActive(true);
-                    ARbool = true;
+                    AR_Manager.SetActive(true);
                     break;
                 }
         }

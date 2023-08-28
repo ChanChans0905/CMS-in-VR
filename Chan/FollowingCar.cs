@@ -4,122 +4,172 @@ using System.Collections.Generic;
 using System.Threading;
 using UnityEngine;
 
-public class FollowingCar : MonoBehaviour
+public class FollowingCar: MonoBehaviour
 {
-    Rigidbody _rb;
-    public GameObject TargetCar;
-    public PathCreator pathCreator;
-    float distanceTravelled;
-    public bool wayPointTrigger = false;
-    float disableTime;
-    Vector3 startPos;
-    [SerializeField] DemoCarController DriverCar;
-    [SerializeField] LeadingCar LeadingCar;
-    [SerializeField] FollowingCarRight FollowingCarRight;
-    public GameObject carLeft, carRight;
-    public bool eventStartBool = false;
-    public float accelTime;
-    Vector3 CarSpeedLeft1 = new Vector3(794,0,870);
-    Vector3 CarSpeedRight1 = new Vector3(806,0,870);
-    public float laneChangeTimer;
-    public float distance = 25;
-    public bool Respawn = false;
+    [SerializeField] DemoCarController DC;
+    [SerializeField] LeadingCar LC;
+    public GameObject FCL_1, FCR_1, FCL_2, FCR_2, FCB_1, FCB_2;
+    public Transform TargetCar, Obstacle;
+    Vector3 TargetCarVelocity;
+    GameObject FCL_Velocity, FCR_Velocity, FCB_Velocity;
+    public float OvertakeTimer;
+    public bool StopOvertake;
+    public PathCreator PathCreator_LC;
+    public PathCreator PathCreator_RC;
+    Vector3 StartPos_FCL_1, StartPos_FCL_2, StartPos_FCR_1, StartPos_FCR_2, StartPos_FCB_1, StartPos_FCB_2;
+    bool StartAceel;
+    float FC_Fast_Time = 4f;
+    float FC_Slow_Time = 8f;
+    float FC_Accel_Timer;
+    Vector3 LC_StopPos_for_FC_L, LC_StopPos_for_FC_R;
+    float FC_Fast_ReachingPercent, FC_Slow_ReachingPercent;
+    int StoppingTime, AccelSpeed;
 
-
-    void Start()
+    private void Start()
     {
-        startPos= transform.position;
-        carLeft.SetActive(false);
-        carRight.SetActive(false);
+        StartPos_FCL_1 = FCL_1.transform.position;
+        StartPos_FCL_2 = FCL_2.transform.position;
+        StartPos_FCR_1 = FCR_1.transform.position;
+        StartPos_FCR_2 = FCR_2.transform.position;
+        StartPos_FCB_1 = FCB_1.transform.position;
+        StartPos_FCB_2 = FCB_2.transform.position;
     }
 
-    void Update()
+    private void FixedUpdate()
     {
-        carLeft.transform.position = CarSpeedLeft1;
-        carRight.transform.position = CarSpeedRight1;
+        TargetCarVelocity.z = TargetCar.GetComponent<Rigidbody>().velocity.z;
 
-        if (LeadingCar.eventStartBool)
+        if(LC.DrivingDirection == 1)
         {
-            accelTime += Time.deltaTime;
-            if (DriverCar.LaneChangeTime[DriverCar.taskCount] != 0)
-
-            {
-                if (accelTime >= 8 + DriverCar.LaneChangeTime[DriverCar.taskCount])
-                {
-                    laneChangeTimer += Time.deltaTime;
-
-                    if (DriverCar.FollowingCarSpeed[DriverCar.taskCount] == 1)
-                    {
-                        CarSpeedLeft1.z = TargetCar.transform.position.z - distance + laneChangeTimer * 2f;
-                        CarSpeedRight1.z = TargetCar.transform.position.z - distance + laneChangeTimer * 3f;
-                    }
-                    else
-                    {
-                        CarSpeedLeft1.z = TargetCar.transform.position.z - distance + laneChangeTimer * 3f;
-                        CarSpeedRight1.z = TargetCar.transform.position.z - distance + laneChangeTimer * 2f;
-                    }
-                }
-                else if (accelTime <= 8 + DriverCar.LaneChangeTime[DriverCar.taskCount])
-                {
-                    CarSpeedLeft1.z = TargetCar.transform.position.z - distance;
-                    CarSpeedRight1.z = TargetCar.transform.position.z - distance;
-                }
-            }
-            else if (DriverCar.LaneChangeTime[DriverCar.taskCount] == 0)
-            {
-
-                CarSpeedLeft1.z = TargetCar.transform.position.z - distance;
-                CarSpeedRight1.z = TargetCar.transform.position.z - distance;
-            }
+            FCL_Velocity = FCL_1;
+            FCR_Velocity = FCR_1;
+            FCB_Velocity = FCB_1;
         }
-        //else if (eventStartBool == false)
+        else
+        {
+            FCL_Velocity = FCL_2;
+            FCR_Velocity = FCR_2;
+            FCB_Velocity = FCB_2;
+        }
+
+        if (LC.TaskStart)
+            StartAceel = true;
+        else
+        {
+            FCL_Velocity.GetComponent<Rigidbody>().velocity = TargetCarVelocity;
+            FCR_Velocity.GetComponent<Rigidbody>().velocity = TargetCarVelocity;
+            FCB_Velocity.GetComponent<Rigidbody>().velocity = TargetCarVelocity;
+        }
+
+        if(StartAceel && LC.TaskStartTime != 0)
+            Accel(DC.taskCount);
+
+        if (StopOvertake)
+            TargetCarVelocity.z = 0;
+
+
+        if (DC.respawnTrigger)
+            Respawn();
+    }
+
+    private void Accel(int taskCount)
+    {
+        OvertakeTimer += Time.deltaTime;
+
+        StoppingTime = DC.LaneChangeTime[taskCount];
+        AccelSpeed = DC.FollowingCarSpeed[taskCount];
+
+        if(OvertakeTimer < 8 + StoppingTime && StoppingTime != 0)
+        {
+            FCL_Velocity.GetComponent<Rigidbody>().velocity = TargetCarVelocity;
+            FCR_Velocity.GetComponent<Rigidbody>().velocity = TargetCarVelocity;
+            FCB_Velocity.GetComponent<Rigidbody>().velocity = TargetCarVelocity;
+        }
+
+        //if (OvertakeTimer > 8 + StoppingTime && StoppingTime != 0)
         //{
-        //    CarSpeedLeft1.z = TargetCar.transform.position.z - distance;
-        //    CarSpeedRight1.z = TargetCar.transform.position.z - distance;
+        //    if(AccelSpeed == 1)
+        //    {
+        //        FCL_Velocity.GetComponent<Rigidbody>().velocity = TargetCarVelocity * 1.5f;
+        //        FCR_Velocity.GetComponent<Rigidbody>().velocity = TargetCarVelocity * 1.3f;
+
+        //        if (StopOvertake)
+        //            FCL_Velocity.GetComponent<Rigidbody>().velocity = TargetCarVelocity * 0;
+        //    }
+        //    else
+        //    {
+        //        FCL_Velocity.GetComponent<Rigidbody>().velocity = TargetCarVelocity * 1.3f;
+        //        FCR_Velocity.GetComponent<Rigidbody>().velocity = TargetCarVelocity * 1.5f;
+
+        //        if (StopOvertake)
+        //            FCR_Velocity.GetComponent<Rigidbody>().velocity = TargetCarVelocity * 0;
+        //    }
+        //    FCB_Velocity.GetComponent<Rigidbody>().velocity = TargetCarVelocity;
         //}
 
-        if (wayPointTrigger)
+        // use lerp
+
+        if (OvertakeTimer > 8 + StoppingTime && StoppingTime != 0)
         {
-            distanceTravelled += Time.deltaTime * 15;
-            transform.position = pathCreator.path.GetPointAtDistance(distanceTravelled);
-            transform.rotation = pathCreator.path.GetRotationAtDistance(distanceTravelled);
-            disableTime += Time.deltaTime;
+            FC_Accel_Timer += Time.deltaTime;
 
-            if (disableTime > 20) { Respawn = true; }
+            if (FC_Accel_Timer < 0.2)
+            {
+                if(LC.StartScenario_Obstacle)
+                {
+                    LC_StopPos_for_FC_L = Obstacle.position;
+                    LC_StopPos_for_FC_R = Obstacle.position;
+                }
+                else
+                {
+                    LC_StopPos_for_FC_L = TargetCar.transform.position;
+                    LC_StopPos_for_FC_R = TargetCar.transform.position;
+                }
+                LC_StopPos_for_FC_L.x = FCL_Velocity.transform.position.x;
+                LC_StopPos_for_FC_R.x = FCR_Velocity.transform.position.x;
+            }
 
+            FC_Fast_ReachingPercent = FC_Accel_Timer / FC_Fast_Time;
+            FC_Slow_ReachingPercent = FC_Accel_Timer / FC_Slow_Time;
+
+            if (AccelSpeed == 1)
+            {
+                FCL_Velocity.transform.position = Vector3.Lerp(FCL_Velocity.transform.position, LC_StopPos_for_FC_L, FC_Fast_ReachingPercent);
+                FCR_Velocity.transform.position = Vector3.Lerp(FCR_Velocity.transform.position, LC_StopPos_for_FC_R, FC_Slow_ReachingPercent);
+            }
+            else
+            {
+                FCL_Velocity.transform.position = Vector3.Lerp(FCL_Velocity.transform.position, LC_StopPos_for_FC_L, FC_Slow_ReachingPercent);
+                FCR_Velocity.transform.position = Vector3.Lerp(FCR_Velocity.transform.position, LC_StopPos_for_FC_R, FC_Fast_ReachingPercent);
+            }
         }
 
-        if (Respawn || DriverCar.respawnTrigger)
+        if (StoppingTime == 0)
         {
-            FollowingCarRight.transform.position = startPos;
-            FollowingCarRight.transform.rotation = Quaternion.identity;
-            FollowingCarRight.wayPointTrigger = false;
-            FollowingCarRight.disableTime = 0;
-            FollowingCarRight.distanceTravelled = 0;
-            FollowingCarRight.gameObject.SetActive(false);
-
-            laneChangeTimer = 0;
-            accelTime = 0;
-            distanceTravelled = 0;
-            disableTime = 0;
-            wayPointTrigger = false;
-            eventStartBool = false;
-            Respawn = false;
-            gameObject.transform.position = startPos;
-            gameObject.transform.rotation = Quaternion.identity;
-            gameObject.SetActive(false);
+            FCL_Velocity.GetComponent<Rigidbody>().velocity = TargetCarVelocity;
+            FCR_Velocity.GetComponent<Rigidbody>().velocity = TargetCarVelocity;
+            FCB_Velocity.GetComponent<Rigidbody>().velocity = TargetCarVelocity;
         }
     }
-            
 
-
-
-
-    private void OnTriggerEnter(Collider other)
+    private void Respawn()
     {
-        if (other.gameObject.CompareTag("WayPoint"))
-        {
-            wayPointTrigger = true;
-        }
+        FC_Accel_Timer = 0;
+        OvertakeTimer = 0;
+        StopOvertake = false;
+        FCL_1.transform.position = StartPos_FCL_1;
+        FCL_2.transform.position = StartPos_FCL_2;
+        FCR_1.transform.position = StartPos_FCR_1;
+        FCR_2.transform.position = StartPos_FCR_2;
+        FCB_1.transform.position = StartPos_FCB_1;
+        FCB_2.transform.position = StartPos_FCB_2;
+        FCL_1.SetActive(false);
+        FCL_2.SetActive(false);
+        FCR_1.SetActive(false);
+        FCR_2.SetActive(false);
+        FCB_1.SetActive(false);
+        FCB_2.SetActive(false);
+        //gameObject.SetActive(false);
     }
 }
+

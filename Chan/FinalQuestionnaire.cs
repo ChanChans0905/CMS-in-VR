@@ -9,55 +9,45 @@ using UnityEngine.XR;
 
 public class FinalQuestionnaire : MonoBehaviour
 {
-    public bool SaveTriggerExit = false;
     public GameObject SaveTriggerObject;
-    int threshold_y;
-    int threshold_z;
-    [SerializeField] DemoCarController DriverCar;
-    public int QuestionnaireNumber;
+    int QuestionnaireNumber;
     [SerializeField] Slider AnswerSlider;
-    private string csvSeparator = ",";
-    public string csvFileName;
-    private string[] csvHeaders = new string[2] { "Number", "Answer" };
-    private string csvDirectoryName = "FinalQuestionnaire";
+    string csvSeparator = ",";
+    string csvFileName;
+    string[] csvHeaders = new string[2] { "Number", "Answer" };
+    string csvDirectoryName = "FinalQuestionnaire";
     LogitechGSDK.LogiControllerPropertiesData properties;
     public bool SaveTrigger;
-    [SerializeField] FadeInOut FadeInOut;
-    public bool ButtonActivation;
     public GameObject GameEnd;
-
-    private void Start()
-    {
-        ButtonActivation = true;
-        List<Transform> children = GetChildren(transform);
-    }
+    List<Transform> children;
+    bool FinalQuestionnairePhase;
+    float ThresholdTimer;
 
     void Update()
     {
-        List<Transform> children = GetChildren(transform);
-        if (LogitechGSDK.LogiUpdate() && LogitechGSDK.LogiIsConnected(0))
+        if (FinalQuestionnairePhase)
         {
-            LogitechGSDK.DIJOYSTATE2ENGINES rec;
-            rec = LogitechGSDK.LogiGetStateUnity(0);
-
-            // Get slider value from the steering wheel
-
-            if (rec.lX < -7500) { AnswerSlider.value = 1; }
-            else if (rec.lX < -4500 && rec.lX > -7500) { AnswerSlider.value = 2; }
-            else if (rec.lX < -1500 && rec.lX > -4500) { AnswerSlider.value = 3; }
-            else if (rec.lX < 1500 && rec.lX > -1500) { AnswerSlider.value = 4; }
-            else if (rec.lX > 1500 && rec.lX < 4500) { AnswerSlider.value = 5; }
-            else if (rec.lX > 4500 && rec.lX < 7500) { AnswerSlider.value = 6; }
-            //else if (rec.lX > 7500) { AnswerSlider.value = 7; }
-
-            // Functions below only works with the slider
-            if (ButtonActivation)
+            if (LogitechGSDK.LogiUpdate() && LogitechGSDK.LogiIsConnected(0))
             {
-                // when the left lever is pulled, move to the next question
-                if (rec.rgbButtons[4] == 128)
+                LogitechGSDK.DIJOYSTATE2ENGINES rec;
+                rec = LogitechGSDK.LogiGetStateUnity(0);
+
+                if (ThresholdTimer < 3f)
+                    ThresholdTimer += Time.deltaTime;
+
+                // Get slider value from the steering wheel
+                if (rec.lX < -7500) { AnswerSlider.value = 1; }
+                else if (rec.lX < -4500 && rec.lX > -7500) { AnswerSlider.value = 2; }
+                else if (rec.lX < -1500 && rec.lX > -4500) { AnswerSlider.value = 3; }
+                else if (rec.lX < 1500 && rec.lX > -1500) { AnswerSlider.value = 4; }
+                else if (rec.lX > 1500 && rec.lX < 4500) { AnswerSlider.value = 5; }
+                else if (rec.lX > 4500 && rec.lX < 7500) { AnswerSlider.value = 6; }
+                else if (rec.lX > 7500) { AnswerSlider.value = 7; }
+
+                if (ThresholdTimer > 2)
                 {
-                    threshold_y++;
-                    if (threshold_y >= 25)
+                    // when the right lever is pulled, move to the next question
+                    if (rec.rgbButtons[4] == 128)
                     {
                         if (QuestionnaireNumber < 6)
                         {
@@ -70,23 +60,18 @@ public class FinalQuestionnaire : MonoBehaviour
                         {
                             QuestionnaireNumber++;
                         }
-                        threshold_y = 0;
+
+                        // if it's the last question, turn the questions off and turn on the save notive for saving the survey result
+                        if (QuestionnaireNumber == 7)
+                        {
+                            children[QuestionnaireNumber - 1].gameObject.SetActive(false);
+                            SaveTriggerObject.SetActive(true);
+                        }
+                        ThresholdTimer = 0;
                     }
-                }
 
-                // if it's the last question, turn the questions off and turn on the save notive for saving the survey result
-                if (QuestionnaireNumber == 7)
-                {
-                    children[QuestionnaireNumber - 1].gameObject.SetActive(false);
-                    SaveTriggerObject.SetActive(true);
-                    ButtonActivation = false;
-                }
-
-                // when the right leve is pulled, get back to the previous question
-                if (rec.rgbButtons[5] == 128)
-                {
-                    threshold_z++;
-                    if (threshold_z >= 25)
+                    // when the left leve is pulled, get back to the previous question
+                    if (rec.rgbButtons[5] == 128)
                     {
                         if (QuestionnaireNumber > 1)
                         {
@@ -95,16 +80,17 @@ public class FinalQuestionnaire : MonoBehaviour
                             AnswerSlider = children[QuestionnaireNumber - 1].GetComponent<Slider>();
                             QuestionnaireNumber--;
                         }
-                        threshold_z = 0;
+                        ThresholdTimer = 0;
                     }
                 }
-            }
 
-            // if the user pull the right lever when the save notice object is activated, the survey result will be saved to csv file
-            if (SaveTrigger)
-            {
-                SaveToCSV();
-                GameEnd.SetActive(true);
+                // if the user pull the right lever when the save notice object is activated, the survey result will be saved to csv file
+                if (SaveTrigger)
+                {
+                    SaveToCSV();
+
+                    GameEnd.SetActive(true);
+                }
             }
         }
     }
@@ -182,6 +168,7 @@ public class FinalQuestionnaire : MonoBehaviour
             finalString += csvSeparator;
             sw.WriteLine(finalString);
 
+            FinalQuestionnairePhase = false;
             gameObject.SetActive(false);
 
         }

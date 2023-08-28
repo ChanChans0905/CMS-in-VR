@@ -9,57 +9,53 @@ using UnityEngine.XR;
 
 public class Questionnaire : MonoBehaviour
 {
-    public bool SaveTriggerExit;
     public GameObject SaveTriggerObject;
-    int threshold_y;
-    int threshold_z;
-    [SerializeField] DemoCarController DriverCar;
+    [SerializeField] DemoCarController DC;
     [SerializeField] TrialManager TM;
     public int QuestionnaireNumber;
     [SerializeField] Slider AnswerSlider;
-    private string csvSeparator = ",";
-    public string csvFileName;
-    private string[] csvHeaders = new string[2] { "Number", "Answer" };
-    private string csvDirectoryName = "Questionnaire";
-    LogitechGSDK.LogiControllerPropertiesData properties;
+    string csvSeparator = ",";
+    string csvFileName;
+    string[] csvHeaders = new string[2] { "Number", "Answer" };
+    string csvDirectoryName = "Questionnaire";
     public bool SaveTrigger;
-    [SerializeField] FadeInOut FadeInOut;
-    public bool ButtonActivation;
+    [SerializeField] DC_Collidor DC_C;
     public GameObject FinalQuestionnaireStartNotice;
-
+    LogitechGSDK.LogiControllerPropertiesData properties;
+    public bool QuestionnairePhase;
+    List<Transform> children;
+    float ThresholdTimer;
 
     void Start()
     {
-        ButtonActivation = true;
         List<Transform> children = GetChildren(transform);
     }
 
     void Update()
     {
-        List<Transform> children = GetChildren(transform);
-        if (LogitechGSDK.LogiUpdate() && LogitechGSDK.LogiIsConnected(0))
+        if (QuestionnairePhase)
         {
-            LogitechGSDK.DIJOYSTATE2ENGINES rec;
-            rec = LogitechGSDK.LogiGetStateUnity(0);
-
-            // Get slider value from the steering wheel
-
-            if (rec.lX < -7500) { AnswerSlider.value = 1; }
-            else if (rec.lX < -4500 && rec.lX > -7500) { AnswerSlider.value = 2; }
-            else if (rec.lX < -1500 && rec.lX > -4500) { AnswerSlider.value = 3; }
-            else if (rec.lX < 1500 && rec.lX > -1500) { AnswerSlider.value = 4; }
-            else if (rec.lX > 1500 && rec.lX < 4500) { AnswerSlider.value = 5; }
-            else if (rec.lX > 4500 && rec.lX < 7500) { AnswerSlider.value = 6; }
-            else if (rec.lX > 7500) { AnswerSlider.value = 7; }
-
-            // Functions below only works with the slider
-            if (ButtonActivation)
+            if (LogitechGSDK.LogiUpdate() && LogitechGSDK.LogiIsConnected(0))
             {
-                // when the right lever is pulled, move to the next question
-                if (rec.rgbButtons[4] == 128)
+                LogitechGSDK.DIJOYSTATE2ENGINES rec;
+                rec = LogitechGSDK.LogiGetStateUnity(0);
+
+                if(ThresholdTimer < 3f)
+                    ThresholdTimer += Time.deltaTime;
+
+                // Get slider value from the steering wheel
+                if (rec.lX < -7500) { AnswerSlider.value = 1; }
+                else if (rec.lX < -4500 && rec.lX > -7500) { AnswerSlider.value = 2; }
+                else if (rec.lX < -1500 && rec.lX > -4500) { AnswerSlider.value = 3; }
+                else if (rec.lX < 1500 && rec.lX > -1500) { AnswerSlider.value = 4; }
+                else if (rec.lX > 1500 && rec.lX < 4500) { AnswerSlider.value = 5; }
+                else if (rec.lX > 4500 && rec.lX < 7500) { AnswerSlider.value = 6; }
+                else if (rec.lX > 7500) { AnswerSlider.value = 7; }
+
+                if (ThresholdTimer > 2)
                 {
-                    threshold_y++;
-                    if (threshold_y >= 25)
+                    // when the right lever is pulled, move to the next question
+                    if (rec.rgbButtons[4] == 128)
                     {
                         if (QuestionnaireNumber < 6)
                         {
@@ -72,23 +68,18 @@ public class Questionnaire : MonoBehaviour
                         {
                             QuestionnaireNumber++;
                         }
-                        threshold_y = 0;
+
+                        // if it's the last question, turn the questions off and turn on the save notive for saving the survey result
+                        if (QuestionnaireNumber == 7)
+                        {
+                            children[QuestionnaireNumber - 1].gameObject.SetActive(false);
+                            SaveTriggerObject.SetActive(true);
+                        }
+                        ThresholdTimer = 0;
                     }
-                }
 
-                // if it's the last question, turn the questions off and turn on the save notive for saving the survey result
-                if (QuestionnaireNumber == 7)
-                {
-                    children[QuestionnaireNumber - 1].gameObject.SetActive(false);
-                    SaveTriggerObject.SetActive(true);
-                    ButtonActivation = false;
-                }
-
-                // when the left leve is pulled, get back to the previous question
-                if (rec.rgbButtons[5] == 128)
-                {
-                    threshold_z++;
-                    if (threshold_z >= 25)
+                    // when the left leve is pulled, get back to the previous question
+                    if (rec.rgbButtons[5] == 128)
                     {
                         if (QuestionnaireNumber > 1)
                         {
@@ -97,29 +88,28 @@ public class Questionnaire : MonoBehaviour
                             AnswerSlider = children[QuestionnaireNumber - 1].GetComponent<Slider>();
                             QuestionnaireNumber--;
                         }
-                        threshold_z = 0;
+                        ThresholdTimer = 0;
                     }
                 }
-            }
 
-            // if the user pull the right lever when the save notice object is activated, the survey result will be saved to csv file
-            if (SaveTrigger)
-            {
-                SaveToCSV();
-
-                if (DriverCar.QuestionnaireCount < 2)
+                // if the user pull the right lever when the save notice object is activated, the survey result will be saved to csv file
+                if (SaveTrigger)
                 {
-                    DriverCar.CMSchangeBool = true;
-                    TM.TrialTask = true;
-                    TM.TurnOnTrialStartNotice = true;
-                    FadeInOut.FadingEvent = false;
-                    DriverCar.respawnTrigger = false;
-                }
+                    SaveToCSV();
 
-                if (DriverCar.QuestionnaireCount == 2)
-                {
-                    DriverCar.FinalQuestionnaireBool = true;
-                    FinalQuestionnaireStartNotice.SetActive(true);
+                    if (DC.QuestionnaireCount < 2)
+                    {
+                        DC.CMSchangeBool = true;
+                        TM.TrialTask = true;
+                        DC_C.FadingEvent = false;
+                        DC.respawnTrigger = false;
+                    }
+
+                    if (DC.QuestionnaireCount == 2)
+                    {
+                        DC.FinalQuestionnaireBool = true;
+                        FinalQuestionnaireStartNotice.SetActive(true);
+                    }
                 }
             }
         }
@@ -134,8 +124,8 @@ public class Questionnaire : MonoBehaviour
 
     public void SaveToCSV()
     {
-        DriverCar.QuestionnaireCount++;
-        csvFileName = "Questionnaire" + DriverCar.QuestionnaireCount + ".csv";
+        DC.QuestionnaireCount++;
+        csvFileName = "Questionnaire" + DC.QuestionnaireCount + ".csv";
         List<Transform> children = GetChildren(transform);
         for (int i = 0; i < children.Count; i++)
         {
@@ -196,11 +186,11 @@ public class Questionnaire : MonoBehaviour
             }
             finalString += csvSeparator;
             sw.WriteLine(finalString);
+
             SaveTrigger = false;
-            SaveTriggerExit = true;
-            gameObject.SetActive(false);
             QuestionnaireNumber = 0;
-            ButtonActivation = true;
+            QuestionnairePhase = false;
+            gameObject.SetActive(false);
         }
     }
 

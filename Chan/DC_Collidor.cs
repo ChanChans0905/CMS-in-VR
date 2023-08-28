@@ -8,7 +8,7 @@ public class DC_Collidor : MonoBehaviour
     private Material _mat;
     public bool FadingEvent;
     [SerializeField] DemoCarController DC;
-    [SerializeField] LaneChangeCar LC;
+    [SerializeField] LeadingCar LC;
     [SerializeField] TrialManager TM;
     public GameObject QuestionnaireStartNotice, TaskFailureNotice/*,KeepLaneNotice*/;
     //float OutofLaneTime;
@@ -29,8 +29,6 @@ public class DC_Collidor : MonoBehaviour
 
         if (DC.respawnTrigger)
         {
-            LC.GetLeadingCarDirection = 0;
-
             if (FadingEvent && alpha <= 1) 
                 alpha += .01f;
 
@@ -85,7 +83,7 @@ public class DC_Collidor : MonoBehaviour
             if (DC.MainTask)
             {
                 LC.TurnOn_LC_FC = 1;
-                LC.GetLeadingCarDirection = 1;
+                LC.LC_Direction = 1;
                 LC.TaskStart = true;
                 
                 if(TaskCountThreshold > 2)
@@ -102,7 +100,7 @@ public class DC_Collidor : MonoBehaviour
             if (TM.TrialTask)
             {
                 TM.TurnOnTrialCars = 1;
-                TM.TurnOnAndMoveTrialCar = 1;
+                TM.MoveTrialCar = 1;
                 TM.ActivateTC_Speed = true;
             }
         }
@@ -112,7 +110,7 @@ public class DC_Collidor : MonoBehaviour
             if (DC.MainTask)
             {
                 LC.TurnOn_LC_FC = 2;
-                LC.GetLeadingCarDirection = 2;
+                LC.LC_Direction = 2;
                 LC.TaskStart = true;
 
                 if (TaskCountThreshold > 2)
@@ -129,7 +127,7 @@ public class DC_Collidor : MonoBehaviour
             if (TM.TrialTask)
             {
                 TM.TurnOnTrialCars = 2;
-                TM.TurnOnAndMoveTrialCar = 2;
+                TM.MoveTrialCar = 2;
                 TM.ActivateTC_Speed = true;
             }
         }
