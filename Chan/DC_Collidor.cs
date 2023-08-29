@@ -15,6 +15,8 @@ public class DC_Collidor : MonoBehaviour
 
     bool DrivingIn2ndLane;
     float TaskCountThreshold;
+    public bool Activate_Fade;
+    float FadingTimer;
 
     void Start()
     {
@@ -27,18 +29,34 @@ public class DC_Collidor : MonoBehaviour
         //if(OutofLaneTime >= 3) KeepLaneNotice.gameObject.SetActive(true);
         //if (OutofLaneTime == 0) KeepLaneNotice.gameObject.SetActive(false);
 
-        if (DC.respawnTrigger)
+        if (Activate_Fade)
         {
-            if (FadingEvent && alpha <= 1) 
-                alpha += .01f;
+            FadingTimer += Time.deltaTime;
 
-            else if (!FadingEvent && alpha >= 0) 
+            if (FadingEvent && alpha <= 1)
+            {
+                alpha += .01f;
+            }
+                
+
+            else if (!FadingEvent && alpha >= 0)
+            {
                 alpha -= .01f;
+            }
+                
 
             Color nNew = new Color(0, 0, 0, alpha);
             _mat.SetColor("_BaseColor", nNew);
             //OutofLaneTime = 0;
             //DrivingIn2ndLane = false;
+
+            if(FadingTimer > 5)
+            {
+                FadingTimer = 0;
+                Activate_Fade = false;
+                Debug.Log("ENded");
+            }
+                
         }
 
         if (TaskCountThreshold < 3)
@@ -51,6 +69,7 @@ public class DC_Collidor : MonoBehaviour
         {
             FadingEvent = true;
             DC.respawnTrigger = true;
+            Activate_Fade = true;
             TaskFailureNotice.SetActive(true);
             if(!LC.TaskStart && DC.taskCount != 0) 
                 DC.taskCount--;
@@ -72,6 +91,7 @@ public class DC_Collidor : MonoBehaviour
             {
                 FadingEvent = true;
                 DC.respawnTrigger = true;
+                Activate_Fade = true;
                 QuestionnaireStartNotice.SetActive(true);
                 DC.taskCount = 0;
                 DC.FirstTaskCountThreshold = false;
@@ -99,6 +119,7 @@ public class DC_Collidor : MonoBehaviour
  
             if (TM.TrialTask)
             {
+                TM.TrialTaskTimer = 0;
                 TM.TurnOnTrialCars = 1;
                 TM.MoveTrialCar = 1;
                 TM.ActivateTC_Speed = true;
@@ -126,6 +147,7 @@ public class DC_Collidor : MonoBehaviour
 
             if (TM.TrialTask)
             {
+                TM.TrialTaskTimer = 0;
                 TM.TurnOnTrialCars = 2;
                 TM.MoveTrialCar = 2;
                 TM.ActivateTC_Speed = true;

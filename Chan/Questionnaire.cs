@@ -25,6 +25,7 @@ public class Questionnaire : MonoBehaviour
     public bool QuestionnairePhase;
     List<Transform> children;
     float ThresholdTimer;
+    public GameObject TrialStartNotice;
 
     void Start()
     {
@@ -100,9 +101,7 @@ public class Questionnaire : MonoBehaviour
                     if (DC.QuestionnaireCount < 2)
                     {
                         DC.CMSchangeBool = true;
-                        TM.TrialTask = true;
-                        DC_C.FadingEvent = false;
-                        DC.respawnTrigger = false;
+                        TrialStartNotice.SetActive(true);
                     }
 
                     if (DC.QuestionnaireCount == 2)

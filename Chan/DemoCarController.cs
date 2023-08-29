@@ -23,12 +23,14 @@ public class DemoCarController : MonoBehaviour
     [SerializeField] private VolvoCars.Data.LampBrake lampBrake = default;
 
     [SerializeField] LeadingCar LC;
+    [SerializeField] DC_Collidor DC_C;
 
     public GameObject VolvoCar;
     public GameObject CMS_LD_SW, CMS_LD_TM, CMS_RD_SW, CMS_RD_TM, CMSCenter, CMSStitched, TraditionalMirrorLeft, TraditionalMirrorRight;
-    public GameObject AR_Manager;
+    public GameObject CSV_Manager;
+    public bool Activate_AR;
 
-    public GameObject CSV_SaveObject;
+
 
     public bool respawnTrigger;
 
@@ -45,7 +47,7 @@ public class DemoCarController : MonoBehaviour
     public float FC1Lposition, FC1Rposition, LC1position, FC2Lposition, FC2Rposition, LC2position, DCposition;
     public bool FCLbool, FCRbool, LCbool, TCLbool, TCRbool;
     public bool UsingAR,MainTask;
-    public float Acc, Br, SteeringInput;
+    public float Acc, Br, SteeringWheel_Data, Pedal_Data;
     //bool GameStartNoticeBool;
 
     int ReactionStarted, ReactionNoCount ;
@@ -97,13 +99,13 @@ public class DemoCarController : MonoBehaviour
             Br = (rec.lRz - 32768f) / 65536f;
 
             rawForwardInput = Acc + Br;
+            Pedal_Data = rawForwardInput;
 
             // Steering
             steeringReduction = 1 - Mathf.Min(Mathf.Abs(velocity.Value) / 30f, 0.85f);
 
             userSteeringInput.Value = rawSteeringInput * steeringReduction*2f;
-            SteeringInput = userSteeringInput.Value;
-            Debug.Log(SteeringInput);
+            SteeringWheel_Data = userSteeringInput.Value;
 
             // ************ORG  ***************
 
@@ -194,19 +196,25 @@ public class DemoCarController : MonoBehaviour
 
             if(SampleSelection)
             {
-                CSV_SaveObject.SetActive(true);
+                CSV_Manager.SetActive(true);
             }
-
-
 
             if(LC.LC_StoppingTime ==1)
             {
                 FirstReactionTimer += Time.deltaTime;
-                if (FirstReactionTimer <= 0.1f && (Br <= -0.7 || Mathf.Abs(SteeringInput) > 0.02f))
+                if (FirstReactionTimer <= 0.1f && (Br <= -0.7 || Mathf.Abs(SteeringWheel_Data) > 0.02f))
+                {
                     ReactionNoCount = 1;
+                    Debug.Log(123);
+                }
+                    
 
-                if (FirstReactionTimer >= 0.1f && (Br <= -0.7 || Mathf.Abs(SteeringInput) > 0.02f))
+                if (FirstReactionTimer >= 0.1f && (Br <= -0.7 || Mathf.Abs(SteeringWheel_Data) > 0.02f))
+                {
                     ReactionStarted = 1;
+                    Debug.Log(567);
+                }
+                    
 
                 TotalFirstReactionValue = ReactionStarted - ReactionNoCount;
             }
@@ -214,9 +222,12 @@ public class DemoCarController : MonoBehaviour
 
             if (respawnTrigger)
             {
-                waitTimer += Time.deltaTime;
+                if(waitTimer < 2)
+                    waitTimer += Time.deltaTime;
                 if (waitTimer > 1.5)
                 {
+                    DC_C.FadingEvent = true;
+                    DC_C.Activate_Fade = true;
                     ReactionStarted = 0;
                     ReactionNoCount = 0;
                     TotalFirstReactionValue = 0;
@@ -227,7 +238,6 @@ public class DemoCarController : MonoBehaviour
                     wheelTorque.Value = wheelTorqueValue;
                     VolvoCar.transform.localPosition = new Vector3(-2166, 0, 2300);
                     VolvoCar.transform.rotation = Quaternion.Slerp(VolvoCar.transform.rotation, Quaternion.AngleAxis(-90, Vector3.up), 3f * Time.deltaTime);
-                    waitTimer = 0;
                 }
             }
 
@@ -269,6 +279,7 @@ public class DemoCarController : MonoBehaviour
                 {
                     TraditionalMirrorLeft.SetActive(true);
                     TraditionalMirrorRight.SetActive(true);
+                    Activate_AR = false;
                     break;
                 }
             case 2: // CMS under A-pillar
@@ -276,6 +287,7 @@ public class DemoCarController : MonoBehaviour
                     CMSCenter.SetActive(true);
                     CMS_LD_TM.SetActive(true);
                     CMS_RD_TM.SetActive(true);
+                    Activate_AR = false;
                     break;
                 }
             case 3: // CMS near the Steering Wheel
@@ -283,11 +295,13 @@ public class DemoCarController : MonoBehaviour
                     CMSCenter.SetActive(true);
                     CMS_LD_SW.SetActive(true);
                     CMS_RD_SW.SetActive(true);
+                    Activate_AR = false;
                     break;
                 }
             case 4: // CMS Stitched
                 {
                     CMSStitched.SetActive(true);
+                    Activate_AR = false;
                     break;
                 }
             case 5: // CMS under A-pillar with AR signal
@@ -295,7 +309,7 @@ public class DemoCarController : MonoBehaviour
                     CMSCenter.SetActive(true);
                     CMS_LD_TM.SetActive(true);
                     CMS_RD_TM.SetActive(true);
-                    AR_Manager.SetActive(true);
+                    Activate_AR = true;
                     break;
                 }
             case 6: // CMS near the Steering Wheel with AR signal
@@ -303,13 +317,13 @@ public class DemoCarController : MonoBehaviour
                     CMSCenter.SetActive(true);
                     CMS_LD_SW.SetActive(true);
                     CMS_RD_SW.SetActive(true);
-                    AR_Manager.SetActive(true);
+                    Activate_AR = true;
                     break;
                 }
             case 7: // CMS Stitched with AR signal
                 {
                     CMSStitched.SetActive(true);
-                    AR_Manager.SetActive(true);
+                    Activate_AR = true;
                     break;
                 }
         }

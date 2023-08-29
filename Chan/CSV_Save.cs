@@ -19,10 +19,10 @@ public class CSV_Save : MonoBehaviour
     string csvFileName;
     string csvDirectoryName = "Data";
     string csvSeparator = ",";
-    string[] csvHeaders = new string[] { "FrameNumber", "CMS_Combination", "TaskCount", "LC_LaneChangeStartingTime", "LC_StoppingTime", "FirstReactionTime", "FC_Speed", "NumberOfCollision", "DC_LaneChangeCompleteTime", "Gaze_X", "Gaze_Y", "Gaze_Z",
+    string[] csvHeaders = new string[] { "FrameNumber", "CMS_Combination", "TaskCount", "LC_LaneChangeStartingTime", "LC_StoppingTime", "FirstReactionTime", "FC_Speed", "NumberOfCollision", "DC_LaneChangeCompleteTime","Steering Wheel","Pedal", "Gaze_X", "Gaze_Y", "Gaze_Z",
                                          "DC_Pos_X","DC_Pos_Y","DC_Pos_Z", "DC_Rot_X","DC_Rot_Y","DC_Rot_Z","DC_Rot_W", "LC_Pos_X","LC_Pos_Y","LC_Pos_Z", "FCL_Pos_X","FCL_Pos_Y","FCL_Pos_Z", "FCR_Pos_X", "FCR_Pos_Y", "FCR_Pos_Z" };
 
-    public float[] SaveData = new float[28];
+    float[] SaveData = new float[30];
     float FrameNumber;
     string FilePath;
 
@@ -70,48 +70,48 @@ public class CSV_Save : MonoBehaviour
         SaveData[6] = DC.FollowingCarSpeed[DC.taskCount]; // FC_Speed
         SaveData[7] = DC.NumOfCollision;
         SaveData[8] = DC.LaneChangeComplete;
-        SaveData[9] = Gaze.transform.localPosition.x;
-        SaveData[10] = Gaze.transform.localPosition.y;
-        SaveData[11] = Gaze.transform.localPosition.z;
-        SaveData[12] = Volvocar.transform.position.x;
-        SaveData[13] = 0;
-        SaveData[14] = Volvocar.transform.position.z;
-        SaveData[15] = Volvocar.transform.rotation.x;
-        SaveData[16] = Volvocar.transform.rotation.y;
-        SaveData[17] = Volvocar.transform.rotation.z;
-        SaveData[18] = Volvocar.transform.rotation.w;
+        SaveData[9] = DC.SteeringWheel_Data;
+        SaveData[10] = DC.Pedal_Data;
+        SaveData[11] = Gaze.transform.localPosition.x;
+        SaveData[12] = Gaze.transform.localPosition.y;
+        SaveData[13] = Gaze.transform.localPosition.z;
+        SaveData[14] = Volvocar.transform.position.x;
+        SaveData[15] = 0;
+        SaveData[16] = Volvocar.transform.position.z;
+        SaveData[17] = Volvocar.transform.rotation.x;
+        SaveData[18] = Volvocar.transform.rotation.y;
+        SaveData[19] = Volvocar.transform.rotation.z;
+        SaveData[20] = Volvocar.transform.rotation.w;
 
         if (DC.MainTask)
         {
             if(LC.LC_Direction == 1)
             {
-                SaveData[19] = LC1.transform.position.x;
-                SaveData[20] = 0;
-                SaveData[21] = LC1.transform.position.z;
-                SaveData[22] = FCL1.transform.position.x;
-                SaveData[23] = 0;
-                SaveData[24] = FCL1.transform.position.z;
-                SaveData[25] = FCR1.transform.position.x;
-                SaveData[26] = 0;
-                SaveData[27] = FCR1.transform.position.z;
+                SaveData[21] = LC1.transform.position.x;
+                SaveData[22] = 0;
+                SaveData[23] = LC1.transform.position.z;
+                SaveData[24] = FCL1.transform.position.x;
+                SaveData[25] = 0;
+                SaveData[26] = FCL1.transform.position.z;
+                SaveData[27] = FCR1.transform.position.x;
+                SaveData[28] = 0;
+                SaveData[29] = FCR1.transform.position.z;
             }
             else if (LC.LC_Direction == 2)
             {
-                SaveData[19] = LC2.transform.position.x;
-                SaveData[20] = 0;
-                SaveData[21] = LC2.transform.position.z;
-                SaveData[22] = FCL2.transform.position.x;
-                SaveData[23] = 0;
-                SaveData[24] = FCL2.transform.position.z;
-                SaveData[25] = FCR2.transform.position.x;
-                SaveData[26] = 0;
-                SaveData[27] = FCR2.transform.position.z;
+                SaveData[21] = LC2.transform.position.x;
+                SaveData[22] = 0;
+                SaveData[23] = LC2.transform.position.z;
+                SaveData[24] = FCL2.transform.position.x;
+                SaveData[25] = 0;
+                SaveData[26] = FCL2.transform.position.z;
+                SaveData[27] = FCR2.transform.position.x;
+                SaveData[28] = 0;
+                SaveData[29] = FCR2.transform.position.z;
             }
         }
         else
         {
-            SaveData[19] = 0;
-            SaveData[20] = 0;
             SaveData[21] = 0;
             SaveData[22] = 0;
             SaveData[23] = 0;
@@ -119,6 +119,8 @@ public class CSV_Save : MonoBehaviour
             SaveData[25] = 0;
             SaveData[26] = 0;
             SaveData[27] = 0;
+            SaveData[28] = 0;
+            SaveData[29] = 0;
         }
 
 
@@ -132,7 +134,6 @@ public class CSV_Save : MonoBehaviour
             string csvFinalString = "";
             for (int i = 0; i < data.Length; i++)
             {
-                Debug.Log(data.Length);
                 if (csvFinalString != "")
                 {
                     csvFinalString += csvSeparator;

@@ -13,46 +13,49 @@ public class AR_Manager : MonoBehaviour
 
     void Update()
     {
-        if(TurnOn_AR_Signal_L == 1)
+        if(DC.Activate_AR)
         {
-            AR_Signal_CMS_5_L.SetActive(true);
-            AR_Signal_CMS_6_L.SetActive(true);
-            AR_Signal_CMS_7_L.SetActive(true);
-        }
-        else if(TurnOn_AR_Signal_L == 2)
-        {
-            AR_Signal_CMS_5_L.SetActive(false);
-            AR_Signal_CMS_6_L.SetActive(false);
-            AR_Signal_CMS_7_L.SetActive(false);
-            TurnOn_AR_Signal_L = 0;
+            if (TurnOn_AR_Signal_L == 1)
+            {
+                AR_Signal_CMS_5_L.SetActive(true);
+                AR_Signal_CMS_6_L.SetActive(true);
+                AR_Signal_CMS_7_L.SetActive(true);
+            }
+            else if (TurnOn_AR_Signal_L == 2)
+            {
+                AR_Signal_CMS_5_L.SetActive(false);
+                AR_Signal_CMS_6_L.SetActive(false);
+                AR_Signal_CMS_7_L.SetActive(false);
+                TurnOn_AR_Signal_L = 0;
+            }
+
+            if (TurnOn_AR_Signal_R == 1)
+            {
+                AR_Signal_CMS_5_R.SetActive(true);
+                AR_Signal_CMS_6_R.SetActive(true);
+                AR_Signal_CMS_7_R.SetActive(true);
+            }
+            else if (TurnOn_AR_Signal_R == 2)
+            {
+                AR_Signal_CMS_5_R.SetActive(false);
+                AR_Signal_CMS_6_R.SetActive(false);
+                AR_Signal_CMS_7_R.SetActive(false);
+                TurnOn_AR_Signal_R = 0;
+            }
+
+            if (DC.respawnTrigger)
+            {
+                TurnOn_AR_Signal_L = 0;
+                TurnOn_AR_Signal_R = 0;
+                AR_Signal_CMS_5_L.SetActive(false);
+                AR_Signal_CMS_6_L.SetActive(false);
+                AR_Signal_CMS_7_L.SetActive(false);
+                AR_Signal_CMS_5_R.SetActive(false);
+                AR_Signal_CMS_6_R.SetActive(false);
+                AR_Signal_CMS_7_R.SetActive(false);
+            }
         }
 
-        if(TurnOn_AR_Signal_R == 1)
-        {
-            AR_Signal_CMS_5_R.SetActive(true);
-            AR_Signal_CMS_6_R.SetActive(true);
-            AR_Signal_CMS_7_R.SetActive(true);
-        }
-        else if(TurnOn_AR_Signal_R == 2)
-        {
-            AR_Signal_CMS_5_R.SetActive(false);
-            AR_Signal_CMS_6_R.SetActive(false);
-            AR_Signal_CMS_7_R.SetActive(false);
-            TurnOn_AR_Signal_R = 0;
-        }
-
-        if (DC.respawnTrigger)
-        {
-            TurnOn_AR_Signal_L = 0;
-            TurnOn_AR_Signal_R = 0;
-            AR_Signal_CMS_5_L.SetActive(false);
-            AR_Signal_CMS_6_L.SetActive(false);
-            AR_Signal_CMS_7_L.SetActive(false);
-            AR_Signal_CMS_5_R.SetActive(false);
-            AR_Signal_CMS_6_R.SetActive(false);
-            AR_Signal_CMS_7_R.SetActive(false);
-            gameObject.SetActive(false);
-        }
     }
 
     private void OnTriggerStay(Collider other)

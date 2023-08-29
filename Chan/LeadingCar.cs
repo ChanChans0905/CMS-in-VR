@@ -37,7 +37,7 @@ public class LeadingCar : MonoBehaviour
     private void Start()
     {
         // Set distance between DC and LC
-        StoppingDistance = 60;
+        StoppingDistance = 80;
 
         // Get original position and rotation of LC_1 and LC_2
         StartPos_LC_1 = LeadingCar_1.transform.localPosition;
@@ -50,6 +50,8 @@ public class LeadingCar : MonoBehaviour
     {
         if(DC.MainTask)
         {
+            Debug.Log("MainTask");
+
             if (TurnOn_LC_FC == 1)
             {
                 LeadingCar_1.SetActive(true);
@@ -86,14 +88,14 @@ public class LeadingCar : MonoBehaviour
 
             TargetCarVelocity.z = TargetCar.GetComponent<Rigidbody>().velocity.z;
 
-            if (TargetCarVelocity.z > 27)
-                StoppingDistance = 80;
-            else if (TargetCarVelocity.z > 25)
-                StoppingDistance = 55;
-            else if (TargetCarVelocity.z > 22)
-                StoppingDistance = 40;
-            else if (TargetCarVelocity.z > 19)
-                StoppingDistance = 30;
+            //if (TargetCarVelocity.z > 27)
+            //    StoppingDistance = 80;
+            //else if (TargetCarVelocity.z > 25)
+            //    StoppingDistance = 55;
+            //else if (TargetCarVelocity.z > 22)
+            //    StoppingDistance = 40;
+            //else if (TargetCarVelocity.z > 19)
+            //    StoppingDistance = 30;
 
             if (TaskStart)
             {
@@ -244,11 +246,24 @@ public class LeadingCar : MonoBehaviour
         // over slows down and change the lane to the 2nd
         if (OvertakeTimer <= 8)
         {
+            float DistanceBetween_DC_LC = TargetCar.transform.position.z - LeadingCarPosition.z;
+
             // slow down
-            if (Mathf.Abs(TargetCar.transform.position.z - LeadingCarPosition.z) > StoppingDistance)
-                TargetCarVelocity.z *= 0.6f;
+            if (LeadingCarPosition.x < 1000)
+            {
+                if (DistanceBetween_DC_LC > -80)
+                    TargetCarVelocity.z *= 1.4f;
+                else
+                    TargetCarVelocity.z *= 0.9f;
+            }
             else
-                TargetCarVelocity.z *= 1.4f;
+            {
+                if (DistanceBetween_DC_LC < -80)
+                    TargetCarVelocity.z *= 1.4f;
+                else
+                    TargetCarVelocity.z *= 0.9f;
+            }
+
             // lane changing
             if (OvertakeTimer >= 4)
                 TargetCarVelocity.x = 1.5f;
@@ -257,7 +272,7 @@ public class LeadingCar : MonoBehaviour
         if (OvertakeTimer > 8 && OvertakeTimer <= 8 + TaskStartTime)
         {
             TargetCarVelocity.x = 0;
-            Obstacle.transform.position = LeadingCarPosition + new Vector3(0, 1, 60);
+            Obstacle.transform.position = LeadingCarPosition + new Vector3(0, 0, 10);
         }
 
         // stop
@@ -267,14 +282,14 @@ public class LeadingCar : MonoBehaviour
             TargetCarVelocity.x = 2f;
             if (OvertakeTimer <= 10 + TaskStartTime)
             {
-
+                LC_StoppingTime = 1;
                 Obstacle.SetActive(true);
             }
         }
 
         if (OvertakeTimer > 11 + TaskStartTime)
         {
-            LC_StoppingTime = 1;
+
             TargetCarVelocity.x = 0;
         }
             
