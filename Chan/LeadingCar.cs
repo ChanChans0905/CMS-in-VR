@@ -10,7 +10,7 @@ public class LeadingCar : MonoBehaviour
     public Transform TargetCar;
     public GameObject Obstacle;
     public GameObject LeadingCar_1, LeadingCar_2;
-    public GameObject FCL_1, FCR_1, FCB_1, FCL_2, FCR_2, FCB_2, LC_1_WayPoint, LC_2_WayPoint;
+    public GameObject FCL_1, FCR_1, FCB_1, FCL_2, FCR_2, FCB_2, TaskEndPoint_1, TaskEndPoint_2;
     public PathCreator PathCreator_1, PathCreator_2;
     GameObject LeadingCarVelocity;
     Vector3 TargetCarVelocity;
@@ -27,7 +27,7 @@ public class LeadingCar : MonoBehaviour
     public int TurnOn_LC_FC;
 
     float DisableTime;
-    bool RespawnTrigger;
+    public bool RespawnTrigger;
     public bool StartScenario_LaneChangeThenStop, StartScenario_LaneChangeWithLowSpeed, StartScenario_Obstacle, StartScenario_None;
     public float DrivingDirection;
 
@@ -58,7 +58,7 @@ public class LeadingCar : MonoBehaviour
                 FCL_1.SetActive(true);
                 FCR_1.SetActive(true);
                 FCB_1.SetActive(true);
-                LC_1_WayPoint.SetActive(true);
+                TaskEndPoint_1.SetActive(true);
                 TurnOn_LC_FC = 0;
             }
             else if (TurnOn_LC_FC == 2)
@@ -67,7 +67,7 @@ public class LeadingCar : MonoBehaviour
                 FCL_2.SetActive(true);
                 FCR_2.SetActive(true);
                 FCB_2.SetActive(true);
-                LC_2_WayPoint.SetActive(true);
+                TaskEndPoint_2.SetActive(true);
                 TurnOn_LC_FC = 0;
             }
 
@@ -177,10 +177,6 @@ public class LeadingCar : MonoBehaviour
             TargetCarVelocity.z = 0;
         }
 
-        // disable
-        if (OvertakeTimer >= 20)
-            RespawnTrigger = true;
-
         // apply the velocity to the car
         LeadingCarVelocity.GetComponent<Rigidbody>().velocity = TargetCarVelocity * DrivingDirection;
     }
@@ -193,22 +189,12 @@ public class LeadingCar : MonoBehaviour
         // overtake
         if (OvertakeTimer <= 10 + TaskStartTime)
         {
-            float DistanceBetween_DC_LC = TargetCar.transform.position.z - LeadingCarPosition.z;
+            float DistanceBetween_DC_LC = LeadingCarPosition.z - TargetCar.transform.position.z;
 
-            if (LeadingCarPosition.x < 1000)
-            {
-                if (DistanceBetween_DC_LC > -38)
-                    TargetCarVelocity.z *= 1.2f;
-                else
-                    TargetCarVelocity.z *= 0.9f;
-            }
+            if (DistanceBetween_DC_LC < 60 * DrivingDirection)
+                TargetCarVelocity.z *= 1.3f;
             else
-            {
-                if (DistanceBetween_DC_LC < -38)
-                    TargetCarVelocity.z *= 1.2f;
-                else
-                    TargetCarVelocity.z *= 0.9f;
-            }
+                TargetCarVelocity.z *= 0.9f;
 
             //if (Mathf.Abs(TargetCar.transform.position.z - LeadingCarPosition.z) < 40) 
             //    TargetCarVelocity.z *= 0.3f;
@@ -219,21 +205,18 @@ public class LeadingCar : MonoBehaviour
         }
 
         // slows down and change the lane to the 2nd
-        if (OvertakeTimer > 10 + TaskStartTime && OvertakeTimer <= 12 + TaskStartTime)
+        if (OvertakeTimer >= 10 + TaskStartTime && OvertakeTimer <= 13 + TaskStartTime)
         {
-            TargetCarVelocity.z *= 0.4f;
-            TargetCarVelocity.x = 3f;
+            TargetCarVelocity.z *= 0.5f;
+            TargetCarVelocity.x = 2f;
         }
 
-        if (OvertakeTimer > 12 + TaskStartTime)
+        if (OvertakeTimer > 13 + TaskStartTime)
         {
             LC_StoppingTime = 1;
             TargetCarVelocity.z = 0;
             TargetCarVelocity.x = 0;
         }
-
-        if (OvertakeTimer >= 20)
-            RespawnTrigger = true;
 
         LeadingCarVelocity.GetComponent<Rigidbody>().velocity = TargetCarVelocity * DrivingDirection;
     }
@@ -292,11 +275,6 @@ public class LeadingCar : MonoBehaviour
 
             TargetCarVelocity.x = 0;
         }
-            
-
-        // disable
-        if (OvertakeTimer >= 20)
-            RespawnTrigger = true;
 
         // apply the velocity to the car
         LeadingCarVelocity.GetComponent<Rigidbody>().velocity = TargetCarVelocity * DrivingDirection;
@@ -324,10 +302,15 @@ public class LeadingCar : MonoBehaviour
             TargetCarVelocity.x = 2f;
         }
 
-        if (OvertakeTimer > 8)
+        if (OvertakeTimer > 8 && OvertakeTimer < 20)
         {
             TargetCarVelocity.z *= 1f;
             TargetCarVelocity.x = 0;
+        }
+
+        if(OvertakeTimer >= 20 && OvertakeTimer <= 23)
+        {
+            TargetCarVelocity.x = 2f;
         }
 
         if (WayPointTrigger)
@@ -382,8 +365,15 @@ public class LeadingCar : MonoBehaviour
         LeadingCar_2.transform.localRotation = StartRot_LC_2;
         LeadingCar_1.SetActive(false);
         LeadingCar_2.SetActive(false);
-        LC_1_WayPoint.SetActive(false);
-        LC_2_WayPoint.SetActive(false);
+        TaskEndPoint_1.SetActive(false);
+        TaskEndPoint_2.SetActive(false);
+        Obstacle.SetActive(false);
         RespawnTrigger = false;
+    }
+
+    private void OnTriggerEnter(Collider other)
+    {
+        if (other.tag == "TaskEndPoint")
+            RespawnTrigger = true;
     }
 }

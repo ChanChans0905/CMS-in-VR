@@ -21,7 +21,7 @@ public class FollowingCar : MonoBehaviour
     float FC_Fast_Time = 4f;
     float FC_Slow_Time = 8f;
     float FC_Accel_Timer;
-    Vector3 LC_StopPos_for_FC_L, LC_StopPos_for_FC_R;
+    Vector3 LC_StopPos_for_FC_L, LC_StopPos_for_FC_R, LC_StopPos_for_FC_B;
     //float FC_Fast_ReachingPercent, FC_Slow_ReachingPercent;
     int StoppingTime, AccelSpeed;
 
@@ -68,7 +68,7 @@ public class FollowingCar : MonoBehaviour
             TargetCarVelocity.z = 0;
 
 
-        if (DC.respawnTrigger)
+        if (LC.RespawnTrigger)
             Respawn();
     }
 
@@ -119,15 +119,18 @@ public class FollowingCar : MonoBehaviour
                 {
                     LC_StopPos_for_FC_L = Obstacle.position;
                     LC_StopPos_for_FC_R = Obstacle.position;
+                    LC_StopPos_for_FC_B = Obstacle.position;
                 }
                 else
                 {
                     LC_StopPos_for_FC_L = TargetCar.transform.position;
                     LC_StopPos_for_FC_R = TargetCar.transform.position;
+                    LC_StopPos_for_FC_B = TargetCar.transform.position;
                 }
 
                 LC_StopPos_for_FC_L.x = FCL_Velocity.transform.position.x;
                 LC_StopPos_for_FC_R.x = FCR_Velocity.transform.position.x;
+                LC_StopPos_for_FC_B.x = FCB_Velocity.transform.position.x;
             }
 
             float FC_Fast_ReachingPercent = FC_Accel_Timer / FC_Fast_Time;
@@ -137,13 +140,13 @@ public class FollowingCar : MonoBehaviour
             {
                 FCL_Velocity.transform.position = Vector3.Lerp(FCL_Velocity.transform.position, LC_StopPos_for_FC_L, FC_Fast_ReachingPercent / 400f);
                 FCR_Velocity.transform.position = Vector3.Lerp(FCR_Velocity.transform.position, LC_StopPos_for_FC_R, FC_Fast_ReachingPercent / 100f);
-                FCB_Velocity.transform.position = Vector3.Lerp(FCB_Velocity.transform.position, LC_StopPos_for_FC_L, FC_Fast_ReachingPercent / 100f);
+                FCB_Velocity.transform.position = Vector3.Lerp(FCB_Velocity.transform.position, LC_StopPos_for_FC_B, FC_Fast_ReachingPercent / 100f);
             }
             else
             {
-                FCL_Velocity.transform.position = Vector3.Lerp(FCL_Velocity.transform.position, LC_StopPos_for_FC_L, FC_Fast_ReachingPercent / 100f);
-                FCR_Velocity.transform.position = Vector3.Lerp(FCR_Velocity.transform.position, LC_StopPos_for_FC_R, FC_Fast_ReachingPercent / 400f);
-                FCB_Velocity.transform.position = Vector3.Lerp(FCB_Velocity.transform.position, LC_StopPos_for_FC_L, FC_Fast_ReachingPercent / 100f);
+                FCL_Velocity.transform.position = Vector3.Lerp(FCL_Velocity.transform.position, LC_StopPos_for_FC_L, FC_Fast_ReachingPercent / 150f);
+                FCR_Velocity.transform.position = Vector3.Lerp(FCR_Velocity.transform.position, LC_StopPos_for_FC_R, FC_Fast_ReachingPercent / 600f);
+                FCB_Velocity.transform.position = Vector3.Lerp(FCB_Velocity.transform.position, LC_StopPos_for_FC_B, FC_Fast_ReachingPercent / 150f);
             }
         }
 
@@ -172,7 +175,6 @@ public class FollowingCar : MonoBehaviour
         FCR_2.SetActive(false);
         FCB_1.SetActive(false);
         FCB_2.SetActive(false);
-        //gameObject.SetActive(false);
     }
 }
 

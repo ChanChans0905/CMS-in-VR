@@ -8,7 +8,6 @@ using UnityEngine;
 
 public class CSV_Save : MonoBehaviour
 {
-    // needed : FrameNumber, CMS_Combination, TaskCount, EventStartingTime, FirstReacionTIme, DC_LaneChangeTime, NumberOfCollision, GazeCoor, DC_Coor, LC_Coor, FC_Coor
     [SerializeField] DemoCarController DC;
     [SerializeField] LeadingCar LC;
     [SerializeField] FollowingCar FC;
@@ -16,7 +15,9 @@ public class CSV_Save : MonoBehaviour
     public GameObject Volvocar, Gaze;
     public GameObject LC1, LC2, FCL1, FCL2, FCR1, FCR2;
 
-    string csvFileName;
+    public bool DataLoggingStart, DataLoggingEnd, Create_CSV_File;
+
+    string FilePath;
     string csvDirectoryName = "Data";
     string csvSeparator = ",";
     string[] csvHeaders = new string[] { "FrameNumber", "CMS_Combination", "TaskCount", "LC_LaneChangeStartingTime", "LC_StoppingTime", "FirstReactionTime", "FC_Speed", "NumberOfCollision", "DC_LaneChangeCompleteTime","Steering Wheel","Pedal", "Gaze_X", "Gaze_Y", "Gaze_Z",
@@ -24,107 +25,95 @@ public class CSV_Save : MonoBehaviour
 
     float[] SaveData = new float[30];
     float FrameNumber;
-    string FilePath;
+
 
     private void Start()
     {
         string dir = Application.dataPath + "/" + csvDirectoryName;
         Directory.CreateDirectory(dir);
-        DC.SampleSelection = true;
     }
 
     void FixedUpdate()
     {
-        if(DC.SampleSelection)
+        if (DataLoggingStart)
         {
-            csvFileName = "Data_SampleNumber_" + DC.SampleNumber + ".csv";
-
-            FilePath = Application.dataPath + "/" + csvDirectoryName + "/" + csvFileName;
-
-            using (StreamWriter sw = File.CreateText(FilePath))
+            if (Create_CSV_File)
             {
-                string finalString = "";
-                for (int i = 0; i < csvHeaders.Length; i++)
+                string csvFileName = "Data_SampleNumber_" + DC.SampleNumber + "_" + DC.CMScombination[DC.CMSchangeCount] + "_" + DC.taskCount + ".csv";
+
+                FilePath = Application.dataPath + "/" + csvDirectoryName + "/" + csvFileName;
+
+                using (StreamWriter sw = File.CreateText(FilePath))
                 {
-                    if (finalString != "")
+                    string finalString = "";
+                    for (int i = 0; i < csvHeaders.Length; i++)
                     {
-                        finalString += csvSeparator;
+                        if (finalString != "")
+                        {
+                            finalString += csvSeparator;
+                        }
+                        finalString += csvHeaders[i];
                     }
-                    finalString += csvHeaders[i];
+                    finalString += csvSeparator;
+                    sw.WriteLine(finalString);
                 }
-                finalString += csvSeparator;
-                sw.WriteLine(finalString);
+                Create_CSV_File = false;
+                FrameNumber = 0;
             }
 
-            DC.SampleSelection = false;
-        }
+            FrameNumber += Time.fixedDeltaTime;
 
-        FrameNumber += Time.fixedDeltaTime;
+            SaveData[0] = FrameNumber; // FrameNumber
+            SaveData[1] = DC.CMScombination[DC.CMSchangeCount]; // CMS_Combination
+            SaveData[2] = DC.taskCount; // TaskCount
+            SaveData[3] = DC.LaneChangeTime[DC.taskCount]; // LC_laneChangeStartingTime
+            SaveData[4] = LC.LC_StoppingTime; // LC_StoppingTime
+            SaveData[5] = DC.TotalFirstReactionValue; // FirstReactionTime
+            SaveData[6] = DC.FollowingCarSpeed[DC.taskCount]; // FC_Speed
+            SaveData[7] = DC.NumOfCollision;
+            SaveData[8] = DC.LaneChangeComplete;
+            SaveData[9] = DC.SteeringWheel_Data;
+            SaveData[10] = DC.Pedal_Data;
+            SaveData[11] = Gaze.transform.localPosition.x;
+            SaveData[12] = Gaze.transform.localPosition.y;
+            SaveData[13] = Gaze.transform.localPosition.z;
+            SaveData[14] = Volvocar.transform.position.x;
+            SaveData[15] = 0;
+            SaveData[16] = Volvocar.transform.position.z;
+            SaveData[17] = Volvocar.transform.rotation.x;
+            SaveData[18] = Volvocar.transform.rotation.y;
+            SaveData[19] = Volvocar.transform.rotation.z;
+            SaveData[20] = Volvocar.transform.rotation.w;
 
-        SaveData[0] = FrameNumber; // FrameNumber
-        SaveData[1] = DC.CMScombination[DC.CMSchangeCount]; // CMS_Combination
-        SaveData[2] = DC.taskCount; // TaskCount
-        SaveData[3] = DC.LaneChangeTime[DC.taskCount]; // LC_laneChangeStartingTime
-        SaveData[4] = LC.LC_StoppingTime; // LC_StoppingTime
-        SaveData[5] = DC.TotalFirstReactionValue; // FirstReactionTime
-        SaveData[6] = DC.FollowingCarSpeed[DC.taskCount]; // FC_Speed
-        SaveData[7] = DC.NumOfCollision;
-        SaveData[8] = DC.LaneChangeComplete;
-        SaveData[9] = DC.SteeringWheel_Data;
-        SaveData[10] = DC.Pedal_Data;
-        SaveData[11] = Gaze.transform.localPosition.x;
-        SaveData[12] = Gaze.transform.localPosition.y;
-        SaveData[13] = Gaze.transform.localPosition.z;
-        SaveData[14] = Volvocar.transform.position.x;
-        SaveData[15] = 0;
-        SaveData[16] = Volvocar.transform.position.z;
-        SaveData[17] = Volvocar.transform.rotation.x;
-        SaveData[18] = Volvocar.transform.rotation.y;
-        SaveData[19] = Volvocar.transform.rotation.z;
-        SaveData[20] = Volvocar.transform.rotation.w;
-
-        if (DC.MainTask)
-        {
-            if(LC.LC_Direction == 1)
+            if (DC.MainTask)
             {
-                SaveData[21] = LC1.transform.position.x;
-                SaveData[22] = 0;
-                SaveData[23] = LC1.transform.position.z;
-                SaveData[24] = FCL1.transform.position.x;
-                SaveData[25] = 0;
-                SaveData[26] = FCL1.transform.position.z;
-                SaveData[27] = FCR1.transform.position.x;
-                SaveData[28] = 0;
-                SaveData[29] = FCR1.transform.position.z;
+                if (LC.LC_Direction == 1)
+                {
+                    SaveData[21] = LC1.transform.position.x;
+                    SaveData[22] = 0;
+                    SaveData[23] = LC1.transform.position.z;
+                    SaveData[24] = FCL1.transform.position.x;
+                    SaveData[25] = 0;
+                    SaveData[26] = FCL1.transform.position.z;
+                    SaveData[27] = FCR1.transform.position.x;
+                    SaveData[28] = 0;
+                    SaveData[29] = FCR1.transform.position.z;
+                }
+                else if (LC.LC_Direction == 2)
+                {
+                    SaveData[21] = LC2.transform.position.x;
+                    SaveData[22] = 0;
+                    SaveData[23] = LC2.transform.position.z;
+                    SaveData[24] = FCL2.transform.position.x;
+                    SaveData[25] = 0;
+                    SaveData[26] = FCL2.transform.position.z;
+                    SaveData[27] = FCR2.transform.position.x;
+                    SaveData[28] = 0;
+                    SaveData[29] = FCR2.transform.position.z;
+                }
             }
-            else if (LC.LC_Direction == 2)
-            {
-                SaveData[21] = LC2.transform.position.x;
-                SaveData[22] = 0;
-                SaveData[23] = LC2.transform.position.z;
-                SaveData[24] = FCL2.transform.position.x;
-                SaveData[25] = 0;
-                SaveData[26] = FCL2.transform.position.z;
-                SaveData[27] = FCR2.transform.position.x;
-                SaveData[28] = 0;
-                SaveData[29] = FCR2.transform.position.z;
-            }
+            AppendToCsv(SaveData);
         }
-        else
-        {
-            SaveData[21] = 0;
-            SaveData[22] = 0;
-            SaveData[23] = 0;
-            SaveData[24] = 0;
-            SaveData[25] = 0;
-            SaveData[26] = 0;
-            SaveData[27] = 0;
-            SaveData[28] = 0;
-            SaveData[29] = 0;
-        }
-
-
-        AppendToCsv(SaveData);
     }
 
     public void AppendToCsv(float[] data)
@@ -142,6 +131,13 @@ public class CSV_Save : MonoBehaviour
             }
             csvFinalString += csvSeparator;
             sw.WriteLine(csvFinalString);
+        }
+
+        if(DataLoggingEnd)
+        {
+            DataLoggingStart = false;
+            DataLoggingEnd = false;
+            DC.ResetData = true;
         }
     }
 }

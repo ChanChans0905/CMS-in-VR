@@ -30,7 +30,7 @@ public class GameStartNotice : MonoBehaviour
 
                 ThresholdTimer += Time.deltaTime;
 
-                if (ThresholdTimer > 0.5f)
+                if (ThresholdTimer > 0.5f) 
                 {
                     if (rec.rgbButtons[4] == 128)
                     {

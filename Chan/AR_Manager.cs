@@ -20,6 +20,7 @@ public class AR_Manager : MonoBehaviour
                 AR_Signal_CMS_5_L.SetActive(true);
                 AR_Signal_CMS_6_L.SetActive(true);
                 AR_Signal_CMS_7_L.SetActive(true);
+                TurnOn_AR_Signal_L = 0;
             }
             else if (TurnOn_AR_Signal_L == 2)
             {
@@ -34,6 +35,7 @@ public class AR_Manager : MonoBehaviour
                 AR_Signal_CMS_5_R.SetActive(true);
                 AR_Signal_CMS_6_R.SetActive(true);
                 AR_Signal_CMS_7_R.SetActive(true);
+                TurnOn_AR_Signal_L = 0;
             }
             else if (TurnOn_AR_Signal_R == 2)
             {
@@ -55,7 +57,6 @@ public class AR_Manager : MonoBehaviour
                 AR_Signal_CMS_7_R.SetActive(false);
             }
         }
-
     }
 
     private void OnTriggerStay(Collider other)

@@ -10,6 +10,7 @@ public class DC_Collidor : MonoBehaviour
     [SerializeField] DemoCarController DC;
     [SerializeField] LeadingCar LC;
     [SerializeField] TrialManager TM;
+    [SerializeField] CSV_Save CSV;
     public GameObject QuestionnaireStartNotice, TaskFailureNotice/*,KeepLaneNotice*/;
     //float OutofLaneTime;
 
@@ -34,17 +35,11 @@ public class DC_Collidor : MonoBehaviour
             FadingTimer += Time.deltaTime;
 
             if (FadingEvent && alpha <= 1)
-            {
                 alpha += .01f;
-            }
                 
-
             else if (!FadingEvent && alpha >= 0)
-            {
                 alpha -= .01f;
-            }
                 
-
             Color nNew = new Color(0, 0, 0, alpha);
             _mat.SetColor("_BaseColor", nNew);
             //OutofLaneTime = 0;
@@ -65,29 +60,33 @@ public class DC_Collidor : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        if (other.gameObject.CompareTag("FC") || other.gameObject.CompareTag("LC") || other.gameObject.CompareTag("OutOfRoad"))
+        if (other.gameObject.CompareTag("LC") || other.gameObject.CompareTag("FC"))
         {
+            DC.NumOfCollision = 1;
             FadingEvent = true;
             DC.respawnTrigger = true;
             Activate_Fade = true;
             TaskFailureNotice.SetActive(true);
-            if(!LC.TaskStart && DC.taskCount != 0) 
-                DC.taskCount--;
-        }
-
-        if (other.gameObject.CompareTag("LC") || other.gameObject.CompareTag("FC"))
-        {
-            DC.NumOfCollision = 1;
+            CSV.DataLoggingEnd = true;
         }
 
         if (other.gameObject.CompareTag("OutOfRoad"))
         {
             DC.NumOfCollision = 2;
+            FadingEvent = true;
+            DC.respawnTrigger = true;
+            Activate_Fade = true;
+            TaskFailureNotice.SetActive(true);
+            if (!LC.TaskStart && DC.taskCount != 0)
+                DC.taskCount--;
+            CSV.DataLoggingEnd = true;
         }
-        if (other.gameObject.CompareTag("WayPoint"))
-        {
 
-            if(DC.taskCount == 2)
+        if (other.gameObject.CompareTag("TaskEndPoint"))
+        {
+            CSV.DataLoggingEnd = true;
+
+            if (DC.taskCount == 2)
             {
                 FadingEvent = true;
                 DC.respawnTrigger = true;
@@ -102,6 +101,9 @@ public class DC_Collidor : MonoBehaviour
         {
             if (DC.MainTask)
             {
+                CSV.Create_CSV_File = true;
+                CSV.DataLoggingStart = true;
+
                 LC.TurnOn_LC_FC = 1;
                 LC.LC_Direction = 1;
                 LC.TaskStart = true;
@@ -130,6 +132,9 @@ public class DC_Collidor : MonoBehaviour
         {
             if (DC.MainTask)
             {
+                CSV.Create_CSV_File = true;
+                CSV.DataLoggingStart = true;
+
                 LC.TurnOn_LC_FC = 2;
                 LC.LC_Direction = 2;
                 LC.TaskStart = true;

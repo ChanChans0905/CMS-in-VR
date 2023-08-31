@@ -19,8 +19,8 @@ public class DemoCarController : MonoBehaviour
     [SerializeField] private VolvoCars.Data.UserSteeringInput userSteeringInput = default;
     [SerializeField] private VolvoCars.Data.Velocity velocity = default;
     [SerializeField] private VolvoCars.Data.GearLeverIndication gearLeverIndication = default;
-    [SerializeField] private VolvoCars.Data.DoorIsOpenR1L doorIsOpenR1L = default; // R1L stands for Row 1 Left.
-    [SerializeField] private VolvoCars.Data.LampBrake lampBrake = default;
+    //[SerializeField] private VolvoCars.Data.DoorIsOpenR1L doorIsOpenR1L = default; // R1L stands for Row 1 Left.
+    //[SerializeField] private VolvoCars.Data.LampBrake lampBrake = default;
 
     [SerializeField] LeadingCar LC;
     [SerializeField] DC_Collidor DC_C;
@@ -29,6 +29,7 @@ public class DemoCarController : MonoBehaviour
     public GameObject CMS_LD_SW, CMS_LD_TM, CMS_RD_SW, CMS_RD_TM, CMSCenter, CMSStitched, TraditionalMirrorLeft, TraditionalMirrorRight;
     public GameObject CSV_Manager;
     public bool Activate_AR;
+    public bool ResetData;
 
 
 
@@ -66,7 +67,7 @@ public class DemoCarController : MonoBehaviour
 
     #region Private variables not shown in the inspector
     private VolvoCars.Data.Value.Public.WheelTorque wheelTorqueValue = new VolvoCars.Data.Value.Public.WheelTorque(); // This is the value type used by the wheelTorque data item.     
-    private VolvoCars.Data.Value.Public.LampGeneral lampValue = new VolvoCars.Data.Value.Public.LampGeneral(); // This is the value type used by lights/lamps
+    //private VolvoCars.Data.Value.Public.LampGeneral lampValue = new VolvoCars.Data.Value.Public.LampGeneral(); // This is the value type used by lights/lamps
     private float totalTorque;  // The total torque requested by the user, will be split between the four wheels
     private float steeringReduction; // Used to make it easier to drive with keyboard in higher speeds
     public const float MAX_BRAKE_TORQUE = 8000; // [Nm]
@@ -74,7 +75,7 @@ public class DemoCarController : MonoBehaviour
 
     private void Start()
     {
-        TaskScenario = new int[] { 3, 1, 2, 1, 2, 3 };
+        TaskScenario = new int[] { 2, 1, 2, 1, 2, 3 };
         CMScombination = new int[] { 6, 3, 2, 5, 7, 4, 1 };
         LaneChangeTime = new int[] { 9, 5, 3, 7, 1, 0, 0, 0 };
         FollowingCarSpeed = new int[] { 0, 0, 0, 0, 1, 1, 1, 1 };
@@ -199,26 +200,18 @@ public class DemoCarController : MonoBehaviour
                 CSV_Manager.SetActive(true);
             }
 
-            if(LC.LC_StoppingTime ==1)
+            if(LC.LC_StoppingTime == 1)
             {
                 FirstReactionTimer += Time.deltaTime;
                 if (FirstReactionTimer <= 0.1f && (Br <= -0.7 || Mathf.Abs(SteeringWheel_Data) > 0.02f))
-                {
                     ReactionNoCount = 1;
-                    Debug.Log(123);
-                }
-                    
 
                 if (FirstReactionTimer >= 0.1f && (Br <= -0.7 || Mathf.Abs(SteeringWheel_Data) > 0.02f))
-                {
                     ReactionStarted = 1;
-                    Debug.Log(567);
-                }
                     
 
                 TotalFirstReactionValue = ReactionStarted - ReactionNoCount;
             }
-
 
             if (respawnTrigger)
             {
@@ -228,17 +221,22 @@ public class DemoCarController : MonoBehaviour
                 {
                     DC_C.FadingEvent = true;
                     DC_C.Activate_Fade = true;
-                    ReactionStarted = 0;
-                    ReactionNoCount = 0;
-                    TotalFirstReactionValue = 0;
-                    NumOfCollision = 0;
-                    LaneChangeComplete = 0;
-
                     velocity.Value = 0;
                     wheelTorque.Value = wheelTorqueValue;
                     VolvoCar.transform.localPosition = new Vector3(-2166, 0, 2300);
                     VolvoCar.transform.rotation = Quaternion.Slerp(VolvoCar.transform.rotation, Quaternion.AngleAxis(-90, Vector3.up), 3f * Time.deltaTime);
                 }
+            }
+
+            if(ResetData)
+            {
+                Debug.Log("Reset");
+                ReactionStarted = 0;
+                ReactionNoCount = 0;
+                TotalFirstReactionValue = 0;
+                NumOfCollision = 0;
+                LaneChangeComplete = 0;
+                ResetData = false;
             }
 
             if (CMSchangeBool)
