@@ -14,7 +14,7 @@ public class FinalQuestionnaire : MonoBehaviour
     [SerializeField] Slider AnswerSlider;
     string csvSeparator = ",";
     string csvFileName;
-    string[] csvHeaders = new string[2] { "Number", "Answer" };
+    string[] csvHeaders = new string[2] { "Questionnaire", "Answer" };
     string csvDirectoryName = "FinalQuestionnaire";
     LogitechGSDK.LogiControllerPropertiesData properties;
     public bool SaveTrigger;

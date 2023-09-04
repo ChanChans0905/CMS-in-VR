@@ -16,7 +16,7 @@ public class Questionnaire : MonoBehaviour
     [SerializeField] Slider AnswerSlider;
     string csvSeparator = ",";
     string csvFileName;
-    string[] csvHeaders = new string[2] { "Number", "Answer" };
+    string[] csvHeaders = new string[2] { "Questionnaire", "Answer" };
     string csvDirectoryName = "Questionnaire";
     public bool SaveTrigger;
     [SerializeField] DC_Collidor DC_C;
@@ -124,18 +124,17 @@ public class Questionnaire : MonoBehaviour
     public void SaveToCSV()
     {
         DC.QuestionnaireCount++;
-        csvFileName = "Questionnaire" + DC.QuestionnaireCount + ".csv";
+        csvFileName = "Questionnaire" + DC.CMScombination[DC.CMSchangeCount] + ".csv";
         List<Transform> children = GetChildren(transform);
         for (int i = 0; i < children.Count; i++)
         {
             AnswerSlider = children[i].GetComponent<Slider>();
-            string[] QuestionnaireSubject = { "1", "2" };
+            string[] QuestionnaireSubject = { "Quickly", "Acuurately", "Safely", "Conveniently", "Effort", "meets expectation", "like this layout", "mentally", "physically", "hurries or rushed", "successful", "hard", "insecure" };
             string[] Data = new string[2];
             Data[0] = QuestionnaireSubject[i];
             Data[1] = AnswerSlider.value.ToString();
             AppendToCsv(Data);
         }
-
     }
 
     string GetDirectoryPath() { return Application.dataPath + "/" + csvDirectoryName; }

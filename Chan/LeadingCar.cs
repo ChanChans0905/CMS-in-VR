@@ -8,7 +8,7 @@ public class LeadingCar : MonoBehaviour
     [SerializeField] DemoCarController DC;
     [SerializeField] DC_Collidor DC_C;
     public Transform TargetCar;
-    public GameObject Obstacle;
+    public GameObject Obstacle_1, Obstacle_2;
     public GameObject LeadingCar_1, LeadingCar_2;
     public GameObject FCL_1, FCR_1, FCB_1, FCL_2, FCR_2, FCB_2, TaskEndPoint_1, TaskEndPoint_2;
     public PathCreator PathCreator_1, PathCreator_2;
@@ -36,9 +36,6 @@ public class LeadingCar : MonoBehaviour
 
     private void Start()
     {
-        // Set distance between DC and LC
-        StoppingDistance = 80;
-
         // Get original position and rotation of LC_1 and LC_2
         StartPos_LC_1 = LeadingCar_1.transform.localPosition;
         StartPos_LC_2 = LeadingCar_2.transform.localPosition;
@@ -88,14 +85,14 @@ public class LeadingCar : MonoBehaviour
 
             TargetCarVelocity.z = TargetCar.GetComponent<Rigidbody>().velocity.z;
 
-            //if (TargetCarVelocity.z > 27)
-            //    StoppingDistance = 80;
-            //else if (TargetCarVelocity.z > 25)
-            //    StoppingDistance = 55;
-            //else if (TargetCarVelocity.z > 22)
-            //    StoppingDistance = 40;
-            //else if (TargetCarVelocity.z > 19)
-            //    StoppingDistance = 30;
+            if (TargetCarVelocity.z > 27)
+                StoppingDistance = 80;
+            else if (TargetCarVelocity.z > 25)
+                StoppingDistance = 75;
+            else if (TargetCarVelocity.z > 22)
+                StoppingDistance = 66;
+            else if (TargetCarVelocity.z > 19)
+                StoppingDistance = 57;
 
             if (TaskStart)
             {
@@ -191,7 +188,7 @@ public class LeadingCar : MonoBehaviour
         {
             float DistanceBetween_DC_LC = LeadingCarPosition.z - TargetCar.transform.position.z;
 
-            if (DistanceBetween_DC_LC < 60 * DrivingDirection)
+            if (DistanceBetween_DC_LC < StoppingDistance / 2f * DrivingDirection)
                 TargetCarVelocity.z *= 1.3f;
             else
                 TargetCarVelocity.z *= 0.9f;
@@ -255,7 +252,8 @@ public class LeadingCar : MonoBehaviour
         if (OvertakeTimer > 8 && OvertakeTimer <= 8 + TaskStartTime)
         {
             TargetCarVelocity.x = 0;
-            Obstacle.transform.position = LeadingCarPosition + new Vector3(0, 0, 10);
+            Obstacle_1.transform.position = LeadingCarPosition + new Vector3(0, 0, 10);
+            Obstacle_2.transform.position = LeadingCarPosition + new Vector3(0, 0, 10);
         }
 
         // stop
@@ -266,7 +264,12 @@ public class LeadingCar : MonoBehaviour
             if (OvertakeTimer <= 10 + TaskStartTime)
             {
                 LC_StoppingTime = 1;
-                Obstacle.SetActive(true);
+
+                if (LeadingCarPosition.x < 1000)
+                    Obstacle_1.SetActive(true);
+                else
+                    Obstacle_2.SetActive(true);
+
             }
         }
 
@@ -367,7 +370,8 @@ public class LeadingCar : MonoBehaviour
         LeadingCar_2.SetActive(false);
         TaskEndPoint_1.SetActive(false);
         TaskEndPoint_2.SetActive(false);
-        Obstacle.SetActive(false);
+        Obstacle_1.SetActive(false);
+        Obstacle_2.SetActive(false);
         RespawnTrigger = false;
     }
 

@@ -31,8 +31,6 @@ public class DemoCarController : MonoBehaviour
     public bool Activate_AR;
     public bool ResetData;
 
-
-
     public bool respawnTrigger;
 
     public float waitTimer;
@@ -75,7 +73,7 @@ public class DemoCarController : MonoBehaviour
 
     private void Start()
     {
-        TaskScenario = new int[] { 2, 1, 2, 1, 2, 3 };
+        TaskScenario = new int[] { 3, 1, 2, 1, 2, 3 };
         CMScombination = new int[] { 6, 3, 2, 5, 7, 4, 1 };
         LaneChangeTime = new int[] { 9, 5, 3, 7, 1, 0, 0, 0 };
         FollowingCarSpeed = new int[] { 0, 0, 0, 0, 1, 1, 1, 1 };

@@ -49,7 +49,6 @@ public class DC_Collidor : MonoBehaviour
             {
                 FadingTimer = 0;
                 Activate_Fade = false;
-                Debug.Log("ENded");
             }
                 
         }
