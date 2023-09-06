@@ -56,12 +56,14 @@ public class DemoCarController : MonoBehaviour
     public int[] LaneChangeTime = new int[8]; // make the 2 dimension list by using counter-balance
     public int[] FollowingCarSpeed = new int[8];
     public int[] CMScombination = new int[7];
+    int[,] TaskScenario_Array = new int[120,6] ;
     public int ARSignalActivateDistance;
 
     float FirstReactionTimer;
     public int SampleNumber;
-    public bool SampleSelection;
+    public bool SelectArray;
     public int LaneChangeComplete;
+
 
     #region Private variables not shown in the inspector
     private VolvoCars.Data.Value.Public.WheelTorque wheelTorqueValue = new VolvoCars.Data.Value.Public.WheelTorque(); // This is the value type used by the wheelTorque data item.     
@@ -193,9 +195,17 @@ public class DemoCarController : MonoBehaviour
             }
             ApplyWheelTorques(totalTorque);
 
-            if(SampleSelection)
+            if(SelectArray)
             {
-                CSV_Manager.SetActive(true);
+                // select array
+                for(int i = 0; i < TaskScenario.Length; i++)
+                {
+                    TaskScenario[i] = TaskScenario_Array[SampleNumber, i];
+                }
+
+
+
+                SelectArray = false;
             }
 
             if(LC.LC_StoppingTime == 1)
