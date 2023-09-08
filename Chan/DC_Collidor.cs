@@ -84,8 +84,9 @@ public class DC_Collidor : MonoBehaviour
         if (other.gameObject.CompareTag("TaskEndPoint"))
         {
             CSV.DataLoggingEnd = true;
+            LC.RespawnTrigger = true;
 
-            if (DC.taskCount == 2)
+            if (DC.taskCount == 0)
             {
                 FadingEvent = true;
                 DC.respawnTrigger = true;

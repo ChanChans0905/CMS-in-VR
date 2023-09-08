@@ -12,6 +12,7 @@ public class Questionnaire : MonoBehaviour
     public GameObject SaveTriggerObject;
     [SerializeField] DemoCarController DC;
     [SerializeField] TrialManager TM;
+    [SerializeField] FinalQuestionnaire FQ;
     public int QuestionnaireNumber;
     [SerializeField] Slider AnswerSlider;
     string csvSeparator = ",";
@@ -29,7 +30,7 @@ public class Questionnaire : MonoBehaviour
 
     void Start()
     {
-        List<Transform> children = GetChildren(transform);
+
     }
 
     void Update()
@@ -41,7 +42,9 @@ public class Questionnaire : MonoBehaviour
                 LogitechGSDK.DIJOYSTATE2ENGINES rec;
                 rec = LogitechGSDK.LogiGetStateUnity(0);
 
-                if(ThresholdTimer < 3f)
+                List<Transform> children = GetChildren(transform);
+
+                if (ThresholdTimer < 3f)
                     ThresholdTimer += Time.deltaTime;
 
                 // Get slider value from the steering wheel
@@ -61,6 +64,7 @@ public class Questionnaire : MonoBehaviour
                         if (QuestionnaireNumber < 6)
                         {
                             QuestionnaireNumber++;
+                            Debug.Log(children[QuestionnaireNumber]);
                             children[QuestionnaireNumber].gameObject.SetActive(true);
                             children[QuestionnaireNumber - 1].gameObject.SetActive(false);
                             AnswerSlider = children[QuestionnaireNumber].GetComponent<Slider>();
@@ -76,6 +80,8 @@ public class Questionnaire : MonoBehaviour
                             children[QuestionnaireNumber - 1].gameObject.SetActive(false);
                             SaveTriggerObject.SetActive(true);
                         }
+
+                        Debug.Log(QuestionnaireNumber);
                         ThresholdTimer = 0;
                     }
 
@@ -107,6 +113,7 @@ public class Questionnaire : MonoBehaviour
                     if (DC.QuestionnaireCount == 2)
                     {
                         DC.FinalQuestionnaireBool = true;
+                        FQ.FinalQuestionnairePhase = true;
                         FinalQuestionnaireStartNotice.SetActive(true);
                     }
                 }
@@ -117,7 +124,8 @@ public class Questionnaire : MonoBehaviour
     List<Transform> GetChildren(Transform parent)
     {
         List<Transform> children = new List<Transform>();
-        foreach (Transform child in parent) { children.Add(child); }
+        foreach (Transform child in parent) 
+            children.Add(child); 
         return children;
     }
 

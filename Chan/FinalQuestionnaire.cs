@@ -20,7 +20,7 @@ public class FinalQuestionnaire : MonoBehaviour
     public bool SaveTrigger;
     public GameObject GameEnd;
     List<Transform> children;
-    bool FinalQuestionnairePhase;
+    public bool FinalQuestionnairePhase;
     float ThresholdTimer;
 
     void Update()

@@ -9,6 +9,7 @@ public class FollowingCar : MonoBehaviour
     [SerializeField] DemoCarController DC;
     [SerializeField] LeadingCar LC;
     public GameObject FCL_1, FCR_1, FCL_2, FCR_2, FCB_1, FCB_2;
+    public GameObject LC_1, LC_2;
     public Transform TargetCar, Obstacle;
     Vector3 TargetCarVelocity;
     GameObject FCL_Velocity, FCR_Velocity, FCB_Velocity;
@@ -24,6 +25,7 @@ public class FollowingCar : MonoBehaviour
     Vector3 LC_StopPos_for_FC_L, LC_StopPos_for_FC_R, LC_StopPos_for_FC_B;
     //float FC_Fast_ReachingPercent, FC_Slow_ReachingPercent;
     int StoppingTime, AccelSpeed;
+    bool RespawnTrigger;
 
     private void Start()
     {
@@ -69,6 +71,9 @@ public class FollowingCar : MonoBehaviour
 
 
         if (LC.RespawnTrigger)
+            RespawnTrigger = true;
+
+        if(RespawnTrigger)
             Respawn();
     }
 
@@ -109,7 +114,7 @@ public class FollowingCar : MonoBehaviour
 
         // use lerp
 
-        if (OvertakeTimer > 8 + StoppingTime && StoppingTime != 0)
+        if (OvertakeTimer >= 8 + StoppingTime && StoppingTime != 0)
         {
             FC_Accel_Timer += Time.fixedDeltaTime;
 
@@ -123,9 +128,19 @@ public class FollowingCar : MonoBehaviour
                 }
                 else
                 {
-                    LC_StopPos_for_FC_L = TargetCar.transform.position;
-                    LC_StopPos_for_FC_R = TargetCar.transform.position;
-                    LC_StopPos_for_FC_B = TargetCar.transform.position;
+                    if(LC.LC_Direction == 1)
+                    {
+                        LC_StopPos_for_FC_L = LC_1.transform.position;
+                        LC_StopPos_for_FC_R = LC_1.transform.position;
+                        LC_StopPos_for_FC_B = LC_1.transform.position;
+                    }
+                    else if(LC.LC_Direction == 2)
+                    {
+                        LC_StopPos_for_FC_L = LC_2.transform.position;
+                        LC_StopPos_for_FC_R = LC_2.transform.position;
+                        LC_StopPos_for_FC_B = LC_2.transform.position;
+                    }
+
                 }
 
                 LC_StopPos_for_FC_L.x = FCL_Velocity.transform.position.x;
@@ -138,12 +153,14 @@ public class FollowingCar : MonoBehaviour
 
             if (AccelSpeed == 1)
             {
+                // LCR is faster
                 FCL_Velocity.transform.position = Vector3.Lerp(FCL_Velocity.transform.position, LC_StopPos_for_FC_L, FC_Fast_ReachingPercent / 400f);
                 FCR_Velocity.transform.position = Vector3.Lerp(FCR_Velocity.transform.position, LC_StopPos_for_FC_R, FC_Fast_ReachingPercent / 100f);
                 FCB_Velocity.transform.position = Vector3.Lerp(FCB_Velocity.transform.position, LC_StopPos_for_FC_B, FC_Fast_ReachingPercent / 100f);
             }
             else
             {
+                // LCL is faster
                 FCL_Velocity.transform.position = Vector3.Lerp(FCL_Velocity.transform.position, LC_StopPos_for_FC_L, FC_Fast_ReachingPercent / 150f);
                 FCR_Velocity.transform.position = Vector3.Lerp(FCR_Velocity.transform.position, LC_StopPos_for_FC_R, FC_Fast_ReachingPercent / 600f);
                 FCB_Velocity.transform.position = Vector3.Lerp(FCB_Velocity.transform.position, LC_StopPos_for_FC_B, FC_Fast_ReachingPercent / 150f);
@@ -175,6 +192,7 @@ public class FollowingCar : MonoBehaviour
         FCR_2.SetActive(false);
         FCB_1.SetActive(false);
         FCB_2.SetActive(false);
+        RespawnTrigger = false;
     }
 }
 

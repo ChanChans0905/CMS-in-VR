@@ -53,10 +53,16 @@ public class DemoCarController : MonoBehaviour
     public int TotalFirstReactionValue;
 
     public int[] TaskScenario = new int[6];
-    public int[] LaneChangeTime = new int[8]; // make the 2 dimension list by using counter-balance
+    public int[] LaneChangeTime = new int[6]; // make the 2 dimension list by using counter-balance
     public int[] FollowingCarSpeed = new int[8];
     public int[] CMScombination = new int[7];
-    int[,] TaskScenario_Array = new int[120,6] ;
+    
+    int[,] TaskScenario_Array = new int[70,6] ;
+    int[,] LaneChangeTime_Array = new int[70, 6];
+    int[,] FollowingCarSpeed_Array = new int[70, 8];
+    int[,] CMScombination_Array = new int[70, 7];
+
+
     public int ARSignalActivateDistance;
 
     float FirstReactionTimer;
@@ -75,13 +81,13 @@ public class DemoCarController : MonoBehaviour
 
     private void Start()
     {
-        TaskScenario = new int[] { 3, 1, 2, 1, 2, 3 };
-        CMScombination = new int[] { 6, 3, 2, 5, 7, 4, 1 };
-        LaneChangeTime = new int[] { 9, 5, 3, 7, 1, 0, 0, 0 };
+        //TaskScenario = new int[] { 3, 1, 2, 1, 2, 3 };
+        //CMScombination = new int[] { 6, 3, 2, 5, 7, 4, 1 };
+        //LaneChangeTime = new int[] { 9, 5, 3, 7, 1, 0, 0, 0 };
         FollowingCarSpeed = new int[] { 0, 0, 0, 0, 1, 1, 1, 1 };
         ARSignalActivateDistance = 10;
 
-        CMSchange();
+
     }
 
     private void Update()
@@ -195,20 +201,10 @@ public class DemoCarController : MonoBehaviour
             }
             ApplyWheelTorques(totalTorque);
 
-            if(SelectArray)
-            {
-                // select array
-                for(int i = 0; i < TaskScenario.Length; i++)
-                {
-                    TaskScenario[i] = TaskScenario_Array[SampleNumber, i];
-                }
+            if (SelectArray)
+                ApplyArray();
 
-
-
-                SelectArray = false;
-            }
-
-            if(LC.LC_StoppingTime == 1)
+            if (LC.LC_StoppingTime == 1)
             {
                 FirstReactionTimer += Time.deltaTime;
                 if (FirstReactionTimer <= 0.1f && (Br <= -0.7 || Mathf.Abs(SteeringWheel_Data) > 0.02f))
@@ -217,7 +213,6 @@ public class DemoCarController : MonoBehaviour
                 if (FirstReactionTimer >= 0.1f && (Br <= -0.7 || Mathf.Abs(SteeringWheel_Data) > 0.02f))
                     ReactionStarted = 1;
                     
-
                 TotalFirstReactionValue = ReactionStarted - ReactionNoCount;
             }
 
@@ -227,6 +222,8 @@ public class DemoCarController : MonoBehaviour
                     waitTimer += Time.deltaTime;
                 if (waitTimer > 1.5)
                 {
+                    // need : do not let the DC move during respawning and questionnaire
+                    rawForwardInput = 0;
                     DC_C.FadingEvent = true;
                     DC_C.Activate_Fade = true;
                     velocity.Value = 0;
@@ -283,6 +280,7 @@ public class DemoCarController : MonoBehaviour
         {
             case 1: // Traditional Mirror
                 {
+                    Debug.Log("TM");
                     TraditionalMirrorLeft.SetActive(true);
                     TraditionalMirrorRight.SetActive(true);
                     Activate_AR = false;
@@ -290,6 +288,7 @@ public class DemoCarController : MonoBehaviour
                 }
             case 2: // CMS under A-pillar
                 {
+                    Debug.Log("CMS_Under Pillar");
                     CMSCenter.SetActive(true);
                     CMS_LD_TM.SetActive(true);
                     CMS_RD_TM.SetActive(true);
@@ -298,6 +297,7 @@ public class DemoCarController : MonoBehaviour
                 }
             case 3: // CMS near the Steering Wheel
                 {
+                    Debug.Log("CMS_Steering Wheel");
                     CMSCenter.SetActive(true);
                     CMS_LD_SW.SetActive(true);
                     CMS_RD_SW.SetActive(true);
@@ -306,6 +306,7 @@ public class DemoCarController : MonoBehaviour
                 }
             case 4: // CMS Stitched
                 {
+                    Debug.Log("CMS_Stitched");
                     CMSStitched.SetActive(true);
                     Activate_AR = false;
                     break;
@@ -335,5 +336,43 @@ public class DemoCarController : MonoBehaviour
         }
         CMSchangeCount++;
         CMSchangeBool = false;
+        SelectArray = false;
+    }
+
+    private void ApplyArray()
+    {
+        LaneChangeTime_Array = new int[,] { { 1, 0, 5, 3, 7, 9 }, { 1, 7, 0, 5, 3, 9 }, { 3, 7, 1, 0, 5, 9 }, { 3, 9, 7, 5, 0, 1 }, { 5, 1, 9, 7, 3, 0 },
+                                          { 5, 0, 3, 9, 7, 1 }, { 7, 3, 0, 1, 5, 9 }, { 7, 5, 9, 0, 1, 3 }, { 9, 3, 7, 1, 0, 5 }, { 9, 5, 1, 7, 3, 0 } };
+
+        CMScombination_Array = new int[,] { { 1, 4, 2, 3, 7, 6, 5 }, { 1, 6, 4, 2, 3, 7, 5 }, { 2, 5, 7, 1, 6, 4, 3 }, { 3, 2, 5, 4, 6, 1, 7 }, { 3, 6, 4, 2, 1, 5, 7 }, 
+                                            { 4, 2, 7, 3, 1, 5, 6 }, { 5, 2, 1, 4, 7, 3, 6 }, { 5, 4, 1, 2, 6, 3, 7 }, { 6, 1, 5, 7, 2, 4, 3 }, { 7, 2, 6, 4, 5, 3, 1 } };
+
+        TaskScenario_Array = new int[,] { { 1, 2, 3, 1, 2, 3 }, { 1, 3, 2, 2, 1, 3 }, { 1, 3, 1, 2, 3, 2 }, { 1, 2, 3, 2, 3, 1 }, { 2, 1, 2, 3, 3, 1 }, 
+                                          { 2, 3, 1, 2, 3, 1 }, { 2, 1, 2, 3, 1, 3 }, { 3, 1, 2, 1, 3, 2 }, { 3, 2, 2, 1, 3, 1 }, { 3, 2, 2, 1, 1, 3 } };
+
+        Debug.Log("SampleNumber : " + SampleNumber);
+
+        //for (int i = 0; i < TaskScenario.Length; i++)
+        //    TaskScenario[i] = TaskScenario_Array[SampleNumber, i];
+
+        //for (int i = 0; i < CMScombination.Length; i++)
+        //    CMScombination[i] = CMScombination_Array[SampleNumber, i];
+
+        //for (int i = 0; i < LaneChangeTime.Length; i++)
+        //    LaneChangeTime[i] = LaneChangeTime_Array[SampleNumber, i];
+
+        //for (int i = 0; i < FollowingCarSpeed.Length; i++)
+        //    FollowingCarSpeed[i] = FollowingCarSpeed_Array[SampleNumber, i];
+
+
+        for(int i = 0; i < 6; i++)
+        {
+            Debug.Log("LaneChangeTIme" + LaneChangeTime[i]);
+            Debug.Log("CMScombination" + CMScombination[i]);
+            Debug.Log("TaskScenario" + TaskScenario[i]);
+        }
+
+
+        CMSchange();
     }
 }

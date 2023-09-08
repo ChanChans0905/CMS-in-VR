@@ -37,10 +37,10 @@ public class LeadingCar : MonoBehaviour
     private void Start()
     {
         // Get original position and rotation of LC_1 and LC_2
-        StartPos_LC_1 = LeadingCar_1.transform.localPosition;
-        StartPos_LC_2 = LeadingCar_2.transform.localPosition;
-        StartRot_LC_1 = LeadingCar_1.transform.localRotation;
-        StartRot_LC_2 = LeadingCar_2.transform.localRotation;
+        StartPos_LC_1 = LeadingCar_1.transform.position;
+        StartPos_LC_2 = LeadingCar_2.transform.position;
+        StartRot_LC_1 = LeadingCar_1.transform.rotation;
+        StartRot_LC_2 = LeadingCar_2.transform.rotation;
     }
 
     private void FixedUpdate()
@@ -73,11 +73,10 @@ public class LeadingCar : MonoBehaviour
                 DrivingDirection = 1;
                 LeadingCarPosition = LeadingCar_1.transform.position;
                 LeadingCarVelocity = LeadingCar_1;
-                Debug.Log(LeadingCarVelocity);
             }
+
             else if (LC_Direction == 2)
             {
-                Debug.Log(LeadingCarVelocity);
                 DrivingDirection = -1;
                 LeadingCarPosition = LeadingCar_2.transform.position;
                 LeadingCarVelocity = LeadingCar_2;
@@ -133,8 +132,8 @@ public class LeadingCar : MonoBehaviour
             if (StartScenario_None)
                 None();
 
-            if (WayPointTrigger)
-                WayPointDriving();
+            //if (WayPointTrigger)
+            //    WayPointDriving();
 
             if (DC.respawnTrigger)
                 RespawnTrigger = true;
@@ -312,41 +311,39 @@ public class LeadingCar : MonoBehaviour
         }
 
         if(OvertakeTimer >= 20 && OvertakeTimer <= 23)
-        {
             TargetCarVelocity.x = 2f;
-        }
 
-        if (WayPointTrigger)
+        if (OvertakeTimer > 23)
             TargetCarVelocity.z = 0;
 
         // apply the velocity to the car
         gameObject.GetComponent<Rigidbody>().velocity = TargetCarVelocity * DrivingDirection;
     }
 
-    private void WayPointDriving()
-    {
-        if (DrivingDirection == 1)
-        {
-            DistanceTravelled += Time.deltaTime * 10;
-            LeadingCar_1.transform.position = PathCreator_1.path.GetPointAtDistance(DistanceTravelled);
-            LeadingCar_1.transform.rotation = PathCreator_1.path.GetRotationAtDistance(DistanceTravelled);
-            DisableTime += Time.deltaTime;
+    //private void WayPointDriving()
+    //{
+    //    if (DrivingDirection == 1)
+    //    {
+    //        DistanceTravelled += Time.deltaTime * 10;
+    //        LeadingCar_1.transform.position = PathCreator_1.path.GetPointAtDistance(DistanceTravelled);
+    //        LeadingCar_1.transform.rotation = PathCreator_1.path.GetRotationAtDistance(DistanceTravelled);
+    //        DisableTime += Time.deltaTime;
 
-            if (DisableTime > 10)
-                RespawnTrigger = true;
-        }
+    //        if (DisableTime > 10)
+    //            RespawnTrigger = true;
+    //    }
 
-        if (DrivingDirection == -1)
-        {
-            DistanceTravelled += Time.deltaTime * 10;
-            LeadingCar_2.transform.position = PathCreator_2.path.GetPointAtDistance(DistanceTravelled);
-            LeadingCar_2.transform.rotation = PathCreator_2.path.GetRotationAtDistance(DistanceTravelled);
-            DisableTime += Time.deltaTime;
+    //    if (DrivingDirection == -1)
+    //    {
+    //        DistanceTravelled += Time.deltaTime * 10;
+    //        LeadingCar_2.transform.position = PathCreator_2.path.GetPointAtDistance(DistanceTravelled);
+    //        LeadingCar_2.transform.rotation = PathCreator_2.path.GetRotationAtDistance(DistanceTravelled);
+    //        DisableTime += Time.deltaTime;
 
-            if (DisableTime > 10)
-                RespawnTrigger = true;
-        }
-    }
+    //        if (DisableTime > 10)
+    //            RespawnTrigger = true;
+    //    }
+    //}
 
     private void Respawn()
     {
@@ -357,15 +354,14 @@ public class LeadingCar : MonoBehaviour
         LC_StoppingTime = 0;
         WayPointTrigger = false;
         TaskStart = false;
-        RespawnTrigger = false;
         StartScenario_LaneChangeThenStop = false;
         StartScenario_LaneChangeWithLowSpeed = false;
         StartScenario_Obstacle = false;
         StartScenario_None = false;
-        LeadingCar_1.transform.localPosition = StartPos_LC_1;
-        LeadingCar_2.transform.localPosition = StartPos_LC_2;
-        LeadingCar_1.transform.localRotation = StartRot_LC_1;
-        LeadingCar_2.transform.localRotation = StartRot_LC_2;
+        LeadingCar_1.transform.position = StartPos_LC_1;
+        LeadingCar_2.transform.position = StartPos_LC_2;
+        LeadingCar_1.transform.rotation = StartRot_LC_1;
+        LeadingCar_2.transform.rotation = StartRot_LC_2;
         LeadingCar_1.SetActive(false);
         LeadingCar_2.SetActive(false);
         TaskEndPoint_1.SetActive(false);

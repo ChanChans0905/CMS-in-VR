@@ -102,6 +102,7 @@ public class GameStartNotice : MonoBehaviour
                             KeepLaneNotice.SetActive(false);
                             TrialStartNotice.SetActive(true);
                             gameObject.SetActive(false);
+                            DC.SelectArray = true;
                             break;
                     }
                 }
