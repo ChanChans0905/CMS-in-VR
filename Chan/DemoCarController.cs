@@ -108,6 +108,8 @@ public class DemoCarController : MonoBehaviour
             rawForwardInput = Acc + Br;
             Pedal_Data = rawForwardInput;
 
+            // rawsteeringwheelinput 을 rawforwardinput과 마찬가지로 비율 계산하여 움직이도록 수정 필요
+
             // Steering
             steeringReduction = 1 - Mathf.Min(Mathf.Abs(velocity.Value) / 30f, 0.85f);
 
