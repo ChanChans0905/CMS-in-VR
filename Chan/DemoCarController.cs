@@ -46,7 +46,7 @@ public class DemoCarController : MonoBehaviour
     public float FC1Lposition, FC1Rposition, LC1position, FC2Lposition, FC2Rposition, LC2position, DCposition;
     public bool FCLbool, FCRbool, LCbool, TCLbool, TCRbool;
     public bool UsingAR,MainTask;
-    public float Acc, Br, SteeringWheel_Data, Pedal_Data;
+    public float Acc, Br, SW, SteeringWheel_Data, Pedal_Data;
     //bool GameStartNoticeBool;
 
     int ReactionStarted, ReactionNoCount ;
@@ -98,12 +98,15 @@ public class DemoCarController : MonoBehaviour
             rec = LogitechGSDK.LogiGetStateUnity(0);
 
             // Driving inputs 
-            float rawSteeringInput = Input.GetAxis("Horizontal");
-            float rawForwardInput = Input.GetAxis("Vertical");
+            float rawSteeringInput /*= Input.GetAxis("Horizontal")*/;
+            float rawForwardInput /*= Input.GetAxis("Vertical")*/;
             float parkInput = Input.GetAxis("Jump");
 
             Acc = (32768f - rec.lY) / 65536f;
             Br = (rec.lRz - 32768f) / 65536f;
+
+            SW = rec.lX / 32656f;
+            rawSteeringInput = SW;
 
             rawForwardInput = Acc + Br;
             Pedal_Data = rawForwardInput;
