@@ -84,7 +84,7 @@ public class DemoCarController : MonoBehaviour
         //TaskScenario = new int[] { 3, 1, 2, 1, 2, 3 };
         //CMScombination = new int[] { 6, 3, 2, 5, 7, 4, 1 };
         //LaneChangeTime = new int[] { 9, 5, 3, 7, 1, 0, 0, 0 };
-        FollowingCarSpeed = new int[] { 0, 0, 0, 0, 1, 1, 1, 1 };
+        FollowingCarSpeed = new int[] { 2, 2, 2, 2, 1, 1, 1, 1 };
         ARSignalActivateDistance = 10;
 
 
@@ -116,7 +116,7 @@ public class DemoCarController : MonoBehaviour
             // Steering
             steeringReduction = 1 - Mathf.Min(Mathf.Abs(velocity.Value) / 30f, 0.85f);
 
-            userSteeringInput.Value = rawSteeringInput * steeringReduction*2f;
+            userSteeringInput.Value = rawSteeringInput * steeringReduction;
             SteeringWheel_Data = userSteeringInput.Value;
 
             // ************ORG  ***************
@@ -357,20 +357,19 @@ public class DemoCarController : MonoBehaviour
 
         Debug.Log("SampleNumber : " + SampleNumber);
 
-        //for (int i = 0; i < TaskScenario.Length; i++)
-        //    TaskScenario[i] = TaskScenario_Array[SampleNumber, i];
+        for (int i = 0; i < TaskScenario.Length; i++)
+            TaskScenario[i] = TaskScenario_Array[SampleNumber, i];
 
-        //for (int i = 0; i < CMScombination.Length; i++)
-        //    CMScombination[i] = CMScombination_Array[SampleNumber, i];
+        for (int i = 0; i < CMScombination.Length; i++)
+            CMScombination[i] = CMScombination_Array[SampleNumber, i];
 
-        //for (int i = 0; i < LaneChangeTime.Length; i++)
-        //    LaneChangeTime[i] = LaneChangeTime_Array[SampleNumber, i];
+        for (int i = 0; i < LaneChangeTime.Length; i++)
+            LaneChangeTime[i] = LaneChangeTime_Array[SampleNumber, i];
 
-        //for (int i = 0; i < FollowingCarSpeed.Length; i++)
-        //    FollowingCarSpeed[i] = FollowingCarSpeed_Array[SampleNumber, i];
+        for (int i = 0; i < FollowingCarSpeed.Length; i++)
+            FollowingCarSpeed[i] = FollowingCarSpeed_Array[SampleNumber, i];
 
-
-        for(int i = 0; i < 6; i++)
+        for (int i = 0; i < 6; i++)
         {
             Debug.Log("LaneChangeTIme" + LaneChangeTime[i]);
             Debug.Log("CMScombination" + CMScombination[i]);

@@ -27,11 +27,7 @@ public class Questionnaire : MonoBehaviour
     List<Transform> children;
     float ThresholdTimer;
     public GameObject TrialStartNotice;
-
-    void Start()
-    {
-
-    }
+    public bool FirstSlider;
 
     void Update()
     {
@@ -47,6 +43,13 @@ public class Questionnaire : MonoBehaviour
                 if (ThresholdTimer < 3f)
                     ThresholdTimer += Time.deltaTime;
 
+                if (FirstSlider)
+                {
+                    AnswerSlider = children[QuestionnaireNumber].GetComponent<Slider>();
+                    FirstSlider = false;
+                }
+                    
+
                 // Get slider value from the steering wheel
                 if (rec.lX < -7500) { AnswerSlider.value = 1; }
                 else if (rec.lX < -4500 && rec.lX > -7500) { AnswerSlider.value = 2; }
@@ -61,7 +64,7 @@ public class Questionnaire : MonoBehaviour
                     // when the right lever is pulled, move to the next question
                     if (rec.rgbButtons[4] == 128)
                     {
-                        if (QuestionnaireNumber < 6)
+                        if (QuestionnaireNumber < 3)
                         {
                             QuestionnaireNumber++;
                             Debug.Log(children[QuestionnaireNumber]);
@@ -69,13 +72,13 @@ public class Questionnaire : MonoBehaviour
                             children[QuestionnaireNumber - 1].gameObject.SetActive(false);
                             AnswerSlider = children[QuestionnaireNumber].GetComponent<Slider>();
                         }
-                        else if (QuestionnaireNumber == 6)
+                        else if (QuestionnaireNumber == 3)
                         {
                             QuestionnaireNumber++;
                         }
 
                         // if it's the last question, turn the questions off and turn on the save notive for saving the survey result
-                        if (QuestionnaireNumber == 7)
+                        if (QuestionnaireNumber == 4)
                         {
                             children[QuestionnaireNumber - 1].gameObject.SetActive(false);
                             SaveTriggerObject.SetActive(true);
@@ -169,7 +172,8 @@ public class Questionnaire : MonoBehaviour
             string finalString = "";
             for (int i = 0; i < csvHeaders.Length; i++)
             {
-                if (finalString != "") { finalString += csvSeparator; }
+                if (finalString != "")
+                    finalString += csvSeparator;
                 finalString += csvHeaders[i];
             }
             finalString += csvSeparator;
@@ -187,7 +191,7 @@ public class Questionnaire : MonoBehaviour
             for (int i = 0; i < floats.Length; i++)
             {
                 if (finalString != "")
-                { finalString += csvSeparator; }
+                    finalString += csvSeparator;
                 finalString += floats[i];
             }
             finalString += csvSeparator;
@@ -199,5 +203,4 @@ public class Questionnaire : MonoBehaviour
             gameObject.SetActive(false);
         }
     }
-
 }

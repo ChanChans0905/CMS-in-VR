@@ -71,7 +71,11 @@ public class FollowingCar : MonoBehaviour
 
 
         if (LC.RespawnTrigger)
+        {
             RespawnTrigger = true;
+            Debug.Log("Respwan");
+        }
+            
 
         if(RespawnTrigger)
             Respawn();
@@ -158,7 +162,7 @@ public class FollowingCar : MonoBehaviour
                 FCR_Velocity.transform.position = Vector3.Lerp(FCR_Velocity.transform.position, LC_StopPos_for_FC_R, FC_Fast_ReachingPercent / 100f);
                 FCB_Velocity.transform.position = Vector3.Lerp(FCB_Velocity.transform.position, LC_StopPos_for_FC_B, FC_Fast_ReachingPercent / 100f);
             }
-            else
+            else if(AccelSpeed == 2)
             {
                 // LCL is faster
                 FCL_Velocity.transform.position = Vector3.Lerp(FCL_Velocity.transform.position, LC_StopPos_for_FC_L, FC_Fast_ReachingPercent / 150f);
@@ -177,6 +181,7 @@ public class FollowingCar : MonoBehaviour
 
     private void Respawn()
     {
+        AccelSpeed = 0;
         FC_Accel_Timer = 0;
         OvertakeTimer = 0;
         StopOvertake = false;

@@ -18,6 +18,7 @@ public class QuestionnaireNoticeTurnOnOff : MonoBehaviour
             if (rec.rgbButtons[4] == 128)
             {
                 Q.QuestionnairePhase = true;
+                Q.FirstSlider = true;
                 Next.SetActive(true); 
                 ParentObject.SetActive(true); 
                 gameObject.SetActive(false);
