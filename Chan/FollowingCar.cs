@@ -69,12 +69,13 @@ public class FollowingCar : MonoBehaviour
         if (StopOvertake)
             TargetCarVelocity.z = 0;
 
+
         if (LC.RespawnTrigger)
         {
             RespawnTrigger = true;
             Debug.Log("Respwan");
         }
-            
+
         if(RespawnTrigger)
             Respawn();
     }
@@ -118,10 +119,10 @@ public class FollowingCar : MonoBehaviour
 
         if (OvertakeTimer >= 8 + StoppingTime && StoppingTime != 0)
         {
-            if (FC_Accel_Timer < 0.1f)
-            {
-                FC_Accel_Timer += Time.DeltaTime;
+            FC_Accel_Timer += Time.fixedDeltaTime;
 
+            if (FC_Accel_Timer < 0.2)
+            {
                 if (LC.StartScenario_Obstacle)
                 {
                     LC_StopPos_for_FC_L = Obstacle.position;
@@ -152,22 +153,19 @@ public class FollowingCar : MonoBehaviour
             float FC_Fast_ReachingPercent = FC_Accel_Timer / FC_Fast_Time;
             float FC_Slow_ReachingPercent = FC_Accel_Timer / FC_Slow_Time;
 
-            if(FC_Accel_Timer > 0.1f)
+            if (AccelSpeed == 1)
             {
-                if (AccelSpeed == 1)
-                {
-                    // LCR is faster
-                    FCL_Velocity.transform.position = Vector3.Lerp(FCL_Velocity.transform.position, LC_StopPos_for_FC_L, FC_Fast_ReachingPercent / 400f);
-                    FCR_Velocity.transform.position = Vector3.Lerp(FCR_Velocity.transform.position, LC_StopPos_for_FC_R, FC_Fast_ReachingPercent / 100f);
-                    FCB_Velocity.transform.position = Vector3.Lerp(FCB_Velocity.transform.position, LC_StopPos_for_FC_B, FC_Fast_ReachingPercent / 100f);
-                }
-                else if (AccelSpeed == 2)
-                {
-                    // LCL is faster
-                    FCL_Velocity.transform.position = Vector3.Lerp(FCL_Velocity.transform.position, LC_StopPos_for_FC_L, FC_Fast_ReachingPercent / 150f);
-                    FCR_Velocity.transform.position = Vector3.Lerp(FCR_Velocity.transform.position, LC_StopPos_for_FC_R, FC_Fast_ReachingPercent / 600f);
-                    FCB_Velocity.transform.position = Vector3.Lerp(FCB_Velocity.transform.position, LC_StopPos_for_FC_B, FC_Fast_ReachingPercent / 150f);
-                }
+                // LCR is faster
+                FCL_Velocity.transform.position = Vector3.Lerp(FCL_Velocity.transform.position, LC_StopPos_for_FC_L, FC_Fast_ReachingPercent / 400f);
+                FCR_Velocity.transform.position = Vector3.Lerp(FCR_Velocity.transform.position, LC_StopPos_for_FC_R, FC_Fast_ReachingPercent / 100f);
+                FCB_Velocity.transform.position = Vector3.Lerp(FCB_Velocity.transform.position, LC_StopPos_for_FC_B, FC_Fast_ReachingPercent / 100f);
+            }
+            else if(AccelSpeed == 2)
+            {
+                // LCL is faster
+                FCL_Velocity.transform.position = Vector3.Lerp(FCL_Velocity.transform.position, LC_StopPos_for_FC_L, FC_Fast_ReachingPercent / 150f);
+                FCR_Velocity.transform.position = Vector3.Lerp(FCR_Velocity.transform.position, LC_StopPos_for_FC_R, FC_Fast_ReachingPercent / 600f);
+                FCB_Velocity.transform.position = Vector3.Lerp(FCB_Velocity.transform.position, LC_StopPos_for_FC_B, FC_Fast_ReachingPercent / 150f);
             }
         }
 

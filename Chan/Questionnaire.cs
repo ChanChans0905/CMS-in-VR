@@ -48,42 +48,41 @@ public class Questionnaire : MonoBehaviour
                     AnswerSlider = children[QuestionnaireNumber].GetComponent<Slider>();
                     FirstSlider = false;
                 }
-                    
 
                 // Get slider value from the steering wheel
-                if (rec.lX < -7500) { AnswerSlider.value = 1; }
-                else if (rec.lX < -4500 && rec.lX > -7500) { AnswerSlider.value = 2; }
-                else if (rec.lX < -1500 && rec.lX > -4500) { AnswerSlider.value = 3; }
-                else if (rec.lX < 1500 && rec.lX > -1500) { AnswerSlider.value = 4; }
-                else if (rec.lX > 1500 && rec.lX < 4500) { AnswerSlider.value = 5; }
-                else if (rec.lX > 4500 && rec.lX < 7500) { AnswerSlider.value = 6; }
-                else if (rec.lX > 7500) { AnswerSlider.value = 7; }
 
-                if (ThresholdTimer > 2)
+                if(QuestionnaireNumber <= 12)
+                {
+                    if (rec.lX < -7500) { AnswerSlider.value = 1; }
+                    else if (rec.lX < -4500 && rec.lX > -7500) { AnswerSlider.value = 2; }
+                    else if (rec.lX < -1500 && rec.lX > -4500) { AnswerSlider.value = 3; }
+                    else if (rec.lX < 1500 && rec.lX > -1500) { AnswerSlider.value = 4; }
+                    else if (rec.lX > 1500 && rec.lX < 4500) { AnswerSlider.value = 5; }
+                    else if (rec.lX > 4500 && rec.lX < 7500) { AnswerSlider.value = 6; }
+                    else if (rec.lX > 7500) { AnswerSlider.value = 7; }
+                }
+
+
+                if (ThresholdTimer > 1)
                 {
                     // when the right lever is pulled, move to the next question
                     if (rec.rgbButtons[4] == 128)
                     {
-                        if (QuestionnaireNumber < 3)
+                        if (QuestionnaireNumber < 12)
                         {
                             QuestionnaireNumber++;
-                            Debug.Log(children[QuestionnaireNumber]);
                             children[QuestionnaireNumber].gameObject.SetActive(true);
                             children[QuestionnaireNumber - 1].gameObject.SetActive(false);
                             AnswerSlider = children[QuestionnaireNumber].GetComponent<Slider>();
                         }
-                        else if (QuestionnaireNumber == 3)
+                        else if (QuestionnaireNumber == 12)
                         {
                             QuestionnaireNumber++;
-                        }
-
-                        // if it's the last question, turn the questions off and turn on the save notive for saving the survey result
-                        if (QuestionnaireNumber == 4)
-                        {
+                            children[QuestionnaireNumber - 2].gameObject.SetActive(false);
                             children[QuestionnaireNumber - 1].gameObject.SetActive(false);
                             SaveTriggerObject.SetActive(true);
+                            
                         }
-
                         Debug.Log(QuestionnaireNumber);
                         ThresholdTimer = 0;
                     }
@@ -91,7 +90,7 @@ public class Questionnaire : MonoBehaviour
                     // when the left leve is pulled, get back to the previous question
                     if (rec.rgbButtons[5] == 128)
                     {
-                        if (QuestionnaireNumber > 1)
+                        if (QuestionnaireNumber > 1 && QuestionnaireNumber != 13)
                         {
                             children[QuestionnaireNumber].gameObject.SetActive(false);
                             children[QuestionnaireNumber - 1].gameObject.SetActive(true);
@@ -200,7 +199,6 @@ public class Questionnaire : MonoBehaviour
             SaveTrigger = false;
             QuestionnaireNumber = 0;
             QuestionnairePhase = false;
-            gameObject.SetActive(false);
         }
     }
 }

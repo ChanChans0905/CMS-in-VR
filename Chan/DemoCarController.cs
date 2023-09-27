@@ -62,9 +62,6 @@ public class DemoCarController : MonoBehaviour
     int[,] FollowingCarSpeed_Array = new int[70, 8];
     int[,] CMScombination_Array = new int[70, 7];
 
-
-    public int ARSignalActivateDistance;
-
     float FirstReactionTimer;
     public int SampleNumber;
     public bool SelectArray;
@@ -78,17 +75,6 @@ public class DemoCarController : MonoBehaviour
     private float steeringReduction; // Used to make it easier to drive with keyboard in higher speeds
     public const float MAX_BRAKE_TORQUE = 8000; // [Nm]
     #endregion
-
-    private void Start()
-    {
-        //TaskScenario = new int[] { 3, 1, 2, 1, 2, 3 };
-        //CMScombination = new int[] { 6, 3, 2, 5, 7, 4, 1 };
-        //LaneChangeTime = new int[] { 9, 5, 3, 7, 1, 0, 0, 0 };
-        FollowingCarSpeed = new int[] { 2, 2, 2, 2, 1, 1, 1, 1 };
-        ARSignalActivateDistance = 10;
-
-
-    }
 
     private void Update()
     {
@@ -111,15 +97,11 @@ public class DemoCarController : MonoBehaviour
             rawForwardInput = Acc + Br;
             Pedal_Data = rawForwardInput;
 
-            // rawsteeringwheelinput 을 rawforwardinput과 마찬가지로 비율 계산하여 움직이도록 수정 필요
-
             // Steering
             steeringReduction = 1 - Mathf.Min(Mathf.Abs(velocity.Value) / 30f, 0.85f);
 
             userSteeringInput.Value = rawSteeringInput * steeringReduction;
             SteeringWheel_Data = userSteeringInput.Value;
-
-            // ************ORG  ***************
 
             if (parkInput > 0)
             { // Park request ("hand brake")
@@ -194,20 +176,14 @@ public class DemoCarController : MonoBehaviour
                 }
             }
 
-            // *********** ORG ****************
-
-
-
-            //Debug.Log(Acc + " , " +  Br);
-
             if (velocity.Value >= 27.5f)
-            {
                 totalTorque = 0;
-            }
+
             ApplyWheelTorques(totalTorque);
 
             if (SelectArray)
                 ApplyArray();
+                
 
             if (LC.LC_StoppingTime == 1)
             {
@@ -229,6 +205,7 @@ public class DemoCarController : MonoBehaviour
                 {
                     // need : do not let the DC move during respawning and questionnaire
                     rawForwardInput = 0;
+                    totalTorque = -9000;
                     DC_C.FadingEvent = true;
                     DC_C.Activate_Fade = true;
                     velocity.Value = 0;
@@ -250,9 +227,7 @@ public class DemoCarController : MonoBehaviour
             }
 
             if (CMSchangeBool)
-            {
                 CMSchange();
-            }
         }
     }
 
@@ -270,8 +245,6 @@ public class DemoCarController : MonoBehaviour
 
     public void CMSchange()
     {
-        int[] CMScombination = { 3, 6, 2, 5, 7, 4, 1 };
-
         CMSCenter.SetActive(false);
         CMS_LD_SW.SetActive(false);
         CMS_LD_TM.SetActive(false);
@@ -346,14 +319,16 @@ public class DemoCarController : MonoBehaviour
 
     private void ApplyArray()
     {
-        LaneChangeTime_Array = new int[,] { { 1, 0, 5, 3, 7, 9 }, { 1, 7, 0, 5, 3, 9 }, { 3, 7, 1, 0, 5, 9 }, { 3, 9, 7, 5, 0, 1 }, { 5, 1, 9, 7, 3, 0 },
+        LaneChangeTime_Array = new int[,] { { 0,1,3,5,7,9},{ 1, 0, 5, 3, 7, 9 }, { 1, 7, 0, 5, 3, 9 }, { 3, 7, 1, 0, 5, 9 }, { 3, 9, 7, 5, 0, 1 }, { 5, 1, 9, 7, 3, 0 },
                                           { 5, 0, 3, 9, 7, 1 }, { 7, 3, 0, 1, 5, 9 }, { 7, 5, 9, 0, 1, 3 }, { 9, 3, 7, 1, 0, 5 }, { 9, 5, 1, 7, 3, 0 } };
 
-        CMScombination_Array = new int[,] { { 1, 4, 2, 3, 7, 6, 5 }, { 1, 6, 4, 2, 3, 7, 5 }, { 2, 5, 7, 1, 6, 4, 3 }, { 3, 2, 5, 4, 6, 1, 7 }, { 3, 6, 4, 2, 1, 5, 7 }, 
+        CMScombination_Array = new int[,] { { 1,2,3,4,5,6,7}, { 1, 4, 2, 3, 7, 6, 5 }, { 1, 6, 4, 2, 3, 7, 5 }, { 2, 5, 7, 1, 6, 4, 3 }, { 3, 2, 5, 4, 6, 1, 7 }, { 3, 6, 4, 2, 1, 5, 7 }, 
                                             { 4, 2, 7, 3, 1, 5, 6 }, { 5, 2, 1, 4, 7, 3, 6 }, { 5, 4, 1, 2, 6, 3, 7 }, { 6, 1, 5, 7, 2, 4, 3 }, { 7, 2, 6, 4, 5, 3, 1 } };
 
         TaskScenario_Array = new int[,] { { 1, 2, 3, 1, 2, 3 }, { 1, 3, 2, 2, 1, 3 }, { 1, 3, 1, 2, 3, 2 }, { 1, 2, 3, 2, 3, 1 }, { 2, 1, 2, 3, 3, 1 }, 
                                           { 2, 3, 1, 2, 3, 1 }, { 2, 1, 2, 3, 1, 3 }, { 3, 1, 2, 1, 3, 2 }, { 3, 2, 2, 1, 3, 1 }, { 3, 2, 2, 1, 1, 3 } };
+
+        FollowingCarSpeed_Array = new int[,] { { 2, 2, 2, 2, 1, 1, 1, 1 } };
 
         Debug.Log("SampleNumber : " + SampleNumber);
 
@@ -368,14 +343,6 @@ public class DemoCarController : MonoBehaviour
 
         for (int i = 0; i < FollowingCarSpeed.Length; i++)
             FollowingCarSpeed[i] = FollowingCarSpeed_Array[SampleNumber, i];
-
-        for (int i = 0; i < 6; i++)
-        {
-            Debug.Log("LaneChangeTIme" + LaneChangeTime[i]);
-            Debug.Log("CMScombination" + CMScombination[i]);
-            Debug.Log("TaskScenario" + TaskScenario[i]);
-        }
-
 
         CMSchange();
     }

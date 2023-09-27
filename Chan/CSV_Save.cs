@@ -87,29 +87,43 @@ public class CSV_Save : MonoBehaviour
 
             if (DC.MainTask)
             {
-                if (LC.LC_Direction == 1)
+                switch (LC.LC_Direction)
                 {
-                    SaveData[21] = LC1.transform.position.x;
-                    SaveData[22] = 0;
-                    SaveData[23] = LC1.transform.position.z;
-                    SaveData[24] = FCL1.transform.position.x;
-                    SaveData[25] = 0;
-                    SaveData[26] = FCL1.transform.position.z;
-                    SaveData[27] = FCR1.transform.position.x;
-                    SaveData[28] = 0;
-                    SaveData[29] = FCR1.transform.position.z;
-                }
-                else if (LC.LC_Direction == 2)
-                {
-                    SaveData[21] = LC2.transform.position.x;
-                    SaveData[22] = 0;
-                    SaveData[23] = LC2.transform.position.z;
-                    SaveData[24] = FCL2.transform.position.x;
-                    SaveData[25] = 0;
-                    SaveData[26] = FCL2.transform.position.z;
-                    SaveData[27] = FCR2.transform.position.x;
-                    SaveData[28] = 0;
-                    SaveData[29] = FCR2.transform.position.z;
+                    case 1:
+                        SaveData[21] = LC1.transform.position.x;
+                        SaveData[22] = 0;
+                        SaveData[23] = LC1.transform.position.z;
+                        SaveData[24] = FCL1.transform.position.x;
+                        SaveData[25] = 0;
+                        SaveData[26] = FCL1.transform.position.z;
+                        SaveData[27] = FCR1.transform.position.x;
+                        SaveData[28] = 0;
+                        SaveData[29] = FCR1.transform.position.z;
+                        break;
+
+                    case 2:
+                        SaveData[21] = LC2.transform.position.x;
+                        SaveData[22] = 0;
+                        SaveData[23] = LC2.transform.position.z;
+                        SaveData[24] = FCL2.transform.position.x;
+                        SaveData[25] = 0;
+                        SaveData[26] = FCL2.transform.position.z;
+                        SaveData[27] = FCR2.transform.position.x;
+                        SaveData[28] = 0;
+                        SaveData[29] = FCR2.transform.position.z;
+                        break;
+
+                    default:
+                        SaveData[21] = 0;
+                        SaveData[22] = 0;
+                        SaveData[23] = 0;
+                        SaveData[24] = 0;
+                        SaveData[25] = 0;
+                        SaveData[26] = 0;
+                        SaveData[27] = 0;
+                        SaveData[28] = 0;
+                        SaveData[29] = 0;
+                        break;
                 }
             }
             AppendToCsv(SaveData);
