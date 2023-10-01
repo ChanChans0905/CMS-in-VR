@@ -9,25 +9,19 @@ using UnityEngine.XR;
 
 public class Questionnaire : MonoBehaviour
 {
-    public GameObject SaveTriggerObject;
+    LogitechGSDK.LogiControllerPropertiesData properties;
     [SerializeField] DemoCarController DC;
-    [SerializeField] TrialManager TM;
     [SerializeField] FinalQuestionnaire FQ;
-    public int QuestionnaireNumber;
     [SerializeField] Slider AnswerSlider;
+    List<Transform> children;
+    public GameObject SaveTriggerObject, FinalQuestionnaireStartNotice, TrialStartNotice;
+    public bool SaveTrigger, QuestionnairePhase, FirstSlider;
+    public int QuestionnaireNumber;
     string csvSeparator = ",";
     string csvFileName;
-    string[] csvHeaders = new string[2] { "Questionnaire", "Answer" };
     string csvDirectoryName = "Questionnaire";
-    public bool SaveTrigger;
-    [SerializeField] DC_Collidor DC_C;
-    public GameObject FinalQuestionnaireStartNotice;
-    LogitechGSDK.LogiControllerPropertiesData properties;
-    public bool QuestionnairePhase;
-    List<Transform> children;
+    string[] csvHeaders = new string[2] { "Questionnaire", "Answer" };
     float ThresholdTimer;
-    public GameObject TrialStartNotice;
-    public bool FirstSlider;
 
     void Update()
     {
@@ -196,9 +190,11 @@ public class Questionnaire : MonoBehaviour
             finalString += csvSeparator;
             sw.WriteLine(finalString);
 
+            QuestionnairePhase = false;
+            ThresholdTimer = 0;
+            FirstSlider = true;
             SaveTrigger = false;
             QuestionnaireNumber = 0;
-            QuestionnairePhase = false;
         }
     }
 }

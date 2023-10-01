@@ -13,7 +13,7 @@ public class AR_Manager : MonoBehaviour
 
     void Update()
     {
-        if(DC.Activate_AR)
+        if (DC.Activate_AR)
         {
             if (TurnOn_AR_Signal_L == 1)
             {
@@ -61,10 +61,10 @@ public class AR_Manager : MonoBehaviour
 
     private void OnTriggerStay(Collider other)
     {
-        if(other.tag == "AR_Signal_L")
+        if (other.tag == "AR_Signal_L")
             TurnOn_AR_Signal_L = 1;
 
-        if(other.tag == "AR_Signal_R")
+        if (other.tag == "AR_Signal_R")
             TurnOn_AR_Signal_R = 1;
     }
 

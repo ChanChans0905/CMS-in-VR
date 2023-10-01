@@ -29,7 +29,6 @@ public class TaskStartNotice : MonoBehaviour
                     DC.MainTask = true;
                     gameObject.SetActive(false);
                 }
-
             }
         }
     }

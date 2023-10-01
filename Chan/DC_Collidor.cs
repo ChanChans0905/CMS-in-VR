@@ -4,20 +4,16 @@ using UnityEngine.Rendering.HighDefinition;
 
 public class DC_Collidor : MonoBehaviour
 {
-    public float alpha = 0;
-    private Material _mat;
-    public bool FadingEvent;
     [SerializeField] DemoCarController DC;
     [SerializeField] LeadingCar LC;
     [SerializeField] TrialManager TM;
     [SerializeField] CSV_Save CSV;
-    public GameObject QuestionnaireStartNotice, TaskFailureNotice/*,KeepLaneNotice*/;
-    //float OutofLaneTime;
-
+    public GameObject QuestionnaireStartNotice, TaskFailureNotice;
+    public float alpha = 0;
+    public bool Activate_Fade, FadingEvent;
+    private Material _mat;
     bool DrivingIn2ndLane;
-    float TaskCountThreshold;
-    public bool Activate_Fade;
-    float FadingTimer;
+    float TaskCountThreshold, FadingTimer;
 
     void Start()
     {
@@ -27,9 +23,6 @@ public class DC_Collidor : MonoBehaviour
 
     void FixedUpdate()
     {
-        //if(OutofLaneTime >= 3) KeepLaneNotice.gameObject.SetActive(true);
-        //if (OutofLaneTime == 0) KeepLaneNotice.gameObject.SetActive(false);
-
         if (Activate_Fade)
         {
             FadingTimer += Time.deltaTime;
@@ -42,15 +35,12 @@ public class DC_Collidor : MonoBehaviour
                 
             Color nNew = new Color(0, 0, 0, alpha);
             _mat.SetColor("_BaseColor", nNew);
-            //OutofLaneTime = 0;
-            //DrivingIn2ndLane = false;
 
             if(FadingTimer > 5)
             {
                 FadingTimer = 0;
                 Activate_Fade = false;
             }
-                
         }
 
         if (TaskCountThreshold < 3)
@@ -162,26 +152,13 @@ public class DC_Collidor : MonoBehaviour
 
     private void OnTriggerStay(Collider other)
     {
-        //if (other.gameObject.CompareTag("KeepLaneNoticeArea"))
-        //{
-        //    OutofLaneTime += Time.deltaTime;
-        //}
-
         if(other.tag == "LaneChangeTimeCalculator" && !DrivingIn2ndLane)
             DrivingIn2ndLane = true;
     }
 
     private void OnTriggerExit(Collider other)
     {
-        //if (other.gameObject.CompareTag("KeepLaneNoticeArea"))
-        //{
-        //    OutofLaneTime = 0;
-        //    KeepLaneNotice.SetActive(false);
-        //}
-
         if (other.tag == ("LaneChangeTimeCalculator") && DrivingIn2ndLane)
-        {
                 DC.LaneChangeComplete = 1;
-        }
     }
 }

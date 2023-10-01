@@ -46,12 +46,14 @@ public class FollowingCar : MonoBehaviour
             FCL_Velocity = FCL_1;
             FCR_Velocity = FCR_1;
             FCB_Velocity = FCB_1;
+            LC.DrivingDirection = 0;
         }
-        else
+        else if (LC.DrivingDirection == -1)
         {
             FCL_Velocity = FCL_2;
             FCR_Velocity = FCR_2;
             FCB_Velocity = FCB_2;
+            LC.DrivingDirection = 0;
         }
 
         if (LC.TaskStart)
@@ -69,14 +71,10 @@ public class FollowingCar : MonoBehaviour
         if (StopOvertake)
             TargetCarVelocity.z = 0;
 
-
         if (LC.RespawnTrigger)
-        {
             RespawnTrigger = true;
-            Debug.Log("Respwan");
-        }
 
-        if(RespawnTrigger)
+        if (RespawnTrigger)
             Respawn();
     }
 
@@ -94,29 +92,6 @@ public class FollowingCar : MonoBehaviour
             FCB_Velocity.GetComponent<Rigidbody>().velocity = TargetCarVelocity;
         }
 
-        //if (OvertakeTimer > 8 + StoppingTime && StoppingTime != 0)
-        //{
-        //    if(AccelSpeed == 1)
-        //    {
-        //        FCL_Velocity.GetComponent<Rigidbody>().velocity = TargetCarVelocity * 1.5f;
-        //        FCR_Velocity.GetComponent<Rigidbody>().velocity = TargetCarVelocity * 1.3f;
-
-        //        if (StopOvertake)
-        //            FCL_Velocity.GetComponent<Rigidbody>().velocity = TargetCarVelocity * 0;
-        //    }
-        //    else
-        //    {
-        //        FCL_Velocity.GetComponent<Rigidbody>().velocity = TargetCarVelocity * 1.3f;
-        //        FCR_Velocity.GetComponent<Rigidbody>().velocity = TargetCarVelocity * 1.5f;
-
-        //        if (StopOvertake)
-        //            FCR_Velocity.GetComponent<Rigidbody>().velocity = TargetCarVelocity * 0;
-        //    }
-        //    FCB_Velocity.GetComponent<Rigidbody>().velocity = TargetCarVelocity;
-        //}
-
-        // use lerp
-
         if (OvertakeTimer >= 8 + StoppingTime && StoppingTime != 0)
         {
             FC_Accel_Timer += Time.fixedDeltaTime;
@@ -131,13 +106,13 @@ public class FollowingCar : MonoBehaviour
                 }
                 else
                 {
-                    if(LC.LC_Direction == 1)
+                    if (LC.LC_Direction == 1)
                     {
                         LC_StopPos_for_FC_L = LC_1.transform.position;
                         LC_StopPos_for_FC_R = LC_1.transform.position;
                         LC_StopPos_for_FC_B = LC_1.transform.position;
                     }
-                    else if(LC.LC_Direction == 2)
+                    else if (LC.LC_Direction == 2)
                     {
                         LC_StopPos_for_FC_L = LC_2.transform.position;
                         LC_StopPos_for_FC_R = LC_2.transform.position;
@@ -160,7 +135,7 @@ public class FollowingCar : MonoBehaviour
                 FCR_Velocity.transform.position = Vector3.Lerp(FCR_Velocity.transform.position, LC_StopPos_for_FC_R, FC_Fast_ReachingPercent / 100f);
                 FCB_Velocity.transform.position = Vector3.Lerp(FCB_Velocity.transform.position, LC_StopPos_for_FC_B, FC_Fast_ReachingPercent / 100f);
             }
-            else if(AccelSpeed == 2)
+            else if (AccelSpeed == 2)
             {
                 // LCL is faster
                 FCL_Velocity.transform.position = Vector3.Lerp(FCL_Velocity.transform.position, LC_StopPos_for_FC_L, FC_Fast_ReachingPercent / 150f);
@@ -179,7 +154,6 @@ public class FollowingCar : MonoBehaviour
 
     private void Respawn()
     {
-        AccelSpeed = 0;
         FC_Accel_Timer = 0;
         OvertakeTimer = 0;
         StopOvertake = false;
