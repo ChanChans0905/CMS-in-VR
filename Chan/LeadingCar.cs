@@ -21,12 +21,10 @@ public class LeadingCar : MonoBehaviour
     float StoppingDistance;
     public bool TaskStart;
     //public bool WayPointTrigger;
-    float DistanceTravelled;
+    //float DistanceTravelled;
 
     public int LC_Direction;
     public int TurnOn_LC_FC;
-
-    float DisableTime;
     public bool RespawnTrigger;
     public bool StartScenario_LaneChangeThenStop, StartScenario_LaneChangeWithLowSpeed, StartScenario_Obstacle, StartScenario_None;
     public float DrivingDirection;
@@ -73,13 +71,15 @@ public class LeadingCar : MonoBehaviour
                 DrivingDirection = 1;
                 LeadingCarPosition = LeadingCar_1.transform.position;
                 LeadingCarVelocity = LeadingCar_1;
+                Debug.Log(LeadingCarVelocity); 
             }
 
-            else if (LC_Direction == 2)
+            if (LC_Direction == 2)
             {
                 DrivingDirection = -1;
                 LeadingCarPosition = LeadingCar_2.transform.position;
                 LeadingCarVelocity = LeadingCar_2;
+                Debug.Log(LeadingCarVelocity);
             }
 
             TargetCarVelocity.z = TargetCar.GetComponent<Rigidbody>().velocity.z;
@@ -313,10 +313,16 @@ public class LeadingCar : MonoBehaviour
         }
 
         if(OvertakeTimer >= 20 && OvertakeTimer <= 23)
-            TargetCarVelocity.x = 2f;
-
+        {
+            TargetCarVelocity.z += 1f;
+            TargetCarVelocity.x = -2f;
+        }
+            
         if (OvertakeTimer > 23)
+        {
             TargetCarVelocity.z = 0;
+            TargetCarVelocity.x = 0;
+        }
 
         // apply the velocity to the car
         LeadingCarVelocity.GetComponent<Rigidbody>().velocity = TargetCarVelocity * DrivingDirection;
@@ -351,8 +357,7 @@ public class LeadingCar : MonoBehaviour
     {
         LC_Direction = 0;
         OvertakeTimer = 0;
-        DistanceTravelled = 0;
-        DisableTime = 0;
+        //DistanceTravelled = 0;
         LC_StoppingTime = 0;
         //WayPointTrigger = false;
         TaskStart = false;

@@ -22,10 +22,11 @@ public class FinalQuestionnaire : MonoBehaviour
     List<Transform> children;
     public bool FinalQuestionnairePhase;
     float ThresholdTimer;
+    public bool FirstSlider;
 
     void Update()
     {
-        if (FinalQuestionnairePhase)
+        if (FinalQuestionnairePhase) 
         {
             if (LogitechGSDK.LogiUpdate() && LogitechGSDK.LogiIsConnected(0))
             {
@@ -34,6 +35,12 @@ public class FinalQuestionnaire : MonoBehaviour
 
                 if (ThresholdTimer < 3f)
                     ThresholdTimer += Time.deltaTime;
+
+                if (FirstSlider)
+                {
+                    AnswerSlider = children[QuestionnaireNumber].GetComponent<Slider>();
+                    FirstSlider = false;
+                }
 
                 // Get slider value from the steering wheel
                 if (rec.lX < -7500) { AnswerSlider.value = 1; }

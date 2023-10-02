@@ -97,22 +97,7 @@ public class Questionnaire : MonoBehaviour
 
                 // if the user pull the right lever when the save notice object is activated, the survey result will be saved to csv file
                 if (SaveTrigger)
-                {
                     SaveToCSV();
-
-                    if (DC.QuestionnaireCount < 2)
-                    {
-                        DC.CMSchangeBool = true;
-                        TrialStartNotice.SetActive(true);
-                    }
-
-                    if (DC.QuestionnaireCount == 2)
-                    {
-                        DC.FinalQuestionnaireBool = true;
-                        FQ.FinalQuestionnairePhase = true;
-                        FinalQuestionnaireStartNotice.SetActive(true);
-                    }
-                }
             }
         }
     }
@@ -128,7 +113,7 @@ public class Questionnaire : MonoBehaviour
     public void SaveToCSV()
     {
         DC.QuestionnaireCount++;
-        csvFileName = "Questionnaire" + DC.CMScombination[DC.CMSchangeCount] + ".csv";
+        csvFileName = "Questionnaire" + DC.CMScombination[DC.CMSchangeCount-1] + ".csv";
         List<Transform> children = GetChildren(transform);
         for (int i = 0; i < children.Count; i++)
         {
@@ -138,6 +123,19 @@ public class Questionnaire : MonoBehaviour
             Data[0] = QuestionnaireSubject[i];
             Data[1] = AnswerSlider.value.ToString();
             AppendToCsv(Data);
+        }
+
+        if (DC.QuestionnaireCount < 2)
+        {
+            DC.CMSchangeBool = true;
+            TrialStartNotice.SetActive(true);
+        }
+
+        if (DC.QuestionnaireCount == 2)
+        {
+            DC.FinalQuestionnaireBool = true;
+            FQ.FinalQuestionnairePhase = true;
+            FinalQuestionnaireStartNotice.SetActive(true);
         }
     }
 
@@ -158,7 +156,8 @@ public class Questionnaire : MonoBehaviour
     }
 
     public void CreateCsv()
-    {
+    {  
+
         VerifyDirectory();
         using (StreamWriter sw = File.CreateText(GetFilePath()))
         {

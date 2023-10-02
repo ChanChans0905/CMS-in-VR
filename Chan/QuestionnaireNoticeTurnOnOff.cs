@@ -5,6 +5,8 @@ using UnityEngine;
 public class QuestionnaireNoticeTurnOnOff : MonoBehaviour
 {
     [SerializeField] Questionnaire Q;
+    [SerializeField] DemoCarController DC;
+    [SerializeField] FinalQuestionnaire FQ;
     public GameObject Next;
     public GameObject ParentObject;
 
@@ -17,8 +19,17 @@ public class QuestionnaireNoticeTurnOnOff : MonoBehaviour
 
             if (rec.rgbButtons[4] == 128)
             {
-                Q.QuestionnairePhase = true;
-                Q.FirstSlider = true;
+                if(DC.QuestionnaireCount < 2)
+                {
+                    Q.QuestionnairePhase = true;
+                    Q.FirstSlider = true;
+                }
+                if(DC.QuestionnaireCount == 2)
+                {
+                    FQ.FinalQuestionnairePhase = true;
+                    FQ.FirstSlider = true;
+                }
+
                 Next.SetActive(true); 
                 ParentObject.SetActive(true); 
                 gameObject.SetActive(false);

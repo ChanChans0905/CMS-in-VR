@@ -76,7 +76,7 @@ public class DC_Collidor : MonoBehaviour
             CSV.DataLoggingEnd = true;
             LC.RespawnTrigger = true;
 
-            if (DC.taskCount == 0)
+            if (DC.taskCount == 5 )
             {
                 FadingEvent = true;
                 DC.respawnTrigger = true;
