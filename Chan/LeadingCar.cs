@@ -9,7 +9,7 @@ public class LeadingCar : MonoBehaviour
     [SerializeField] DC_Collidor DC_C;
     public Transform TargetCar;
     public GameObject Obstacle_1, Obstacle_2;
-    public GameObject LeadingCar_1, LeadingCar_2;
+    public GameObject LeadingCar_1, LeadingCar_2, LC_1_RearLight, LC_2_RearLight;
     public GameObject FCL_1, FCR_1, FCB_1, FCL_2, FCR_2, FCB_2, TaskEndPoint_1, TaskEndPoint_2;
     public PathCreator PathCreator_1, PathCreator_2;
     GameObject LeadingCarVelocity;
@@ -54,6 +54,7 @@ public class LeadingCar : MonoBehaviour
                 FCR_1.SetActive(true);
                 FCB_1.SetActive(true);
                 TaskEndPoint_1.SetActive(true);
+                LC_1_RearLight.SetActive(false);
                 TurnOn_LC_FC = 0;
             }
             else if (TurnOn_LC_FC == 2)
@@ -63,6 +64,7 @@ public class LeadingCar : MonoBehaviour
                 FCR_2.SetActive(true);
                 FCB_2.SetActive(true);
                 TaskEndPoint_2.SetActive(true);
+                LC_2_RearLight.SetActive (false);
                 TurnOn_LC_FC = 0;
             }
 
@@ -95,11 +97,11 @@ public class LeadingCar : MonoBehaviour
 
             if (TaskStart)
             {
-                TaskStartTime = DC.LaneChangeTime[DC.taskCount];
+                TaskStartTime = DC.LaneChangeTime[DC.CMSchangeCount-1,DC.taskCount];
 
                 if (TaskStartTime != 0)
                 {
-                    switch (DC.TaskScenario[DC.taskCount])
+                    switch (DC.TaskScenario[DC.CMScombination[DC.CMSchangeCount],DC.taskCount])
                     {
                         case 1:
                             StartScenario_LaneChangeThenStop = true;
@@ -160,7 +162,12 @@ public class LeadingCar : MonoBehaviour
                 
             // lane changing
             if (OvertakeTimer >= 4)
-                TargetCarVelocity.x = 1.5f;
+            {
+                if (DrivingDirection == -1)
+                    TargetCarVelocity.x = -2f;
+                if (DrivingDirection == 1)
+                    TargetCarVelocity.x = 2f;
+            }
         }
 
         // delete lane changing velocity
@@ -172,10 +179,12 @@ public class LeadingCar : MonoBehaviour
         {
             LC_StoppingTime = 1;
             TargetCarVelocity.z = 0;
+            LC_1_RearLight.SetActive(true);
+            LC_2_RearLight.SetActive(true);
         }
 
         // apply the velocity to the car
-        LeadingCarVelocity.GetComponent<Rigidbody>().velocity = TargetCarVelocity * DrivingDirection;
+        LeadingCarVelocity.GetComponent<Rigidbody>().velocity = TargetCarVelocity /* *DrivingDirection*/;
     }
 
     private void LaneChangeWithLowSpeed()
@@ -188,7 +197,7 @@ public class LeadingCar : MonoBehaviour
         {
             float DistanceBetween_DC_LC = LeadingCarPosition.z - TargetCar.transform.position.z;
 
-            if (DistanceBetween_DC_LC < StoppingDistance / 2f * DrivingDirection)
+            if (DistanceBetween_DC_LC < StoppingDistance / 2f /** DrivingDirection*/)
                 TargetCarVelocity.z *= 1.3f;
             else
                 TargetCarVelocity.z *= 0.9f;
@@ -205,7 +214,14 @@ public class LeadingCar : MonoBehaviour
         if (OvertakeTimer >= 10 + TaskStartTime && OvertakeTimer <= 13 + TaskStartTime)
         {
             TargetCarVelocity.z *= 0.5f;
-            TargetCarVelocity.x = 2f;
+
+            if (DrivingDirection == -1)
+                TargetCarVelocity.x = -2f;
+            if(DrivingDirection == 1)
+                TargetCarVelocity.x = 2f;
+
+            LC_1_RearLight.SetActive(true);
+            LC_2_RearLight.SetActive(true);
         }
 
         if (OvertakeTimer > 13 + TaskStartTime)
@@ -215,7 +231,7 @@ public class LeadingCar : MonoBehaviour
             TargetCarVelocity.x = 0;
         }
 
-        LeadingCarVelocity.GetComponent<Rigidbody>().velocity = TargetCarVelocity * DrivingDirection;
+        LeadingCarVelocity.GetComponent<Rigidbody>().velocity = TargetCarVelocity /* * DrivingDirection*/;
     }
 
     private void LaneChangeWithObstacle()
@@ -261,7 +277,12 @@ public class LeadingCar : MonoBehaviour
         if (OvertakeTimer > 8 + TaskStartTime && OvertakeTimer <= 11 + TaskStartTime)
         {
             TargetCarVelocity.z *= 1f;
-            TargetCarVelocity.x = 1.5f;
+
+            if (DrivingDirection == -1)
+                TargetCarVelocity.x = -1.5f;
+            if (DrivingDirection == 1)
+                TargetCarVelocity.x = 1.5f;
+
             if (OvertakeTimer <= 10 + TaskStartTime)
             {
                 LC_StoppingTime = 1;
@@ -270,7 +291,6 @@ public class LeadingCar : MonoBehaviour
                     Obstacle_1.SetActive(true);
                 else
                     Obstacle_2.SetActive(true);
-
             }
         }
 
@@ -278,6 +298,8 @@ public class LeadingCar : MonoBehaviour
         {
             TargetCarVelocity.x = 0;
             TargetCarVelocity.z = 0;
+            LC_1_RearLight.SetActive(true);
+            LC_2_RearLight.SetActive(true);
         }
 
         // apply the velocity to the car
@@ -315,13 +337,19 @@ public class LeadingCar : MonoBehaviour
         if(OvertakeTimer >= 20 && OvertakeTimer <= 23)
         {
             TargetCarVelocity.z += 1f;
-            TargetCarVelocity.x = -2f;
+
+            if (DrivingDirection == -1)
+                TargetCarVelocity.x = 2f;
+            if (DrivingDirection == 1)
+                TargetCarVelocity.x = -2f;
         }
             
         if (OvertakeTimer > 23)
         {
             TargetCarVelocity.z = 0;
             TargetCarVelocity.x = 0;
+            LC_1_RearLight.SetActive(true);
+            LC_2_RearLight.SetActive(true);
         }
 
         // apply the velocity to the car

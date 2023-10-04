@@ -10,7 +10,7 @@ public class FollowingCar : MonoBehaviour
     [SerializeField] LeadingCar LC;
     public GameObject FCL_1, FCR_1, FCL_2, FCR_2, FCB_1, FCB_2;
     public GameObject LC_1, LC_2;
-    public Transform TargetCar, Obstacle;
+    public Transform TargetCar, Obstacle_1, Obstacle_2;
     Vector3 TargetCarVelocity;
     GameObject FCL_Velocity, FCR_Velocity, FCB_Velocity;
     public float OvertakeTimer;
@@ -46,14 +46,14 @@ public class FollowingCar : MonoBehaviour
             FCL_Velocity = FCL_1;
             FCR_Velocity = FCR_1;
             FCB_Velocity = FCB_1;
-            LC.DrivingDirection = 0;
+            //LC.DrivingDirection = 0;
         }
         else if (LC.DrivingDirection == -1)
         {
             FCL_Velocity = FCL_2;
             FCR_Velocity = FCR_2;
             FCB_Velocity = FCB_2;
-            LC.DrivingDirection = 0;
+            //LC.DrivingDirection = 0;
         }
 
         if (LC.TaskStart)
@@ -71,7 +71,7 @@ public class FollowingCar : MonoBehaviour
         if (StopOvertake)
             TargetCarVelocity.z = 0;
 
-        if (LC.RespawnTrigger)
+        if (DC.respawnTrigger)
             RespawnTrigger = true;
 
         if (RespawnTrigger)
@@ -82,7 +82,7 @@ public class FollowingCar : MonoBehaviour
     {
         OvertakeTimer += Time.deltaTime;
 
-        StoppingTime = DC.LaneChangeTime[taskCount];
+        StoppingTime = DC.LaneChangeTime[DC.CMSchangeCount-1,taskCount];
         AccelSpeed = DC.FollowingCarSpeed[taskCount];
 
         if (OvertakeTimer < 8 + StoppingTime && StoppingTime != 0)
@@ -96,34 +96,41 @@ public class FollowingCar : MonoBehaviour
         {
             FC_Accel_Timer += Time.fixedDeltaTime;
 
-            if (FC_Accel_Timer < 0.2)
+            if (LC.LC_Direction == 1)
             {
                 if (LC.StartScenario_Obstacle)
                 {
-                    LC_StopPos_for_FC_L = Obstacle.position;
-                    LC_StopPos_for_FC_R = Obstacle.position;
-                    LC_StopPos_for_FC_B = Obstacle.position;
+                    LC_StopPos_for_FC_L = Obstacle_1.position;
+                    LC_StopPos_for_FC_R = Obstacle_1.position;
+                    LC_StopPos_for_FC_B = Obstacle_1.position;
                 }
                 else
                 {
-                    if (LC.LC_Direction == 1)
-                    {
-                        LC_StopPos_for_FC_L = LC_1.transform.position;
-                        LC_StopPos_for_FC_R = LC_1.transform.position;
-                        LC_StopPos_for_FC_B = LC_1.transform.position;
-                    }
-                    else if (LC.LC_Direction == 2)
-                    {
-                        LC_StopPos_for_FC_L = LC_2.transform.position;
-                        LC_StopPos_for_FC_R = LC_2.transform.position;
-                        LC_StopPos_for_FC_B = LC_2.transform.position;
-                    }
+                    LC_StopPos_for_FC_L.z = LC_1.transform.position.z;
+                    LC_StopPos_for_FC_R.z = LC_1.transform.position.z;
+                    LC_StopPos_for_FC_B.z = LC_1.transform.position.z;
                 }
-
-                LC_StopPos_for_FC_L.x = FCL_Velocity.transform.position.x;
-                LC_StopPos_for_FC_R.x = FCR_Velocity.transform.position.x;
-                LC_StopPos_for_FC_B.x = FCB_Velocity.transform.position.x;
             }
+            else if (LC.LC_Direction == 2)
+            {
+                if (LC.StartScenario_Obstacle)
+                {
+                    LC_StopPos_for_FC_L = Obstacle_2.position;
+                    LC_StopPos_for_FC_R = Obstacle_2.position;
+                    LC_StopPos_for_FC_B = Obstacle_2.position;
+                }
+                else
+                {
+                    LC_StopPos_for_FC_L.z = LC_2.transform.position.z;
+                    LC_StopPos_for_FC_R.z = LC_2.transform.position.z;
+                    LC_StopPos_for_FC_B.z = LC_2.transform.position.z;
+                }
+            }
+
+
+            LC_StopPos_for_FC_L.x = FCL_Velocity.transform.position.x;
+            LC_StopPos_for_FC_R.x = FCR_Velocity.transform.position.x;
+            LC_StopPos_for_FC_B.x = FCB_Velocity.transform.position.x;
 
             float FC_Fast_ReachingPercent = FC_Accel_Timer / FC_Fast_Time;
             float FC_Slow_ReachingPercent = FC_Accel_Timer / FC_Slow_Time;
@@ -134,6 +141,12 @@ public class FollowingCar : MonoBehaviour
                 FCL_Velocity.transform.position = Vector3.Lerp(FCL_Velocity.transform.position, LC_StopPos_for_FC_L, FC_Fast_ReachingPercent / 400f);
                 FCR_Velocity.transform.position = Vector3.Lerp(FCR_Velocity.transform.position, LC_StopPos_for_FC_R, FC_Fast_ReachingPercent / 100f);
                 FCB_Velocity.transform.position = Vector3.Lerp(FCB_Velocity.transform.position, LC_StopPos_for_FC_B, FC_Fast_ReachingPercent / 100f);
+                TargetCarVelocity.x = 0;
+                TargetCarVelocity.z = 0;
+                TargetCarVelocity.y = 0;
+                FCL_Velocity.GetComponent<Rigidbody>().velocity = TargetCarVelocity;
+                FCR_Velocity.GetComponent<Rigidbody>().velocity = TargetCarVelocity;
+                FCB_Velocity.GetComponent<Rigidbody>().velocity = TargetCarVelocity;
             }
             else if (AccelSpeed == 2)
             {
@@ -141,6 +154,13 @@ public class FollowingCar : MonoBehaviour
                 FCL_Velocity.transform.position = Vector3.Lerp(FCL_Velocity.transform.position, LC_StopPos_for_FC_L, FC_Fast_ReachingPercent / 150f);
                 FCR_Velocity.transform.position = Vector3.Lerp(FCR_Velocity.transform.position, LC_StopPos_for_FC_R, FC_Fast_ReachingPercent / 600f);
                 FCB_Velocity.transform.position = Vector3.Lerp(FCB_Velocity.transform.position, LC_StopPos_for_FC_B, FC_Fast_ReachingPercent / 150f);
+                TargetCarVelocity.x = 0;
+                TargetCarVelocity.z = 0;
+                TargetCarVelocity.y = 0;
+                FCL_Velocity.GetComponent<Rigidbody>().velocity = TargetCarVelocity;
+                FCR_Velocity.GetComponent<Rigidbody>().velocity = TargetCarVelocity;
+                FCB_Velocity.GetComponent<Rigidbody>().velocity = TargetCarVelocity;
+                //Debug.Log(LC_StopPos_for_FC_L);
             }
         }
 
@@ -149,11 +169,14 @@ public class FollowingCar : MonoBehaviour
             FCL_Velocity.GetComponent<Rigidbody>().velocity = TargetCarVelocity;
             FCR_Velocity.GetComponent<Rigidbody>().velocity = TargetCarVelocity;
             FCB_Velocity.GetComponent<Rigidbody>().velocity = TargetCarVelocity;
+            Debug.Log("C");
         }
     }
 
     private void Respawn()
     {
+        StartAceel = false;
+        AccelSpeed = 0;
         FC_Accel_Timer = 0;
         OvertakeTimer = 0;
         StopOvertake = false;

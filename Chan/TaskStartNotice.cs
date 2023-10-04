@@ -13,11 +13,10 @@ public class TaskStartNotice : MonoBehaviour
     {
         if (LogitechGSDK.LogiUpdate() && LogitechGSDK.LogiIsConnected(0))
         {
-            LogitechGSDK.DIJOYSTATE2ENGINES rec;
-            rec = LogitechGSDK.LogiGetStateUnity(0);
-
             ThresholdTImer += Time.deltaTime;
 
+            LogitechGSDK.DIJOYSTATE2ENGINES rec;
+            rec = LogitechGSDK.LogiGetStateUnity(0);
             if (ThresholdTImer > 2)
             {
                 if (rec.rgbButtons[5] == 128)
