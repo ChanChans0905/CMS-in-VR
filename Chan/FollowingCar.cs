@@ -83,7 +83,7 @@ public class FollowingCar : MonoBehaviour
         OvertakeTimer += Time.deltaTime;
 
         StoppingTime = DC.LaneChangeTime[DC.CMSchangeCount-1,taskCount];
-        AccelSpeed = DC.FollowingCarSpeed[taskCount];
+        AccelSpeed = DC.FollowingCarSpeed[DC.CMSchangeCount-1,taskCount];
 
         if (OvertakeTimer < 8 + StoppingTime && StoppingTime != 0)
         {

@@ -45,21 +45,17 @@ public class DemoCarController : MonoBehaviour
 
     public float FC1Lposition, FC1Rposition, LC1position, FC2Lposition, FC2Rposition, LC2position, DCposition;
     public bool FCLbool, FCRbool, LCbool, TCLbool, TCRbool;
-    public bool UsingAR,MainTask;
+    public bool UsingAR, MainTask;
     public float Acc, Br, SW, SteeringWheel_Data, Pedal_Data;
     //bool GameStartNoticeBool;
 
-    int ReactionStarted, ReactionNoCount ;
+    int ReactionStarted, ReactionNoCount;
     public int TotalFirstReactionValue;
 
-    public int[,] TaskScenario = new int[7,6];
-    public int[,] LaneChangeTime = new int[7,6]; // make the 2 dimension list by using counter-balance
-    public int[] FollowingCarSpeed = new int[8];
+    public int[,] TaskScenario = new int[7, 6];
+    public int[,] LaneChangeTime = new int[7, 6]; // make the 2 dimension list by using counter-balance
+    public int[,] FollowingCarSpeed = new int[7, 6];
     public int[] CMScombination = new int[7];
-    
-    int[,] TaskScenario_Array = new int[70,6] ;
-    int[,] LaneChangeTime_Array = new int[70, 6];
-    int[,] FollowingCarSpeed_Array = new int[70, 8];
     int[,] CMScombination_Array = new int[70, 7];
 
     float FirstReactionTimer;
@@ -183,7 +179,7 @@ public class DemoCarController : MonoBehaviour
 
             if (SelectArray)
                 ApplyArray();
-                
+
 
             if (LC.LC_StoppingTime == 1)
             {
@@ -193,13 +189,13 @@ public class DemoCarController : MonoBehaviour
 
                 if (FirstReactionTimer >= 0.1f && (Br <= -0.7 || Mathf.Abs(SteeringWheel_Data) > 0.02f))
                     ReactionStarted = 1;
-                    
+
                 TotalFirstReactionValue = ReactionStarted - ReactionNoCount;
             }
 
             if (respawnTrigger)
             {
-                if(waitTimer < 2)
+                if (waitTimer < 2)
                     waitTimer += Time.deltaTime;
                 if (waitTimer > 1.5)
                 {
@@ -215,7 +211,7 @@ public class DemoCarController : MonoBehaviour
                 }
             }
 
-            if(ResetData)
+            if (ResetData)
             {
                 Debug.Log("Reset");
                 ReactionStarted = 0;
@@ -319,33 +315,20 @@ public class DemoCarController : MonoBehaviour
 
     private void ApplyArray()
     {
-        LaneChangeTime_Array = new int[,] { { 1, 1, 3, 5, 7, 9 }, { 1, 0, 5, 3, 7, 9 }, { 1, 7, 0, 5, 3, 9 }, { 3, 7, 1, 0, 5, 9 }, { 3, 9, 7, 5, 0, 1 }, { 5, 1, 9, 7, 3, 0 },
-                                          { 5, 0, 3, 9, 7, 1 }, { 7, 3, 0, 1, 5, 9 }, { 7, 5, 9, 0, 1, 3 }, { 9, 3, 7, 1, 0, 5 }, { 9, 5, 1, 7, 3, 0 } };
-
-        CMScombination_Array = new int[,] { { 6, 2, 3, 4, 5, 6, 7 }, { 1, 4, 2, 3, 7, 6, 5 }, { 1, 6, 4, 2, 3, 7, 5 }, { 2, 5, 7, 1, 6, 4, 3 }, { 3, 2, 5, 4, 6, 1, 7 }, { 3, 6, 4, 2, 1, 5, 7 }, 
+        CMScombination_Array = new int[,] { { 6, 2, 3, 4, 5, 6, 7 }, { 1, 4, 2, 3, 7, 6, 5 }, { 1, 6, 4, 2, 3, 7, 5 }, { 2, 5, 7, 1, 6, 4, 3 }, { 3, 2, 5, 4, 6, 1, 7 }, { 3, 6, 4, 2, 1, 5, 7 },
                                             { 4, 2, 7, 3, 1, 5, 6 }, { 5, 2, 1, 4, 7, 3, 6 }, { 5, 4, 1, 2, 6, 3, 7 }, { 6, 1, 5, 7, 2, 4, 3 }, { 7, 2, 6, 4, 5, 3, 1 } };
 
-        //TaskScenario_Array = new int[,] { { 1, 2, 3, 1, 2, 3 }, { 1, 3, 2, 2, 1, 3 }, { 1, 3, 1, 2, 3, 2 }, { 1, 2, 3, 2, 3, 1 }, { 2, 1, 2, 3, 3, 1 }, 
-        //                                  { 2, 3, 1, 2, 3, 1 }, { 2, 1, 2, 3, 1, 3 }, { 3, 1, 2, 1, 3, 2 }, { 3, 2, 2, 1, 3, 1 }, { 3, 2, 2, 1, 1, 3 } };
-
-        FollowingCarSpeed_Array = new int[,] { { 2, 2, 2, 2, 1, 1, 1, 1 } };
+        FollowingCarSpeed = new int[,] { { 1,2,1,2,1,2 }, {2,1,2,1,2,1}, {1,1,2,2,1,1}, {2,2,1,1,2,2}, {2,1,1,2,1,2},
+                                            {1,2,2,1,2,1},{2,1,1,1,2,1} };
 
         TaskScenario = new int[,] { { 1, 2, 3, 1, 2, 3 }, { 1, 3, 2, 2, 1, 3 }, { 1, 3, 1, 2, 3, 2 }, { 1, 2, 3, 2, 3, 1 }, { 2, 1, 2, 3, 3, 1 },
                                           { 2, 3, 1, 2, 3, 1 }, { 2, 1, 2, 3, 1, 3 } };
 
-        LaneChangeTime = new int[,] { { 1, 0, 3, 5, 7, 9 }, { 3, 7, 1, 0, 5, 9 }, { 9, 5, 1, 7, 3, 0 }, { 7, 5, 9, 0, 1, 3 }, { 5, 1, 9, 7, 0, 3 }, { 1, 7, 0, 5, 3, 9 }, { 9, 3, 7, 1, 0, 5 } };
-
-        //for (int i = 0; i < TaskScenario.Length; i++)
-        //    TaskScenario[i] = TaskScenario_Array[SampleNumber, i];
+        LaneChangeTime = new int[,] { { 1, 0, 3, 5, 7, 9 }, { 3, 7, 1, 0, 5, 9 }, { 9, 5, 1, 7, 3, 0 }, { 7, 5, 9, 0, 1, 3 }, { 5, 1, 9, 7, 0, 3 },
+                                        { 1, 7, 0, 5, 3, 9 }, { 9, 3, 7, 1, 0, 5 } };
 
         for (int i = 0; i < CMScombination.Length; i++)
             CMScombination[i] = CMScombination_Array[SampleNumber, i];
-
-        //for (int i = 0; i < LaneChangeTime.Length; i++)
-        //    LaneChangeTime[i] = LaneChangeTime_Array[SampleNumber, i];
-
-        for (int i = 0; i < FollowingCarSpeed.Length; i++)
-            FollowingCarSpeed[i] = FollowingCarSpeed_Array[SampleNumber, i];
 
         CMSchange();
     }
