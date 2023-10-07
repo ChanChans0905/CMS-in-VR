@@ -29,14 +29,14 @@ public class DC_Collidor : MonoBehaviour
 
             if (FadingEvent && alpha <= 1)
                 alpha += .01f;
-                
+
             else if (!FadingEvent && alpha >= 0)
                 alpha -= .01f;
-                
+
             Color nNew = new Color(0, 0, 0, alpha);
             _mat.SetColor("_BaseColor", nNew);
 
-            if(FadingTimer > 5)
+            if (FadingTimer > 5)
             {
                 FadingTimer = 0;
                 Activate_Fade = false;
@@ -76,7 +76,7 @@ public class DC_Collidor : MonoBehaviour
             CSV.DataLoggingEnd = true;
             LC.RespawnTrigger = true;
 
-            if (DC.taskCount == 5 )
+            if (DC.taskCount == 5)
             {
                 FadingEvent = true;
                 DC.respawnTrigger = true;
@@ -97,18 +97,18 @@ public class DC_Collidor : MonoBehaviour
                 LC.TurnOn_LC_FC = 1;
                 LC.LC_Direction = 1;
                 LC.TaskStart = true;
-                
-                if(TaskCountThreshold > 2)
+
+                if (TaskCountThreshold > 2)
                 {
-                    if(DC.FirstTaskCountThreshold)
+                    if (DC.FirstTaskCountThreshold)
                         DC.taskCount++;
-                    else 
+                    else
                         DC.FirstTaskCountThreshold = true;
 
                     TaskCountThreshold = 0;
                 }
             }
- 
+
             if (TM.TrialTask)
             {
                 TM.TrialTaskTimer = 0;
@@ -152,13 +152,13 @@ public class DC_Collidor : MonoBehaviour
 
     private void OnTriggerStay(Collider other)
     {
-        if(other.tag == "LaneChangeTimeCalculator" && !DrivingIn2ndLane)
+        if (other.tag == "LaneChangeTimeCalculator" && !DrivingIn2ndLane)
             DrivingIn2ndLane = true;
     }
 
     private void OnTriggerExit(Collider other)
     {
         if (other.tag == ("LaneChangeTimeCalculator") && DrivingIn2ndLane)
-                DC.LaneChangeComplete = 1;
+            DC.LaneChangeComplete = 1;
     }
 }

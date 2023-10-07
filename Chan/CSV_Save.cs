@@ -26,7 +26,6 @@ public class CSV_Save : MonoBehaviour
     float[] SaveData = new float[30];
     float FrameNumber;
 
-
     private void Start()
     {
         string dir = Application.dataPath + "/" + csvDirectoryName;
@@ -66,7 +65,7 @@ public class CSV_Save : MonoBehaviour
             SaveData[0] = FrameNumber; // FrameNumber
             SaveData[1] = DC.CMScombination[DC.CMSchangeCount]; // CMS_Combination
             SaveData[2] = DC.taskCount; // TaskCount
-            SaveData[3] = DC.LaneChangeTime[DC.CMSchangeCount-1,DC.taskCount]; // LC_laneChangeStartingTime
+            SaveData[3] = DC.LaneChangeTime[DC.CMSchangeCount - 1, DC.taskCount]; // LC_laneChangeStartingTime
             SaveData[4] = LC.LC_StoppingTime; // LC_StoppingTime
             SaveData[5] = DC.TotalFirstReactionValue; // FirstReactionTime
             SaveData[6] = DC.FollowingCarSpeed[DC.taskCount]; // FC_Speed
@@ -85,47 +84,45 @@ public class CSV_Save : MonoBehaviour
             SaveData[19] = Volvocar.transform.rotation.z;
             SaveData[20] = Volvocar.transform.rotation.w;
 
-            if (DC.MainTask)
+            switch (LC.LC_Direction)
             {
-                switch (LC.LC_Direction)
-                {
-                    case 1:
-                        SaveData[21] = LC1.transform.position.x;
-                        SaveData[22] = 0;
-                        SaveData[23] = LC1.transform.position.z;
-                        SaveData[24] = FCL1.transform.position.x;
-                        SaveData[25] = 0;
-                        SaveData[26] = FCL1.transform.position.z;
-                        SaveData[27] = FCR1.transform.position.x;
-                        SaveData[28] = 0;
-                        SaveData[29] = FCR1.transform.position.z;
-                        break;
+                case 1:
+                    SaveData[21] = LC1.transform.position.x;
+                    SaveData[22] = 0;
+                    SaveData[23] = LC1.transform.position.z;
+                    SaveData[24] = FCL1.transform.position.x;
+                    SaveData[25] = 0;
+                    SaveData[26] = FCL1.transform.position.z;
+                    SaveData[27] = FCR1.transform.position.x;
+                    SaveData[28] = 0;
+                    SaveData[29] = FCR1.transform.position.z;
+                    break;
 
-                    case 2:
-                        SaveData[21] = LC2.transform.position.x;
-                        SaveData[22] = 0;
-                        SaveData[23] = LC2.transform.position.z;
-                        SaveData[24] = FCL2.transform.position.x;
-                        SaveData[25] = 0;
-                        SaveData[26] = FCL2.transform.position.z;
-                        SaveData[27] = FCR2.transform.position.x;
-                        SaveData[28] = 0;
-                        SaveData[29] = FCR2.transform.position.z;
-                        break;
+                case 2:
+                    SaveData[21] = LC2.transform.position.x;
+                    SaveData[22] = 0;
+                    SaveData[23] = LC2.transform.position.z;
+                    SaveData[24] = FCL2.transform.position.x;
+                    SaveData[25] = 0;
+                    SaveData[26] = FCL2.transform.position.z;
+                    SaveData[27] = FCR2.transform.position.x;
+                    SaveData[28] = 0;
+                    SaveData[29] = FCR2.transform.position.z;
+                    break;
 
-                    default:
-                        SaveData[21] = 0;
-                        SaveData[22] = 0;
-                        SaveData[23] = 0;
-                        SaveData[24] = 0;
-                        SaveData[25] = 0;
-                        SaveData[26] = 0;
-                        SaveData[27] = 0;
-                        SaveData[28] = 0;
-                        SaveData[29] = 0;
-                        break;
-                }
+                default:
+                    SaveData[21] = 0;
+                    SaveData[22] = 0;
+                    SaveData[23] = 0;
+                    SaveData[24] = 0;
+                    SaveData[25] = 0;
+                    SaveData[26] = 0;
+                    SaveData[27] = 0;
+                    SaveData[28] = 0;
+                    SaveData[29] = 0;
+                    break;
             }
+
             AppendToCsv(SaveData);
         }
     }
@@ -147,7 +144,7 @@ public class CSV_Save : MonoBehaviour
             sw.WriteLine(csvFinalString);
         }
 
-        if(DataLoggingEnd)
+        if (DataLoggingEnd)
         {
             DataLoggingStart = false;
             DataLoggingEnd = false;
