@@ -27,6 +27,7 @@ public class DemoCarController : MonoBehaviour
 
     public GameObject VolvoCar;
     public GameObject CMS_LD_SW, CMS_LD_TM, CMS_RD_SW, CMS_RD_TM, CMSCenter, CMSStitched, TraditionalMirrorLeft, TraditionalMirrorRight;
+    public GameObject CMS_CAM_L, CMS_CAM_R, CMS_CAM_S, CAM_TM_L, CAM_TM_R;
     public GameObject CSV_Manager;
     public bool Activate_AR;
     public bool ResetData;
@@ -172,7 +173,7 @@ public class DemoCarController : MonoBehaviour
                 }
             }
 
-            if (velocity.Value >= /*27.5f*/ 40f)
+            if (velocity.Value >= 27.7f)
                 totalTorque = 0;
 
             ApplyWheelTorques(totalTorque);
@@ -220,6 +221,7 @@ public class DemoCarController : MonoBehaviour
                 NumOfCollision = 0;
                 LaneChangeComplete = 0;
                 ResetData = false;
+                DC_C.DrivingIn2ndLane = false;
             }
 
             if (CMSchangeBool)
@@ -247,6 +249,11 @@ public class DemoCarController : MonoBehaviour
         CMS_RD_SW.SetActive(false);
         CMS_RD_TM.SetActive(false);
         CMSStitched.SetActive(false);
+        CMS_CAM_L.SetActive(false);
+        CMS_CAM_R.SetActive(false);
+        CMS_CAM_S.SetActive(false);
+        CAM_TM_L.SetActive(false);
+        CAM_TM_R.SetActive(false);
         TraditionalMirrorLeft.SetActive(false);
         TraditionalMirrorRight.SetActive(false);
 
@@ -257,6 +264,8 @@ public class DemoCarController : MonoBehaviour
                     Debug.Log("TM");
                     TraditionalMirrorLeft.SetActive(true);
                     TraditionalMirrorRight.SetActive(true);
+                    CAM_TM_L.SetActive(true);
+                    CAM_TM_R.SetActive(true);
                     Activate_AR = false;
                     break;
                 }
@@ -266,6 +275,8 @@ public class DemoCarController : MonoBehaviour
                     CMSCenter.SetActive(true);
                     CMS_LD_TM.SetActive(true);
                     CMS_RD_TM.SetActive(true);
+                    CMS_CAM_L.SetActive(true);
+                    CMS_CAM_R.SetActive(true);
                     Activate_AR = false;
                     break;
                 }
@@ -275,6 +286,8 @@ public class DemoCarController : MonoBehaviour
                     CMSCenter.SetActive(true);
                     CMS_LD_SW.SetActive(true);
                     CMS_RD_SW.SetActive(true);
+                    CMS_CAM_L.SetActive(true);
+                    CMS_CAM_R.SetActive(true);
                     Activate_AR = false;
                     break;
                 }
@@ -282,6 +295,7 @@ public class DemoCarController : MonoBehaviour
                 {
                     Debug.Log("CMS_Stitched");
                     CMSStitched.SetActive(true);
+                    CMS_CAM_S.SetActive(true);
                     Activate_AR = false;
                     break;
                 }
@@ -290,6 +304,8 @@ public class DemoCarController : MonoBehaviour
                     CMSCenter.SetActive(true);
                     CMS_LD_TM.SetActive(true);
                     CMS_RD_TM.SetActive(true);
+                    CMS_CAM_L.SetActive(true);
+                    CMS_CAM_R.SetActive(true);
                     Activate_AR = true;
                     break;
                 }
@@ -298,12 +314,15 @@ public class DemoCarController : MonoBehaviour
                     CMSCenter.SetActive(true);
                     CMS_LD_SW.SetActive(true);
                     CMS_RD_SW.SetActive(true);
+                    CMS_CAM_L.SetActive(true);
+                    CMS_CAM_R.SetActive(true);
                     Activate_AR = true;
                     break;
                 }
             case 7: // CMS Stitched with AR signal
                 {
                     CMSStitched.SetActive(true);
+                    CMS_CAM_S.SetActive(true);
                     Activate_AR = true;
                     break;
                 }

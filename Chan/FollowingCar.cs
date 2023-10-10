@@ -25,7 +25,7 @@ public class FollowingCar : MonoBehaviour
     Vector3 LC_StopPos_for_FC_L, LC_StopPos_for_FC_R, LC_StopPos_for_FC_B;
     //float FC_Fast_ReachingPercent, FC_Slow_ReachingPercent;
     int StoppingTime, AccelSpeed;
-    bool RespawnTrigger;
+    public bool RespawnTrigger;
 
     private void Start()
     {
@@ -82,8 +82,8 @@ public class FollowingCar : MonoBehaviour
     {
         OvertakeTimer += Time.deltaTime;
 
-        StoppingTime = DC.LaneChangeTime[DC.CMSchangeCount-1,taskCount];
-        AccelSpeed = DC.FollowingCarSpeed[DC.CMSchangeCount-1,taskCount];
+        StoppingTime = DC.LaneChangeTime[DC.CMSchangeCount - 1, taskCount];
+        AccelSpeed = DC.FollowingCarSpeed[DC.CMSchangeCount - 1, taskCount];
 
         if (OvertakeTimer < 8 + StoppingTime && StoppingTime != 0)
         {
@@ -151,9 +151,9 @@ public class FollowingCar : MonoBehaviour
             else if (AccelSpeed == 2)
             {
                 // LCL is faster
-                FCL_Velocity.transform.position = Vector3.Lerp(FCL_Velocity.transform.position, LC_StopPos_for_FC_L, FC_Fast_ReachingPercent / 150f);
-                FCR_Velocity.transform.position = Vector3.Lerp(FCR_Velocity.transform.position, LC_StopPos_for_FC_R, FC_Fast_ReachingPercent / 600f);
-                FCB_Velocity.transform.position = Vector3.Lerp(FCB_Velocity.transform.position, LC_StopPos_for_FC_B, FC_Fast_ReachingPercent / 150f);
+                FCL_Velocity.transform.position = Vector3.Lerp(FCL_Velocity.transform.position, LC_StopPos_for_FC_L, FC_Fast_ReachingPercent / 100f);
+                FCR_Velocity.transform.position = Vector3.Lerp(FCR_Velocity.transform.position, LC_StopPos_for_FC_R, FC_Fast_ReachingPercent / 400f);
+                FCB_Velocity.transform.position = Vector3.Lerp(FCB_Velocity.transform.position, LC_StopPos_for_FC_B, FC_Fast_ReachingPercent / 100f);
                 TargetCarVelocity.x = 0;
                 TargetCarVelocity.z = 0;
                 TargetCarVelocity.y = 0;

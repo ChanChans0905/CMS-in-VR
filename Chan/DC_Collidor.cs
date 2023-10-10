@@ -8,6 +8,7 @@ public class DC_Collidor : MonoBehaviour
     [SerializeField] LeadingCar LC;
     [SerializeField] TrialManager TM;
     [SerializeField] CSV_Save CSV;
+    [SerializeField] FollowingCar FC;
     public GameObject QuestionnaireStartNotice, TaskFailureNotice;
     public float alpha = 0;
     public bool Activate_Fade, FadingEvent;
@@ -75,6 +76,7 @@ public class DC_Collidor : MonoBehaviour
         {
             CSV.DataLoggingEnd = true;
             LC.RespawnTrigger = true;
+            FC.RespawnTrigger = true;
 
             if (DC.taskCount == 5)
             {
@@ -152,13 +154,13 @@ public class DC_Collidor : MonoBehaviour
 
     private void OnTriggerStay(Collider other)
     {
-        if (other.tag == "LaneChangeTimeCalculator" && !DrivingIn2ndLane)
+        if (!DrivingIn2ndLane && other.tag == "LaneChangeTimeCalculator")
             DrivingIn2ndLane = true;
     }
 
     private void OnTriggerExit(Collider other)
     {
-        if (other.tag == ("LaneChangeTimeCalculator") && DrivingIn2ndLane)
+        if (DrivingIn2ndLane && other.tag == ("LaneChangeTimeCalculator"))
             DC.LaneChangeComplete = 1;
     }
 }

@@ -68,7 +68,7 @@ public class CSV_Save : MonoBehaviour
             SaveData[3] = DC.LaneChangeTime[DC.CMSchangeCount - 1, DC.taskCount]; // LC_laneChangeStartingTime
             SaveData[4] = LC.LC_StoppingTime; // LC_StoppingTime
             SaveData[5] = DC.TotalFirstReactionValue; // FirstReactionTime
-            SaveData[6] = DC.FollowingCarSpeed[DC.taskCount]; // FC_Speed
+            SaveData[6] = DC.FollowingCarSpeed[DC.CMSchangeCount - 1, DC.taskCount]; // FC_Speed
             SaveData[7] = DC.NumOfCollision;
             SaveData[8] = DC.LaneChangeComplete;
             SaveData[9] = DC.SteeringWheel_Data;
