@@ -73,15 +73,14 @@ public class LeadingCar : MonoBehaviour
                 DrivingDirection = 1;
                 LeadingCarPosition = LeadingCar_1.transform.position;
                 LeadingCarVelocity = LeadingCar_1;
-                Debug.Log(LeadingCarVelocity);
+                //Debug.Log(LeadingCarVelocity);
             }
-
-            if (LC_Direction == 2)
+            else if (LC_Direction == 2)
             {
                 DrivingDirection = -1;
                 LeadingCarPosition = LeadingCar_2.transform.position;
                 LeadingCarVelocity = LeadingCar_2;
-                Debug.Log(LeadingCarVelocity);
+                //Debug.Log(LeadingCarVelocity);
             }
 
             TargetCarVelocity.z = TargetCar.GetComponent<Rigidbody>().velocity.z;

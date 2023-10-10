@@ -14,8 +14,11 @@ public class CSV_Save : MonoBehaviour
 
     public GameObject Volvocar, Gaze;
     public GameObject LC1, LC2, FCL1, FCL2, FCR1, FCR2;
+    public GameObject Gaze_Untracked_Notice;
 
     public bool DataLoggingStart, DataLoggingEnd, Create_CSV_File;
+    bool Gaze_Untrackable;
+    float Gaze_Lost_Timer;
 
     string FilePath;
     string csvDirectoryName = "Data";
@@ -122,6 +125,21 @@ public class CSV_Save : MonoBehaviour
                     SaveData[29] = 0;
                     break;
             }
+
+            (SaveData[11] = 0 && SaveData[12] = 0 && SaveData[13] == 0) ? Gaze_Untrackable = true : Gaze_Untrackable = false;
+
+            if (Gaze_Untrackable)
+            {
+                Gaze_Lost_Timer += Time.deltaTime;
+
+                if (Gaze_Lost_Timer >= 60)
+                {
+                    DC.respawnTrigger = true;
+                    Gaze_Untracked_Notice.SetActive(true);
+                }
+            }
+            else
+                Gaze_Lost_Timer = 0;
 
             AppendToCsv(SaveData);
         }
