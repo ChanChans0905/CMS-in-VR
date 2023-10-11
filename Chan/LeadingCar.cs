@@ -85,13 +85,13 @@ public class LeadingCar : MonoBehaviour
 
             TargetCarVelocity.z = TargetCar.GetComponent<Rigidbody>().velocity.z;
 
-            if (TargetCarVelocity.z > 27)
+            if (TargetCarVelocity.z > 27 || TargetCarVelocity.z < -27)
                 StoppingDistance = 80;
-            else if (TargetCarVelocity.z > 25)
+            else if (TargetCarVelocity.z > 25 || TargetCarVelocity.z < -25)
                 StoppingDistance = 75;
-            else if (TargetCarVelocity.z > 22)
+            else if (TargetCarVelocity.z > 22 || TargetCarVelocity.z < -22)
                 StoppingDistance = 66;
-            else if (TargetCarVelocity.z > 19)
+            else if (TargetCarVelocity.z > 19 || TargetCarVelocity.z < -19)
                 StoppingDistance = 57;
 
             if (TaskStart)
@@ -100,7 +100,7 @@ public class LeadingCar : MonoBehaviour
 
                 if (TaskStartTime != 0)
                 {
-                    switch (DC.TaskScenario[DC.CMScombination[DC.CMSchangeCount], DC.taskCount])
+                    switch (DC.TaskScenario[DC.SampleNumber, DC.taskCount])
                     {
                         case 1:
                             StartScenario_LaneChangeThenStop = true;
@@ -153,11 +153,13 @@ public class LeadingCar : MonoBehaviour
         // overtake, slows down and change the lane to the 2nd
         if (OvertakeTimer <= 8)
         {
+            float DistanceBetween_DC_LC = LeadingCarPosition.z - TargetCar.transform.position.z;
+
             // slow down
-            if (TargetCar.transform.position.z - LeadingCarPosition.z < -1 * StoppingDistance)
-                TargetCarVelocity.z *= 0.9f;
-            else
+            if (DistanceBetween_DC_LC < StoppingDistance * DrivingDirection)
                 TargetCarVelocity.z *= 1.5f;
+            else
+                TargetCarVelocity.z *= 0.9f;
 
             // lane changing
             if (OvertakeTimer >= 4)
@@ -196,10 +198,13 @@ public class LeadingCar : MonoBehaviour
         {
             float DistanceBetween_DC_LC = LeadingCarPosition.z - TargetCar.transform.position.z;
 
-            if (DistanceBetween_DC_LC < StoppingDistance / 2f /** DrivingDirection*/)
-                TargetCarVelocity.z *= 1.3f;
+            Debug.Log("Distance : " + StoppingDistance / 2f * DrivingDirection);
+
+            if (DistanceBetween_DC_LC * DrivingDirection < StoppingDistance / 2f)
+                TargetCarVelocity.z *= 1.5f;
             else
                 TargetCarVelocity.z *= 0.9f;
+                
 
             //if (Mathf.Abs(TargetCar.transform.position.z - LeadingCarPosition.z) < 40) 
             //    TargetCarVelocity.z *= 0.3f;
@@ -212,6 +217,7 @@ public class LeadingCar : MonoBehaviour
         // slows down and change the lane to the 2nd
         if (OvertakeTimer >= 10 + TaskStartTime && OvertakeTimer <= 13 + TaskStartTime)
         {
+            LC_StoppingTime = 1;
             TargetCarVelocity.z *= 0.5f;
 
             if (DrivingDirection == -1)
@@ -225,7 +231,7 @@ public class LeadingCar : MonoBehaviour
 
         if (OvertakeTimer > 13 + TaskStartTime)
         {
-            LC_StoppingTime = 1;
+
             TargetCarVelocity.z = 0;
             TargetCarVelocity.x = 0;
         }
@@ -307,7 +313,7 @@ public class LeadingCar : MonoBehaviour
         }
 
         // apply the velocity to the car
-        LeadingCarVelocity.GetComponent<Rigidbody>().velocity = TargetCarVelocity * DrivingDirection;
+        LeadingCarVelocity.GetComponent<Rigidbody>().velocity = TargetCarVelocity/* * DrivingDirection*/;
     }
 
     private void None()
@@ -322,11 +328,13 @@ public class LeadingCar : MonoBehaviour
         // slows down and change the lane to the 2nd
         if (OvertakeTimer >= 4 && OvertakeTimer <= 8)
         {
+            float DistanceBetween_DC_LC = LeadingCarPosition.z - TargetCar.transform.position.z;
+
             // slow down
-            if (Mathf.Abs(TargetCar.transform.position.z - LeadingCarPosition.z) > StoppingDistance)
+            if (DistanceBetween_DC_LC < StoppingDistance * DrivingDirection)
                 TargetCarVelocity.z *= 0.3f;
             else
-                TargetCarVelocity.z *= 2f;
+                TargetCarVelocity.z *= 1.5f;
 
             // lane changing
             if (DrivingDirection == -1)
@@ -360,7 +368,7 @@ public class LeadingCar : MonoBehaviour
         }
 
         // apply the velocity to the car
-        LeadingCarVelocity.GetComponent<Rigidbody>().velocity = TargetCarVelocity * DrivingDirection;
+        LeadingCarVelocity.GetComponent<Rigidbody>().velocity = TargetCarVelocity/* * DrivingDirection*/;
     }
 
     //private void WayPointDriving()

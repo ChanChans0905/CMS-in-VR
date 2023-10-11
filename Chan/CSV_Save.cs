@@ -23,9 +23,9 @@ public class CSV_Save : MonoBehaviour
     string FilePath;
     string csvDirectoryName = "Data";
     string csvSeparator = ",";
-    string[] csvHeaders = new string[] { "FrameNumber", "CMS_Combination", "TaskCount", "LC_LaneChangeStartingTime", "LC_StoppingTime", "FirstReactionTime", "FC_Speed", "NumberOfCollision", "DC_LaneChangeCompleteTime","Steering Wheel","Pedal", "Gaze_X", "Gaze_Y", "Gaze_Z",
+    string[] csvHeaders = new string[] { "FrameNumber", "CMS_Combination", "TaskCount", "LC_LaneChangeStartingTime", "FC_Speed", "LC_StoppingTime", "DC_LaneChangeCompleteTime", "FirstReactionTime", "Steering Wheel","Pedal","NumberOfCollision", "Gaze_X", "Gaze_Y", "Gaze_Z",
                                          "DC_Pos_X","DC_Pos_Y","DC_Pos_Z", "DC_Rot_X","DC_Rot_Y","DC_Rot_Z","DC_Rot_W", "LC_Pos_X","LC_Pos_Y","LC_Pos_Z", "FCL_Pos_X","FCL_Pos_Y","FCL_Pos_Z", "FCR_Pos_X", "FCR_Pos_Y", "FCR_Pos_Z" };
-
+           
     float[] SaveData = new float[30];
     float FrameNumber;
 
@@ -66,16 +66,16 @@ public class CSV_Save : MonoBehaviour
             FrameNumber += Time.fixedDeltaTime;
 
             SaveData[0] = FrameNumber; // FrameNumber
-            SaveData[1] = DC.CMScombination[DC.CMSchangeCount]; // CMS_Combination
+            SaveData[1] = DC.CMScombination[DC.CMSchangeCount-1]; // CMS_Combination
             SaveData[2] = DC.taskCount; // TaskCount
             SaveData[3] = DC.LaneChangeTime[DC.CMSchangeCount - 1, DC.taskCount]; // LC_laneChangeStartingTime
-            SaveData[4] = LC.LC_StoppingTime; // LC_StoppingTime
-            SaveData[5] = DC.TotalFirstReactionValue; // FirstReactionTime
-            SaveData[6] = DC.FollowingCarSpeed[DC.CMSchangeCount - 1, DC.taskCount]; // FC_Speed
-            SaveData[7] = DC.NumOfCollision;
-            SaveData[8] = DC.LaneChangeComplete;
-            SaveData[9] = DC.SteeringWheel_Data;
-            SaveData[10] = DC.Pedal_Data;
+            SaveData[4] = DC.FollowingCarSpeed[DC.CMSchangeCount - 1, DC.taskCount]; // FC_Speed
+            SaveData[5] = LC.LC_StoppingTime; // LC_StoppingTime
+            SaveData[6] = DC.LaneChangeComplete;
+            SaveData[7] = DC.TotalFirstReactionValue; // FirstReactionTime
+            SaveData[8] = DC.SteeringWheel_Data;
+            SaveData[9] = DC.Pedal_Data;
+            SaveData[10] = DC.NumOfCollision;
             SaveData[11] = Gaze.transform.localPosition.x;
             SaveData[12] = Gaze.transform.localPosition.y;
             SaveData[13] = Gaze.transform.localPosition.z;
@@ -86,7 +86,7 @@ public class CSV_Save : MonoBehaviour
             SaveData[18] = Volvocar.transform.rotation.y;
             SaveData[19] = Volvocar.transform.rotation.z;
             SaveData[20] = Volvocar.transform.rotation.w;
-
+     
             switch (LC.LC_Direction)
             {
                 case 1:
@@ -126,7 +126,7 @@ public class CSV_Save : MonoBehaviour
                     break;
             }
 
-            (SaveData[11] = 0 && SaveData[12] = 0 && SaveData[13] == 0) ? Gaze_Untrackable = true : Gaze_Untrackable = false;
+            //(SaveData[11] = 0 && SaveData[12] = 0 && SaveData[13] == 0) ? Gaze_Untrackable = true : Gaze_Untrackable = false;
 
             if (Gaze_Untrackable)
             {

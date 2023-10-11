@@ -13,7 +13,7 @@ public class DC_Collidor : MonoBehaviour
     public float alpha = 0;
     public bool Activate_Fade, FadingEvent;
     private Material _mat;
-    bool DrivingIn2ndLane;
+    public bool DrivingIn2ndLane;
     float TaskCountThreshold, FadingTimer;
 
     void Start()
@@ -53,23 +53,50 @@ public class DC_Collidor : MonoBehaviour
         if (other.gameObject.CompareTag("LC") || other.gameObject.CompareTag("FC"))
         {
             DC.NumOfCollision = 1;
-            FadingEvent = true;
-            DC.respawnTrigger = true;
-            Activate_Fade = true;
-            TaskFailureNotice.SetActive(true);
             CSV.DataLoggingEnd = true;
+
+
+            if (DC.taskCount == 5 && LC.TaskStart) 
+            {
+                FadingEvent = true;
+                DC.respawnTrigger = true;
+                Activate_Fade = true;
+                QuestionnaireStartNotice.SetActive(true);
+                DC.taskCount = 0;
+                DC.FirstTaskCountThreshold = false;
+            }
+            else
+            {
+                TaskFailureNotice.SetActive(true);
+                DC.respawnTrigger = true;
+                FadingEvent = true;
+                Activate_Fade = true;
+            }
         }
 
         if (other.gameObject.CompareTag("OutOfRoad"))
         {
             DC.NumOfCollision = 2;
-            FadingEvent = true;
-            DC.respawnTrigger = true;
-            Activate_Fade = true;
-            TaskFailureNotice.SetActive(true);
-            if (!LC.TaskStart && DC.taskCount != 0)
-                DC.taskCount--;
             CSV.DataLoggingEnd = true;
+
+            if (DC.taskCount == 5 && LC.TaskStart)
+            {
+                FadingEvent = true;
+                DC.respawnTrigger = true;
+                Activate_Fade = true;
+                QuestionnaireStartNotice.SetActive(true);
+                DC.taskCount = 0;
+                DC.FirstTaskCountThreshold = false;
+            }
+            else
+            {
+                TaskFailureNotice.SetActive(true);
+                //if (!LC.TaskStart && DC.taskCount != 0)
+                //    DC.taskCount--;
+                FadingEvent = true;
+                DC.respawnTrigger = true;
+                Activate_Fade = true;
+            }
         }
 
         if (other.gameObject.CompareTag("TaskEndPoint"))
@@ -95,6 +122,7 @@ public class DC_Collidor : MonoBehaviour
             {
                 CSV.Create_CSV_File = true;
                 CSV.DataLoggingStart = true;
+                DC.LaneChangeComplete = 0;
 
                 LC.TurnOn_LC_FC = 1;
                 LC.LC_Direction = 1;
@@ -126,6 +154,7 @@ public class DC_Collidor : MonoBehaviour
             {
                 CSV.Create_CSV_File = true;
                 CSV.DataLoggingStart = true;
+                DC.LaneChangeComplete = 0;
 
                 LC.TurnOn_LC_FC = 2;
                 LC.LC_Direction = 2;
