@@ -322,25 +322,24 @@ public class LeadingCar : MonoBehaviour
         OvertakeTimer += Time.deltaTime;
 
         // overtake
-        if (OvertakeTimer <= 4)
-            TargetCarVelocity.z *= 1.5f;
-
-        // slows down and change the lane to the 2nd
-        if (OvertakeTimer >= 4 && OvertakeTimer <= 8)
+        if (OvertakeTimer <= 8)
         {
             float DistanceBetween_DC_LC = LeadingCarPosition.z - TargetCar.transform.position.z;
 
             // slow down
             if (DistanceBetween_DC_LC < StoppingDistance * DrivingDirection)
-                TargetCarVelocity.z *= 0.3f;
-            else
                 TargetCarVelocity.z *= 1.5f;
+            else
+                TargetCarVelocity.z *= 0.9f;
 
             // lane changing
-            if (DrivingDirection == -1)
-                TargetCarVelocity.x = -1.5f;
-            if (DrivingDirection == 1)
-                TargetCarVelocity.x = 1.5f;
+            if (OvertakeTimer >= 4)
+            {
+                if (DrivingDirection == -1)
+                    TargetCarVelocity.x = -1.5f;
+                if (DrivingDirection == 1)
+                    TargetCarVelocity.x = 1.5f;
+            }
         }
 
         if (OvertakeTimer > 8 && OvertakeTimer < 20)
