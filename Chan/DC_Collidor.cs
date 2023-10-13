@@ -15,6 +15,7 @@ public class DC_Collidor : MonoBehaviour
     private Material _mat;
     public bool DrivingIn2ndLane;
     float TaskCountThreshold, FadingTimer;
+    int TaskCountForTest = 5;
 
     void Start()
     {
@@ -50,13 +51,13 @@ public class DC_Collidor : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        if (other.gameObject.CompareTag("LC") || other.gameObject.CompareTag("FC"))
+        if (other.gameObject.CompareTag("AR_Signal_L") || other.gameObject.CompareTag("AR_Signal_R") || other.gameObject.CompareTag("FC"))
         {
             DC.NumOfCollision = 1;
             CSV.DataLoggingEnd = true;
 
 
-            if (DC.taskCount == 5 && LC.TaskStart) 
+            if (DC.taskCount == TaskCountForTest) 
             {
                 FadingEvent = true;
                 DC.respawnTrigger = true;
@@ -69,8 +70,6 @@ public class DC_Collidor : MonoBehaviour
             {
                 TaskFailureNotice.SetActive(true);
                 DC.respawnTrigger = true;
-                FadingEvent = true;
-                Activate_Fade = true;
             }
         }
 
@@ -79,7 +78,7 @@ public class DC_Collidor : MonoBehaviour
             DC.NumOfCollision = 2;
             CSV.DataLoggingEnd = true;
 
-            if (DC.taskCount == 5 && LC.TaskStart)
+            if (DC.taskCount == TaskCountForTest)
             {
                 FadingEvent = true;
                 DC.respawnTrigger = true;
@@ -105,7 +104,7 @@ public class DC_Collidor : MonoBehaviour
             LC.RespawnTrigger = true;
             FC.RespawnTrigger = true;
 
-            if (DC.taskCount == 5)
+            if (DC.taskCount == TaskCountForTest)
             {
                 FadingEvent = true;
                 DC.respawnTrigger = true;

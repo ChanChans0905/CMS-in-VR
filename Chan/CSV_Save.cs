@@ -12,9 +12,9 @@ public class CSV_Save : MonoBehaviour
     [SerializeField] LeadingCar LC;
     [SerializeField] FollowingCar FC;
 
-    public GameObject Volvocar, Gaze;
+    public GameObject Volvocar, Gaze, Head;
     public GameObject LC1, LC2, FCL1, FCL2, FCR1, FCR2;
-    public GameObject Gaze_Untracked_Notice;
+    //public GameObject Gaze_Untracked_Notice;
 
     public bool DataLoggingStart, DataLoggingEnd, Create_CSV_File;
     bool Gaze_Untrackable;
@@ -24,9 +24,9 @@ public class CSV_Save : MonoBehaviour
     string csvDirectoryName = "Data";
     string csvSeparator = ",";
     string[] csvHeaders = new string[] { "FrameNumber", "CMS_Combination", "TaskCount", "LC_LaneChangeStartingTime", "FC_Speed", "LC_StoppingTime", "DC_LaneChangeCompleteTime", "FirstReactionTime", "Steering Wheel","Pedal","NumberOfCollision", "Gaze_X", "Gaze_Y", "Gaze_Z",
-                                         "DC_Pos_X","DC_Pos_Y","DC_Pos_Z", "DC_Rot_X","DC_Rot_Y","DC_Rot_Z","DC_Rot_W", "LC_Pos_X","LC_Pos_Y","LC_Pos_Z", "FCL_Pos_X","FCL_Pos_Y","FCL_Pos_Z", "FCR_Pos_X", "FCR_Pos_Y", "FCR_Pos_Z" };
+                                         "Head_X","Head_Y","Head_Z","DC_Pos_X","DC_Pos_Y","DC_Pos_Z", "DC_Rot_X","DC_Rot_Y","DC_Rot_Z","DC_Rot_W", "LC_Pos_X","LC_Pos_Y","LC_Pos_Z", "FCL_Pos_X","FCL_Pos_Y","FCL_Pos_Z", "FCR_Pos_X", "FCR_Pos_Y", "FCR_Pos_Z" };
            
-    float[] SaveData = new float[30];
+    float[] SaveData = new float[33];
     float FrameNumber;
 
     private void Start()
@@ -79,67 +79,72 @@ public class CSV_Save : MonoBehaviour
             SaveData[11] = Gaze.transform.localPosition.x;
             SaveData[12] = Gaze.transform.localPosition.y;
             SaveData[13] = Gaze.transform.localPosition.z;
-            SaveData[14] = Volvocar.transform.position.x;
-            SaveData[15] = 0;
-            SaveData[16] = Volvocar.transform.position.z;
-            SaveData[17] = Volvocar.transform.rotation.x;
-            SaveData[18] = Volvocar.transform.rotation.y;
-            SaveData[19] = Volvocar.transform.rotation.z;
-            SaveData[20] = Volvocar.transform.rotation.w;
+            SaveData[14] = Head.transform.position.x;
+            SaveData[15] = Head.transform.position.y;
+            SaveData[16] = Head.transform.position.z;
+
+
+            SaveData[17] = Volvocar.transform.position.x;
+            SaveData[18] = 0;
+            SaveData[19] = Volvocar.transform.position.z;
+            SaveData[20] = Volvocar.transform.rotation.x;
+            SaveData[21] = Volvocar.transform.rotation.y;
+            SaveData[22] = Volvocar.transform.rotation.z;
+            SaveData[23] = Volvocar.transform.rotation.w;
      
             switch (LC.LC_Direction)
             {
                 case 1:
-                    SaveData[21] = LC1.transform.position.x;
-                    SaveData[22] = 0;
-                    SaveData[23] = LC1.transform.position.z;
-                    SaveData[24] = FCL1.transform.position.x;
+                    SaveData[24] = LC1.transform.position.x;
                     SaveData[25] = 0;
-                    SaveData[26] = FCL1.transform.position.z;
-                    SaveData[27] = FCR1.transform.position.x;
+                    SaveData[26] = LC1.transform.position.z;
+                    SaveData[27] = FCL1.transform.position.x;
                     SaveData[28] = 0;
-                    SaveData[29] = FCR1.transform.position.z;
+                    SaveData[29] = FCL1.transform.position.z;
+                    SaveData[30] = FCR1.transform.position.x;
+                    SaveData[31] = 0;
+                    SaveData[32] = FCR1.transform.position.z;
                     break;
 
                 case 2:
-                    SaveData[21] = LC2.transform.position.x;
-                    SaveData[22] = 0;
-                    SaveData[23] = LC2.transform.position.z;
-                    SaveData[24] = FCL2.transform.position.x;
+                    SaveData[24] = LC2.transform.position.x;
                     SaveData[25] = 0;
-                    SaveData[26] = FCL2.transform.position.z;
-                    SaveData[27] = FCR2.transform.position.x;
+                    SaveData[26] = LC2.transform.position.z;
+                    SaveData[27] = FCL2.transform.position.x;
                     SaveData[28] = 0;
-                    SaveData[29] = FCR2.transform.position.z;
+                    SaveData[29] = FCL2.transform.position.z;
+                    SaveData[30] = FCR2.transform.position.x;
+                    SaveData[31] = 0;
+                    SaveData[32] = FCR2.transform.position.z;
                     break;
 
                 default:
-                    SaveData[21] = 0;
-                    SaveData[22] = 0;
-                    SaveData[23] = 0;
                     SaveData[24] = 0;
                     SaveData[25] = 0;
                     SaveData[26] = 0;
                     SaveData[27] = 0;
                     SaveData[28] = 0;
                     SaveData[29] = 0;
+                    SaveData[30] = 0;
+                    SaveData[31] = 0;
+                    SaveData[32] = 0;
                     break;
             }
 
             //(SaveData[11] = 0 && SaveData[12] = 0 && SaveData[13] == 0) ? Gaze_Untrackable = true : Gaze_Untrackable = false;
 
-            if (Gaze_Untrackable)
-            {
-                Gaze_Lost_Timer += Time.deltaTime;
+            //if (Gaze_Untrackable)
+            //{
+            //    Gaze_Lost_Timer += Time.deltaTime;
 
-                if (Gaze_Lost_Timer >= 60)
-                {
-                    DC.respawnTrigger = true;
-                    Gaze_Untracked_Notice.SetActive(true);
-                }
-            }
-            else
-                Gaze_Lost_Timer = 0;
+            //    if (Gaze_Lost_Timer >= 60)
+            //    {
+            //        DC.respawnTrigger = true;
+            //        Gaze_Untracked_Notice.SetActive(true);
+            //    }
+            //}
+            //else
+            //    Gaze_Lost_Timer = 0;
 
             AppendToCsv(SaveData);
         }

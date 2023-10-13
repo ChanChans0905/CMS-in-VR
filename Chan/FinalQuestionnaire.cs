@@ -33,6 +33,8 @@ public class FinalQuestionnaire : MonoBehaviour
                 LogitechGSDK.DIJOYSTATE2ENGINES rec;
                 rec = LogitechGSDK.LogiGetStateUnity(0);
 
+                List<Transform> children = GetChildren(transform);
+
                 if (ThresholdTimer < 3f)
                     ThresholdTimer += Time.deltaTime;
 
@@ -43,34 +45,34 @@ public class FinalQuestionnaire : MonoBehaviour
                 }
 
                 // Get slider value from the steering wheel
-                if (rec.lX < -7500) { AnswerSlider.value = 1; }
-                else if (rec.lX < -4500 && rec.lX > -7500) { AnswerSlider.value = 2; }
-                else if (rec.lX < -1500 && rec.lX > -4500) { AnswerSlider.value = 3; }
-                else if (rec.lX < 1500 && rec.lX > -1500) { AnswerSlider.value = 4; }
-                else if (rec.lX > 1500 && rec.lX < 4500) { AnswerSlider.value = 5; }
-                else if (rec.lX > 4500 && rec.lX < 7500) { AnswerSlider.value = 6; }
-                else if (rec.lX > 7500) { AnswerSlider.value = 7; }
+                if(QuestionnaireNumber <= 7)
+                {
+                    if (rec.lX < -7500) { AnswerSlider.value = 1; }
+                    else if (rec.lX < -4500 && rec.lX > -7500) { AnswerSlider.value = 2; }
+                    else if (rec.lX < -1500 && rec.lX > -4500) { AnswerSlider.value = 3; }
+                    else if (rec.lX < 1500 && rec.lX > -1500) { AnswerSlider.value = 4; }
+                    else if (rec.lX > 1500 && rec.lX < 4500) { AnswerSlider.value = 5; }
+                    else if (rec.lX > 4500 && rec.lX < 7500) { AnswerSlider.value = 6; }
+                    else if (rec.lX > 7500) { AnswerSlider.value = 7; }
+                }
 
-                if (ThresholdTimer > 2)
+                if (ThresholdTimer > 1)
                 {
                     // when the right lever is pulled, move to the next question
                     if (rec.rgbButtons[4] == 128)
                     {
-                        if (QuestionnaireNumber < 6)
+                        if (QuestionnaireNumber < 21)
                         {
+                            Debug.Log(123);
                             QuestionnaireNumber++;
                             children[QuestionnaireNumber].gameObject.SetActive(true);
                             children[QuestionnaireNumber - 1].gameObject.SetActive(false);
                             AnswerSlider = children[QuestionnaireNumber].GetComponent<Slider>();
                         }
-                        else if (QuestionnaireNumber == 6)
+                        else if (QuestionnaireNumber == 21)
                         {
                             QuestionnaireNumber++;
-                        }
-
-                        // if it's the last question, turn the questions off and turn on the save notive for saving the survey result
-                        if (QuestionnaireNumber == 7)
-                        {
+                            children[QuestionnaireNumber - 2].gameObject.SetActive(false);
                             children[QuestionnaireNumber - 1].gameObject.SetActive(false);
                             SaveTriggerObject.SetActive(true);
                         }

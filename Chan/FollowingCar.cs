@@ -169,12 +169,15 @@ public class FollowingCar : MonoBehaviour
             FCL_Velocity.GetComponent<Rigidbody>().velocity = TargetCarVelocity;
             FCR_Velocity.GetComponent<Rigidbody>().velocity = TargetCarVelocity;
             FCB_Velocity.GetComponent<Rigidbody>().velocity = TargetCarVelocity;
-            Debug.Log("C");
         }
     }
 
     private void Respawn()
     {
+        TargetCarVelocity = Vector3.zero;
+        FCL_Velocity.GetComponent<Rigidbody>().velocity = TargetCarVelocity;
+        FCR_Velocity.GetComponent<Rigidbody>().velocity = TargetCarVelocity;
+        FCB_Velocity.GetComponent<Rigidbody>().velocity = TargetCarVelocity;
         StartAceel = false;
         AccelSpeed = 0;
         FC_Accel_Timer = 0;

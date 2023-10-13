@@ -125,16 +125,15 @@ public class Questionnaire : MonoBehaviour
             AppendToCsv(Data);
         }
 
-        if (DC.QuestionnaireCount < 2)
+        if (DC.QuestionnaireCount < 7)
         {
             DC.CMSchangeBool = true;
             TrialStartNotice.SetActive(true);
         }
 
-        if (DC.QuestionnaireCount == 2)
+        if (DC.QuestionnaireCount == 7)
         {
             DC.FinalQuestionnaireBool = true;
-            FQ.FinalQuestionnairePhase = true;
             FinalQuestionnaireStartNotice.SetActive(true);
         }
     }
@@ -191,7 +190,6 @@ public class Questionnaire : MonoBehaviour
 
             QuestionnairePhase = false;
             ThresholdTimer = 0;
-            FirstSlider = true;
             SaveTrigger = false;
             QuestionnaireNumber = 0;
         }

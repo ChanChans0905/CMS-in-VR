@@ -7,6 +7,7 @@ public class TrialStartNotice : MonoBehaviour
     [SerializeField] DemoCarController DC;
     [SerializeField] DC_Collidor DC_C;
     [SerializeField] TrialManager TM;
+    float Timer;
 
     void Update()
     {
@@ -14,7 +15,11 @@ public class TrialStartNotice : MonoBehaviour
         {
             LogitechGSDK.DIJOYSTATE2ENGINES rec;
             rec = LogitechGSDK.LogiGetStateUnity(0);
-            if (rec.rgbButtons[5] == 128)
+
+            if (Timer < 3)
+                Timer += Time.deltaTime;
+
+            if (Timer > 2 && rec.rgbButtons[5] == 128)
             {
                 DC_C.FadingEvent = false;
                 DC_C.Activate_Fade = true;
@@ -22,6 +27,7 @@ public class TrialStartNotice : MonoBehaviour
                 TM.TrialTask = true;
                 DC.waitTimer = 0;
                 gameObject.SetActive(false);
+                Timer = 0;
             }
         }
     }

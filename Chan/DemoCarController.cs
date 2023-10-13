@@ -29,6 +29,7 @@ public class DemoCarController : MonoBehaviour
     public GameObject CMS_LD_SW, CMS_LD_TM, CMS_RD_SW, CMS_RD_TM, CMSCenter, CMSStitched, TraditionalMirrorLeft, TraditionalMirrorRight;
     public GameObject CMS_CAM_L, CMS_CAM_R, CMS_CAM_S, CAM_TM_L, CAM_TM_R;
     public GameObject CSV_Manager;
+    public GameObject EngineSound;
     public bool Activate_AR;
     public bool ResetData;
 
@@ -175,6 +176,13 @@ public class DemoCarController : MonoBehaviour
 
             if (velocity.Value >= 27.7f)
                 totalTorque = 0;
+
+            Debug.Log(velocity.Value);
+
+            if (velocity.Value > 0)
+                EngineSound.SetActive(true);
+            else if (velocity.Value < 0)
+                EngineSound.SetActive(false);
 
             ApplyWheelTorques(totalTorque);
 
@@ -340,10 +348,10 @@ public class DemoCarController : MonoBehaviour
         FollowingCarSpeed = new int[,] { { 1, 2, 1, 2, 1, 2 }, { 2, 1, 2, 1, 2, 1 }, { 1, 1, 2, 2, 1, 1 }, { 2, 2, 1, 1, 2, 2 }, { 2, 1, 1, 2, 1, 2 },
                                             { 1, 2, 2, 1, 2, 1 }, { 2, 1, 1, 1, 2, 1 } };
 
-        TaskScenario = new int[,] { { 2,2,2,2,2,2}/*{ 1, 2, 3, 1, 2, 3 }*/, { 1, 3, 2, 2, 1, 3 }, { 1, 3, 1, 2, 3, 2 }, { 1, 2, 3, 2, 3, 1 }, { 2, 1, 2, 3, 3, 1 },
+        TaskScenario = new int[,] { { 1, 2, 3, 1, 2, 3 }, { 1, 3, 2, 2, 1, 3 }, { 1, 3, 1, 2, 3, 2 }, { 1, 2, 3, 2, 3, 1 }, { 2, 1, 2, 3, 3, 1 },
                                           { 2, 3, 1, 2, 3, 1 }, { 2, 1, 2, 3, 1, 3 } };
 
-        LaneChangeTime = new int[,] { { 1, 0, 3, 5, 7, 9 }, { 3, 7, 1, 0, 5, 9 }, { 9, 5, 1, 7, 3, 0 }, { 7, 5, 9, 0, 1, 3 }, { 5, 1, 9, 7, 0, 3 },
+        LaneChangeTime = new int[,] {{ 1, 0, 3, 5, 7, 9 }, { 3, 7, 1, 0, 5, 9 }, { 9, 5, 1, 7, 3, 0 }, { 7, 5, 9, 0, 1, 3 }, { 5, 1, 9, 7, 0, 3 },
                                         { 1, 7, 0, 5, 3, 9 }, { 9, 3, 7, 1, 0, 5 } };
 
         for (int i = 0; i < CMScombination.Length; i++)
