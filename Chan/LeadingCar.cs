@@ -214,14 +214,16 @@ public class LeadingCar : MonoBehaviour
 
         // slows down and change the lane to the 2nd
         if (OvertakeTimer >= 10 + TaskStartTime && OvertakeTimer <= 13 + TaskStartTime)
-        {
-            LC_StoppingTime = 1;
+        {            
             TargetCarVelocity.z *= 0.5f;
 
             if (DrivingDirection == -1)
                 TargetCarVelocity.x = -2f;
             if (DrivingDirection == 1)
                 TargetCarVelocity.x = 2f;
+
+            if (OvertakeTimer > 11)
+                LC_StoppingTime = 1;
 
             LC_1_RearLight.SetActive(true);
             LC_2_RearLight.SetActive(true);
