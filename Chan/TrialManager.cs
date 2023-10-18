@@ -49,7 +49,7 @@ public class TrialManager : MonoBehaviour
             else if (MoveTrialCar == 2)
                 MoveTrialCarRight();
 
-            if (TrialTaskTimer >= 5)
+            if (TrialTaskTimer >= 60)
             {
                 MoveTrialCar = 0;
                 DC.respawnTrigger = true;
@@ -57,7 +57,7 @@ public class TrialManager : MonoBehaviour
                 TaskStartNotice.SetActive(true);
             }
 
-            if (TrialTaskTimer >= 7)
+            if (TrialTaskTimer >= 63)
             {
                 TC_Speed = 0;
                 TurnOffTrialCars = false;

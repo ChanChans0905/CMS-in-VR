@@ -57,7 +57,7 @@ public class Questionnaire : MonoBehaviour
                 }
 
 
-                if (ThresholdTimer > 1)
+                if (ThresholdTimer > 2)
                 {
                     // when the right lever is pulled, move to the next question
                     if (rec.rgbButtons[4] == 128)
@@ -77,7 +77,6 @@ public class Questionnaire : MonoBehaviour
                             SaveTriggerObject.SetActive(true);
                             
                         }
-                        Debug.Log(QuestionnaireNumber);
                         ThresholdTimer = 0;
                     }
 
@@ -122,19 +121,19 @@ public class Questionnaire : MonoBehaviour
             string[] Data = new string[2];
             Data[0] = QuestionnaireSubject[i];
             Data[1] = AnswerSlider.value.ToString();
+
             AppendToCsv(Data);
-        }
 
-        if (DC.QuestionnaireCount < 7)
-        {
-            DC.CMSchangeBool = true;
-            TrialStartNotice.SetActive(true);
-        }
-
-        if (DC.QuestionnaireCount == 7)
-        {
-            DC.FinalQuestionnaireBool = true;
-            FinalQuestionnaireStartNotice.SetActive(true);
+            if (DC.QuestionnaireCount < 7)
+            {
+                DC.CMSchangeBool = true;
+                TrialStartNotice.SetActive(true);
+            }
+            else if (DC.QuestionnaireCount == 7)
+            {
+                DC.FinalQuestionnaireBool = true;
+                FinalQuestionnaireStartNotice.SetActive(true);
+            }
         }
     }
 
