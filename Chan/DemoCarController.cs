@@ -30,41 +30,44 @@ public class DemoCarController : MonoBehaviour
     public GameObject CMS_CAM_L, CMS_CAM_R, CMS_CAM_S, CAM_TM_L, CAM_TM_R;
     public GameObject CSV_Manager;
     public GameObject EngineSound;
-    public bool Activate_AR;
-    public bool ResetData;
 
-    public bool respawnTrigger;
-
+    // Default
+    public int SampleNumber;
+    public int taskCount;
+    public bool ResetData, RespawnTrigger;
     public float waitTimer;
-    public int taskCount, NumOfCollision;
+    public bool FirstTaskCountThreshold;
+    public bool MainTask;
+
+    // CMS
     public int CMSchangeCount;
-    public int QuestionnaireCount;
     public bool CMSchangeBool;
+
+    // AR
+    public bool Activate_AR;
+
+    // Questionnaire
+    public int QuestionnaireCount;
     public bool FinalQuestionnaireBool;
 
-    public int laneChangeDirection;
-    public bool FirstTaskCountThreshold;
-
+    // Car
     public float FC1Lposition, FC1Rposition, LC1position, FC2Lposition, FC2Rposition, LC2position, DCposition;
-    public bool FCLbool, FCRbool, LCbool, TCLbool, TCRbool;
-    public bool UsingAR, MainTask;
-    public float Acc, Br, SW, SteeringWheel_Data, Pedal_Data;
-    //bool GameStartNoticeBool;
 
-    int ReactionStarted, ReactionNoCount;
-    public int TotalFirstReactionValue;
-
+    // Array
+    public bool SelectArray;
+    public int laneChangeDirection;
     public int[,] TaskScenario = new int[7, 6];
     public int[,] LaneChangeTime = new int[7, 6]; // make the 2 dimension list by using counter-balance
     public int[,] FollowingCarSpeed = new int[7, 6];
     public int[] CMScombination = new int[7];
     int[,] CMScombination_Array = new int[70, 7];
 
+    // Data
+    public float Acc, Br, SW, SteeringWheel_Data, Pedal_Data;
+    int ReactionStarted, ReactionNoCount;
+    public int TotalFirstReactionValue, NumOfCollision;
     float FirstReactionTimer;
-    public int SampleNumber;
-    public bool SelectArray;
     public int LaneChangeComplete;
-
 
     #region Private variables not shown in the inspector
     private VolvoCars.Data.Value.Public.WheelTorque wheelTorqueValue = new VolvoCars.Data.Value.Public.WheelTorque(); // This is the value type used by the wheelTorque data item.     
@@ -88,17 +91,16 @@ public class DemoCarController : MonoBehaviour
 
             Acc = (32768f - rec.lY) / 65536f;
             Br = (rec.lRz - 32768f) / 65536f;
+            rawForwardInput = Acc + Br;
+            Pedal_Data = rawForwardInput;
 
             SW = rec.lX / 32656f;
             rawSteeringInput = SW;
 
-            rawForwardInput = Acc + Br;
-            Pedal_Data = rawForwardInput;
-
             // Steering
-            steeringReduction = 1 - Mathf.Min(Mathf.Abs(velocity.Value) / 30f, 0.85f);
+            //steeringReduction = 1 - Mathf.Min(Mathf.Abs(velocity.Value) / 30f, 0.85f);
 
-            userSteeringInput.Value = rawSteeringInput * steeringReduction;
+            userSteeringInput.Value = rawSteeringInput /* * steeringReduction*/;
             SteeringWheel_Data = userSteeringInput.Value;
 
             if (parkInput > 0)
@@ -151,7 +153,7 @@ public class DemoCarController : MonoBehaviour
                 }
 
             }
-            else if (respawnTrigger == true) totalTorque = -9000;
+            //else if (RespawnTrigger == true) totalTorque = -9000;
             else
             { // No direction (such as neutral gear or P)
                 totalTorque = 0;
@@ -177,8 +179,6 @@ public class DemoCarController : MonoBehaviour
             if (velocity.Value >= 27.7f)
                 totalTorque = 0;
 
-            Debug.Log(velocity.Value);
-
             if (velocity.Value > 0)
                 EngineSound.SetActive(true);
             else if (velocity.Value < 0)
@@ -189,12 +189,11 @@ public class DemoCarController : MonoBehaviour
             if (SelectArray)
                 ApplyArray();
 
-
             if (LC.LC_StoppingTime == 1)
             {
                 FirstReactionTimer += Time.deltaTime;
                 if (FirstReactionTimer <= 0.1f && (Br <= -0.7 || Mathf.Abs(SteeringWheel_Data) > 0.02f))
-                    ReactionNoCount = 1;
+                    ReactionNoCount = 2;
 
                 if (FirstReactionTimer >= 0.1f && (Br <= -0.7 || Mathf.Abs(SteeringWheel_Data) > 0.02f))
                     ReactionStarted = 1;
@@ -202,7 +201,7 @@ public class DemoCarController : MonoBehaviour
                 TotalFirstReactionValue = ReactionStarted - ReactionNoCount;
             }
 
-            if (respawnTrigger)
+            if (RespawnTrigger)
             {
                 if (waitTimer < 2)
                     waitTimer += Time.deltaTime;
@@ -228,8 +227,8 @@ public class DemoCarController : MonoBehaviour
                 TotalFirstReactionValue = 0;
                 NumOfCollision = 0;
                 LaneChangeComplete = 0;
-                ResetData = false;
                 DC_C.DrivingIn2ndLane = false;
+                ResetData = false;
             }
 
             if (CMSchangeBool)
@@ -342,7 +341,7 @@ public class DemoCarController : MonoBehaviour
 
     private void ApplyArray()
     {
-        CMScombination_Array = new int[,] { /*{ 1,2,3,4,5,6,7}*/{ 6, 2, 3, 4, 5, 6, 7 }, { 1, 4, 2, 3, 7, 6, 5 }, { 1, 6, 4, 2, 3, 7, 5 }, { 2, 5, 7, 1, 6, 4, 3 }, { 3, 2, 5, 4, 6, 1, 7 }, { 3, 6, 4, 2, 1, 5, 7 },
+        CMScombination_Array = new int[,] { /*{ 1,2,3,4,5,6,7}*/{ 1, 2, 3, 4, 5, 6, 7 }, { 1, 4, 2, 3, 7, 6, 5 }, { 1, 6, 4, 2, 3, 7, 5 }, { 2, 5, 7, 1, 6, 4, 3 }, { 3, 2, 5, 4, 6, 1, 7 }, { 3, 6, 4, 2, 1, 5, 7 },
                                             { 4, 2, 7, 3, 1, 5, 6 }, { 5, 2, 1, 4, 7, 3, 6 }, { 5, 4, 1, 2, 6, 3, 7 }, { 6, 1, 5, 7, 2, 4, 3 }, { 7, 2, 6, 4, 5, 3, 1 } };
 
         FollowingCarSpeed = new int[,] { { 1, 2, 1, 2, 1, 2 }, { 2, 1, 2, 1, 2, 1 }, { 1, 1, 2, 2, 1, 1 }, { 2, 2, 1, 1, 2, 2 }, { 2, 1, 1, 2, 1, 2 },

@@ -9,9 +9,9 @@ using UnityEngine.XR;
 
 public class FinalQuestionnaire : MonoBehaviour
 {
+    [SerializeField] Slider AnswerSlider;
     public GameObject SaveTriggerObject;
     int QuestionnaireNumber;
-    [SerializeField] Slider AnswerSlider;
     string csvSeparator = ",";
     string csvFileName;
     string[] csvHeaders = new string[2] { "Questionnaire", "Answer" };
@@ -24,7 +24,7 @@ public class FinalQuestionnaire : MonoBehaviour
     float ThresholdTimer;
     public bool FirstSlider;
 
-    void Update()
+    void FixedUpdate()
     {
         if (FinalQuestionnairePhase) 
         {
@@ -35,7 +35,7 @@ public class FinalQuestionnaire : MonoBehaviour
 
                 List<Transform> children = GetChildren(transform);
 
-                if (ThresholdTimer < 3f)
+                if (ThresholdTimer < 3)
                     ThresholdTimer += Time.deltaTime;
 
                 if (FirstSlider)
@@ -45,25 +45,24 @@ public class FinalQuestionnaire : MonoBehaviour
                 }
 
                 // Get slider value from the steering wheel
-                if(QuestionnaireNumber <= 7)
+                if(QuestionnaireNumber <= 21)
                 {
-                    if (rec.lX < -7500) { AnswerSlider.value = 1; }
-                    else if (rec.lX < -4500 && rec.lX > -7500) { AnswerSlider.value = 2; }
-                    else if (rec.lX < -1500 && rec.lX > -4500) { AnswerSlider.value = 3; }
-                    else if (rec.lX < 1500 && rec.lX > -1500) { AnswerSlider.value = 4; }
-                    else if (rec.lX > 1500 && rec.lX < 4500) { AnswerSlider.value = 5; }
-                    else if (rec.lX > 4500 && rec.lX < 7500) { AnswerSlider.value = 6; }
-                    else if (rec.lX > 7500) { AnswerSlider.value = 7; }
+                    if (rec.lX < -5000) { AnswerSlider.value = 1; }
+                    else if (rec.lX < -3000 && rec.lX > -5000) { AnswerSlider.value = 2; }
+                    else if (rec.lX < -1000 && rec.lX > -3000) { AnswerSlider.value = 3; }
+                    else if (rec.lX < 1000 && rec.lX > -1000) { AnswerSlider.value = 4; }
+                    else if (rec.lX > 1000 && rec.lX < 3000) { AnswerSlider.value = 5; }
+                    else if (rec.lX > 3000 && rec.lX < 5000) { AnswerSlider.value = 6; }
+                    else if (rec.lX > 5000) { AnswerSlider.value = 7; }
                 }
 
-                if (ThresholdTimer > 1)
+                if (ThresholdTimer > 2)
                 {
                     // when the right lever is pulled, move to the next question
                     if (rec.rgbButtons[4] == 128)
                     {
                         if (QuestionnaireNumber < 21)
                         {
-                            Debug.Log(123);
                             QuestionnaireNumber++;
                             children[QuestionnaireNumber].gameObject.SetActive(true);
                             children[QuestionnaireNumber - 1].gameObject.SetActive(false);
@@ -72,7 +71,6 @@ public class FinalQuestionnaire : MonoBehaviour
                         else if (QuestionnaireNumber == 21)
                         {
                             QuestionnaireNumber++;
-                            children[QuestionnaireNumber - 2].gameObject.SetActive(false);
                             children[QuestionnaireNumber - 1].gameObject.SetActive(false);
                             SaveTriggerObject.SetActive(true);
                         }
@@ -82,7 +80,7 @@ public class FinalQuestionnaire : MonoBehaviour
                     // when the left leve is pulled, get back to the previous question
                     if (rec.rgbButtons[5] == 128)
                     {
-                        if (QuestionnaireNumber > 1)
+                        if (QuestionnaireNumber > 1 && QuestionnaireNumber != 22)
                         {
                             children[QuestionnaireNumber].gameObject.SetActive(false);
                             children[QuestionnaireNumber - 1].gameObject.SetActive(true);
@@ -97,7 +95,6 @@ public class FinalQuestionnaire : MonoBehaviour
                 if (SaveTrigger)
                 {
                     SaveToCSV();
-
                     GameEnd.SetActive(true);
                 }
             }
@@ -108,7 +105,8 @@ public class FinalQuestionnaire : MonoBehaviour
     List<Transform> GetChildren(Transform parent)
     {
         List<Transform> children = new List<Transform>();
-        foreach (Transform child in parent) { children.Add(child); }
+        foreach (Transform child in parent)
+            children.Add(child);
         return children;
     }
 
@@ -119,9 +117,19 @@ public class FinalQuestionnaire : MonoBehaviour
         for (int i = 0; i < children.Count; i++)
         {
             AnswerSlider = children[i].GetComponent<Slider>();
-            float[] Data = new float[2];
-            Data[0] = i + 1;
-            Data[1] = AnswerSlider.value;
+            string[] QuestionnaireSubject = { "Compared to a normal mirror, I would prefer a camera- monitor system in my own vehicle", "Which of the three camera positions experienced in this experiment would you personally prefer",
+                                              "I prefer a defensive, cautious driving style", "I am willing to use CMS instead of the existing mirror system", "Using CMS instead of the existing mirror system will improve driving convenience",
+                                              "Using CMS instead of the existing mirror system will help me comprehend the side and rear situations more quickly and accurately",
+                                              "When purchasing a car with the same options/conditions, I will opt for CMS instead of the existing mirror system", "CMS is overall better than the existing mirror system",
+                                              "How much were you able to control events", "How natural did your interactions with the environment seem", "How completely were all of your senses engaged",
+                                              "How much did the visual aspects of the environment involve you", "How natural was the mechanism which controlled movement through the environment",
+                                              "How inconsistent or disconnected was the information coming from your various senses", "How much did your experiences in the virtual environment seem consistent with your real world experiences",
+                                              "How compelling was your sense of moving around inside the virtual environment", "To what degree did you feel confused or disoriented at the beginning of breaks or at the end of the experimental session",
+                                              "How involved were you in the virtual environment experience", "How distracting was the control mechanism", "How much delay did you experience between your actions and expected outcomes",
+                                              "How quickly did you adjust to the virtual environment experience", "How much did the visual display quality interfere or distract you from performing assigned tasks or required activities"};
+            string[] Data = new string[2];
+            Data[0] = QuestionnaireSubject[i];
+            Data[1] = AnswerSlider.value.ToString();
             AppendToCsv(Data);
         }
 
@@ -159,7 +167,7 @@ public class FinalQuestionnaire : MonoBehaviour
         }
     }
 
-    public void AppendToCsv(float[] floats)
+    public void AppendToCsv(string[] floats)
     {
         VerifyDirectory();
         VerifyFile();

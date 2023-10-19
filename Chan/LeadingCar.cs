@@ -11,7 +11,6 @@ public class LeadingCar : MonoBehaviour
     public GameObject Obstacle_1, Obstacle_2;
     public GameObject LeadingCar_1, LeadingCar_2, LC_1_RearLight, LC_2_RearLight;
     public GameObject FCL_1, FCR_1, FCB_1, FCL_2, FCR_2, FCB_2, TaskEndPoint_1, TaskEndPoint_2;
-    public PathCreator PathCreator_1, PathCreator_2;
     GameObject LeadingCarVelocity;
     Vector3 TargetCarVelocity;
     Vector3 StartPos_LC_1, StartPos_LC_2;
@@ -39,6 +38,7 @@ public class LeadingCar : MonoBehaviour
         StartPos_LC_2 = LeadingCar_2.transform.position;
         StartRot_LC_1 = LeadingCar_1.transform.rotation;
         StartRot_LC_2 = LeadingCar_2.transform.rotation;
+        LeadingCarVelocity = LeadingCar_1;
     }
 
     private void FixedUpdate()
@@ -136,9 +136,6 @@ public class LeadingCar : MonoBehaviour
 
             //if (WayPointTrigger)
             //    WayPointDriving();
-
-            if (DC.respawnTrigger)
-                RespawnTrigger = true;
 
             if (RespawnTrigger)
                 Respawn();
@@ -416,11 +413,5 @@ public class LeadingCar : MonoBehaviour
         Obstacle_1.SetActive(false);
         Obstacle_2.SetActive(false);
         RespawnTrigger = false;
-    }
-
-    private void OnTriggerEnter(Collider other)
-    {
-        if (other.tag == "TaskEndPoint")
-            RespawnTrigger = true;
     }
 }

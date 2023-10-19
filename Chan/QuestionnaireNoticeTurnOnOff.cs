@@ -19,12 +19,12 @@ public class QuestionnaireNoticeTurnOnOff : MonoBehaviour
 
             if (rec.rgbButtons[4] == 128)
             {
-                if(DC.QuestionnaireCount < 1)
+                if(DC.QuestionnaireCount < 7)
                 {
                     Q.QuestionnairePhase = true;
                     Q.FirstSlider = true;
                 }
-                if(DC.QuestionnaireCount == 1)
+                if(DC.QuestionnaireCount == 7)
                 {
                     FQ.FinalQuestionnairePhase = true;
                     FQ.FirstSlider = true;

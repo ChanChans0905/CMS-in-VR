@@ -6,6 +6,7 @@ public class TaskStartNotice : MonoBehaviour
 {
     [SerializeField] DemoCarController DC;
     [SerializeField] DC_Collidor DC_C;
+    [SerializeField] TrialManager TM;
 
     float ThresholdTImer;
 
@@ -25,10 +26,11 @@ public class TaskStartNotice : MonoBehaviour
                 {
                     DC_C.FadingEvent = false;
                     DC_C.Activate_Fade = true;
-                    DC.respawnTrigger = false;
+                    DC.RespawnTrigger = false;
                     DC.waitTimer = 0;
                     ThresholdTImer = 0;
-                    DC.MainTask = true;
+                    if(!TM.TrialTask)
+                        DC.MainTask = true;
                     gameObject.SetActive(false);
                 }
             }

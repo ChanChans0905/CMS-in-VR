@@ -23,7 +23,7 @@ public class Questionnaire : MonoBehaviour
     string[] csvHeaders = new string[2] { "Questionnaire", "Answer" };
     float ThresholdTimer;
 
-    void Update()
+    void FixedUpdate()
     {
         if (QuestionnairePhase)
         {
@@ -34,7 +34,7 @@ public class Questionnaire : MonoBehaviour
 
                 List<Transform> children = GetChildren(transform);
 
-                if (ThresholdTimer < 3f)
+                if (ThresholdTimer < 3)
                     ThresholdTimer += Time.deltaTime;
 
                 if (FirstSlider)
@@ -47,13 +47,13 @@ public class Questionnaire : MonoBehaviour
 
                 if(QuestionnaireNumber <= 12)
                 {
-                    if (rec.lX < -7500) { AnswerSlider.value = 1; }
-                    else if (rec.lX < -4500 && rec.lX > -7500) { AnswerSlider.value = 2; }
-                    else if (rec.lX < -1500 && rec.lX > -4500) { AnswerSlider.value = 3; }
-                    else if (rec.lX < 1500 && rec.lX > -1500) { AnswerSlider.value = 4; }
-                    else if (rec.lX > 1500 && rec.lX < 4500) { AnswerSlider.value = 5; }
-                    else if (rec.lX > 4500 && rec.lX < 7500) { AnswerSlider.value = 6; }
-                    else if (rec.lX > 7500) { AnswerSlider.value = 7; }
+                    if (rec.lX < -5000) { AnswerSlider.value = 1; }
+                    else if (rec.lX < -3000 && rec.lX > -5000) { AnswerSlider.value = 2; }
+                    else if (rec.lX < -1000 && rec.lX > -3000) { AnswerSlider.value = 3; }
+                    else if (rec.lX < 1000 && rec.lX > -1000) { AnswerSlider.value = 4; }
+                    else if (rec.lX > 1000 && rec.lX < 3000) { AnswerSlider.value = 5; }
+                    else if (rec.lX > 3000 && rec.lX < 5000) { AnswerSlider.value = 6; }
+                    else if (rec.lX > 5000) { AnswerSlider.value = 7; }
                 }
 
 
@@ -72,7 +72,6 @@ public class Questionnaire : MonoBehaviour
                         else if (QuestionnaireNumber == 12)
                         {
                             QuestionnaireNumber++;
-                            children[QuestionnaireNumber - 2].gameObject.SetActive(false);
                             children[QuestionnaireNumber - 1].gameObject.SetActive(false);
                             SaveTriggerObject.SetActive(true);
                             
@@ -121,19 +120,19 @@ public class Questionnaire : MonoBehaviour
             string[] Data = new string[2];
             Data[0] = QuestionnaireSubject[i];
             Data[1] = AnswerSlider.value.ToString();
-
             AppendToCsv(Data);
+        }
 
-            if (DC.QuestionnaireCount < 7)
-            {
-                DC.CMSchangeBool = true;
-                TrialStartNotice.SetActive(true);
-            }
-            else if (DC.QuestionnaireCount == 7)
-            {
-                DC.FinalQuestionnaireBool = true;
-                FinalQuestionnaireStartNotice.SetActive(true);
-            }
+        if (DC.QuestionnaireCount < 7)
+        {
+            DC.CMSchangeBool = true;
+            TrialStartNotice.SetActive(true);
+        }
+
+        if (DC.QuestionnaireCount == 7)
+        {
+            DC.FinalQuestionnaireBool = true;
+            FinalQuestionnaireStartNotice.SetActive(true);
         }
     }
 
@@ -187,10 +186,10 @@ public class Questionnaire : MonoBehaviour
             finalString += csvSeparator;
             sw.WriteLine(finalString);
 
+            QuestionnaireNumber = 0;
             QuestionnairePhase = false;
             ThresholdTimer = 0;
             SaveTrigger = false;
-            QuestionnaireNumber = 0;
         }
     }
 }

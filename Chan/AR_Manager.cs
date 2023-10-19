@@ -45,7 +45,7 @@ public class AR_Manager : MonoBehaviour
                 TurnOn_AR_Signal_R = 0;
             }
 
-            if (DC.respawnTrigger)
+            if (DC.RespawnTrigger)
             {
                 TurnOn_AR_Signal_L = 0;
                 TurnOn_AR_Signal_R = 0;
@@ -61,19 +61,19 @@ public class AR_Manager : MonoBehaviour
 
     private void OnTriggerStay(Collider other)
     {
-        if (other.tag == "AR_Signal_L")
+        if (other.tag == "AR_Signal_L" || other.tag == "TC_L")
             TurnOn_AR_Signal_L = 1;
 
-        if (other.tag == "AR_Signal_R")
+        if (other.tag == "AR_Signal_R" || other.tag == "TC_R") 
             TurnOn_AR_Signal_R = 1;
     }
 
     private void OnTriggerExit(Collider other)
     {
-        if (other.tag == "AR_Signal_L")
+        if (other.tag == "AR_Signal_L" || other.tag == "TC_L")
             TurnOn_AR_Signal_L = 2;
 
-        if (other.tag == "AR_Signal_R")
+        if (other.tag == "AR_Signal_R" || other.tag == "TC_R")
             TurnOn_AR_Signal_R = 2;
     }
 }

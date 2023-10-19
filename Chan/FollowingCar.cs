@@ -14,7 +14,7 @@ public class FollowingCar : MonoBehaviour
     Vector3 TargetCarVelocity;
     GameObject FCL_Velocity, FCR_Velocity, FCB_Velocity;
     public float OvertakeTimer;
-    public bool StopOvertake;
+
     public PathCreator PathCreator_LC;
     public PathCreator PathCreator_RC;
     Vector3 StartPos_FCL_1, StartPos_FCL_2, StartPos_FCR_1, StartPos_FCR_2, StartPos_FCB_1, StartPos_FCB_2;
@@ -35,6 +35,9 @@ public class FollowingCar : MonoBehaviour
         StartPos_FCR_2 = FCR_2.transform.position;
         StartPos_FCB_1 = FCB_1.transform.position;
         StartPos_FCB_2 = FCB_2.transform.position;
+        FCL_Velocity = FCL_1;
+        FCR_Velocity = FCR_1;
+        FCB_Velocity = FCB_1;
     }
 
     private void FixedUpdate()
@@ -67,12 +70,6 @@ public class FollowingCar : MonoBehaviour
 
         if (StartAceel && LC.TaskStartTime != 0)
             Accel(DC.taskCount);
-
-        if (StopOvertake)
-            TargetCarVelocity.z = 0;
-
-        if (DC.respawnTrigger)
-            RespawnTrigger = true;
 
         if (RespawnTrigger)
             Respawn();
@@ -126,14 +123,12 @@ public class FollowingCar : MonoBehaviour
                     LC_StopPos_for_FC_B.z = LC_2.transform.position.z;
                 }
             }
-
-
             LC_StopPos_for_FC_L.x = FCL_Velocity.transform.position.x;
             LC_StopPos_for_FC_R.x = FCR_Velocity.transform.position.x;
             LC_StopPos_for_FC_B.x = FCB_Velocity.transform.position.x;
 
             float FC_Fast_ReachingPercent = FC_Accel_Timer / FC_Fast_Time;
-            float FC_Slow_ReachingPercent = FC_Accel_Timer / FC_Slow_Time;
+            //float FC_Slow_ReachingPercent = FC_Accel_Timer / FC_Slow_Time;
 
             if (AccelSpeed == 1)
             {
@@ -160,7 +155,6 @@ public class FollowingCar : MonoBehaviour
                 FCL_Velocity.GetComponent<Rigidbody>().velocity = TargetCarVelocity;
                 FCR_Velocity.GetComponent<Rigidbody>().velocity = TargetCarVelocity;
                 FCB_Velocity.GetComponent<Rigidbody>().velocity = TargetCarVelocity;
-                //Debug.Log(LC_StopPos_for_FC_L);
             }
         }
 
@@ -182,7 +176,6 @@ public class FollowingCar : MonoBehaviour
         AccelSpeed = 0;
         FC_Accel_Timer = 0;
         OvertakeTimer = 0;
-        StopOvertake = false;
         FCL_1.transform.position = StartPos_FCL_1;
         FCL_2.transform.position = StartPos_FCL_2;
         FCR_1.transform.position = StartPos_FCR_1;

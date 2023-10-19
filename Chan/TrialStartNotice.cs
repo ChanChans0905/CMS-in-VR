@@ -23,7 +23,7 @@ public class TrialStartNotice : MonoBehaviour
             {
                 DC_C.FadingEvent = false;
                 DC_C.Activate_Fade = true;
-                DC.respawnTrigger = false;
+                DC.RespawnTrigger = false;
                 TM.TrialTask = true;
                 DC.waitTimer = 0;
                 gameObject.SetActive(false);

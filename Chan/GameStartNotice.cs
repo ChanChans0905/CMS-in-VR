@@ -39,8 +39,7 @@ public class GameStartNotice : MonoBehaviour
                 {
                     if (ThresholdTimer > 0.3f)
                     {
-                        if (rec.rgbButtons[1] == 128)
-                            if (Num != 0)
+                        if (rec.rgbButtons[1] == 128 && Num != 0)
                             {
                                 Num--;
                                 ThresholdTimer = 0;
@@ -54,14 +53,13 @@ public class GameStartNotice : MonoBehaviour
 
                         if (rec.rgbButtons[3] == 128)
                         {
-                            Num = Num + 10;
+                            Num += 10;
                             ThresholdTimer = 0;
                         }
 
-                        if (rec.rgbButtons[0] == 128)
-                            if (Num - 10 >= 0)
+                        if (rec.rgbButtons[0] == 128 && Num -10 >= 0)
                             {
-                                Num = Num - 10;
+                                Num -= 10;
                                 ThresholdTimer = 0;
                             }
                     }
@@ -73,11 +71,12 @@ public class GameStartNotice : MonoBehaviour
                         SampleSelectionNotice.SetActive(false);
                         WelcomeNotice.SetActive(true);
                         SampleSelection = false;
+                        ThresholdTimer = 0;
                     }
                 }
                 else
                 {
-                    if (ThresholdTimer > 0.5f)
+                    if (ThresholdTimer > 1f)
                     {
                         if (rec.rgbButtons[4] == 128)
                         {
@@ -101,8 +100,8 @@ public class GameStartNotice : MonoBehaviour
                         case 3:
                             KeepLaneNotice.SetActive(false);
                             TrialStartNotice.SetActive(true);
-                            gameObject.SetActive(false);
                             DC.SelectArray = true;
+                            gameObject.SetActive(false);
                             break;
                     }
                 }

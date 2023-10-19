@@ -14,8 +14,8 @@ public class DC_Collidor : MonoBehaviour
     public bool Activate_Fade, FadingEvent;
     private Material _mat;
     public bool DrivingIn2ndLane;
-    float TaskCountThreshold, FadingTimer;
-    int TaskCountForTest = 5;
+    float TimerForTaskCountThresholding, FadingTimer;
+    int TaskCountNum = 5;
 
     void Start()
     {
@@ -29,10 +29,9 @@ public class DC_Collidor : MonoBehaviour
         {
             FadingTimer += Time.deltaTime;
 
-            if (FadingEvent && alpha <= 1)
+            if (FadingEvent && alpha <= 1.05f)
                 alpha += .01f;
-
-            else if (!FadingEvent && alpha >= 0)
+            else if (!FadingEvent && alpha >= -0.5)
                 alpha -= .01f;
 
             Color nNew = new Color(0, 0, 0, alpha);
@@ -45,8 +44,8 @@ public class DC_Collidor : MonoBehaviour
             }
         }
 
-        if (TaskCountThreshold < 3)
-            TaskCountThreshold += Time.deltaTime;
+        if (TimerForTaskCountThresholding < 3)
+            TimerForTaskCountThresholding += Time.deltaTime;
     }
 
     private void OnTriggerEnter(Collider other)
@@ -55,47 +54,36 @@ public class DC_Collidor : MonoBehaviour
         {
             DC.NumOfCollision = 1;
             CSV.DataLoggingEnd = true;
+            DC.RespawnTrigger = true;
+            FC.RespawnTrigger = true;
+            LC.RespawnTrigger = true;
 
-
-            if (DC.taskCount == TaskCountForTest) 
+            if (DC.taskCount == TaskCountNum) 
             {
-                FadingEvent = true;
-                DC.respawnTrigger = true;
-                Activate_Fade = true;
                 QuestionnaireStartNotice.SetActive(true);
                 DC.taskCount = 0;
                 DC.FirstTaskCountThreshold = false;
             }
-            else
-            {
+            else if(DC.taskCount < TaskCountNum)
                 TaskFailureNotice.SetActive(true);
-                DC.respawnTrigger = true;
-            }
         }
 
         if (other.gameObject.CompareTag("OutOfRoad"))
         {
             DC.NumOfCollision = 2;
             CSV.DataLoggingEnd = true;
+            DC.RespawnTrigger = true;
+            FC.RespawnTrigger = true;
+            LC.RespawnTrigger = true;
 
-            if (DC.taskCount == TaskCountForTest)
+            if (DC.taskCount == TaskCountNum)
             {
-                FadingEvent = true;
-                DC.respawnTrigger = true;
-                Activate_Fade = true;
                 QuestionnaireStartNotice.SetActive(true);
                 DC.taskCount = 0;
                 DC.FirstTaskCountThreshold = false;
             }
-            else
-            {
+            else if(DC.taskCount < TaskCountNum)
                 TaskFailureNotice.SetActive(true);
-                //if (!LC.TaskStart && DC.taskCount != 0)
-                //    DC.taskCount--;
-                FadingEvent = true;
-                DC.respawnTrigger = true;
-                Activate_Fade = true;
-            }
         }
 
         if (other.gameObject.CompareTag("TaskEndPoint"))
@@ -104,11 +92,9 @@ public class DC_Collidor : MonoBehaviour
             LC.RespawnTrigger = true;
             FC.RespawnTrigger = true;
 
-            if (DC.taskCount == TaskCountForTest)
+            if (DC.taskCount == TaskCountNum)
             {
-                FadingEvent = true;
-                DC.respawnTrigger = true;
-                Activate_Fade = true;
+                DC.RespawnTrigger = true;
                 QuestionnaireStartNotice.SetActive(true);
                 DC.taskCount = 0;
                 DC.FirstTaskCountThreshold = false;
@@ -119,6 +105,16 @@ public class DC_Collidor : MonoBehaviour
         {
             if (DC.MainTask)
             {
+                if (TimerForTaskCountThresholding > 2)
+                {
+                    if (DC.FirstTaskCountThreshold)
+                        DC.taskCount++;
+                    else
+                        DC.FirstTaskCountThreshold = true;
+
+                    TimerForTaskCountThresholding = 0;
+                }
+
                 CSV.Create_CSV_File = true;
                 CSV.DataLoggingStart = true;
                 DC.LaneChangeComplete = 0;
@@ -126,16 +122,6 @@ public class DC_Collidor : MonoBehaviour
                 LC.TurnOn_LC_FC = 1;
                 LC.LC_Direction = 1;
                 LC.TaskStart = true;
-
-                if (TaskCountThreshold > 2)
-                {
-                    if (DC.FirstTaskCountThreshold)
-                        DC.taskCount++;
-                    else
-                        DC.FirstTaskCountThreshold = true;
-
-                    TaskCountThreshold = 0;
-                }
             }
 
             if (TM.TrialTask)
@@ -151,6 +137,16 @@ public class DC_Collidor : MonoBehaviour
         {
             if (DC.MainTask)
             {
+                if (TimerForTaskCountThresholding > 2)
+                {
+                    if (DC.FirstTaskCountThreshold)
+                        DC.taskCount++;
+                    else
+                        DC.FirstTaskCountThreshold = true;
+
+                    TimerForTaskCountThresholding = 0;
+                }
+
                 CSV.Create_CSV_File = true;
                 CSV.DataLoggingStart = true;
                 DC.LaneChangeComplete = 0;
@@ -158,16 +154,6 @@ public class DC_Collidor : MonoBehaviour
                 LC.TurnOn_LC_FC = 2;
                 LC.LC_Direction = 2;
                 LC.TaskStart = true;
-
-                if (TaskCountThreshold > 2)
-                {
-                    if (DC.FirstTaskCountThreshold)
-                        DC.taskCount++;
-                    else
-                        DC.FirstTaskCountThreshold = true;
-
-                    TaskCountThreshold = 0;
-                }
             }
 
             if (TM.TrialTask)

@@ -16,7 +16,7 @@ public class TaskFailureNotice : MonoBehaviour
             if (rec.rgbButtons[5] == 128)
             {
                 DC_C.FadingEvent = false;
-                DC.respawnTrigger = false;
+                DC.RespawnTrigger = false;
                 DC.waitTimer = 0;
                 gameObject.SetActive(false);
             }
