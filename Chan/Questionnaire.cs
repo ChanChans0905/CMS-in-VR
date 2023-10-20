@@ -43,57 +43,18 @@ public class Questionnaire : MonoBehaviour
                     FirstSlider = false;
                 }
 
-                // Get slider value from the steering wheel
-
                 if(QuestionnaireNumber <= 12)
-                {
-                    if (rec.lX < -5000) { AnswerSlider.value = 1; }
-                    else if (rec.lX < -3000 && rec.lX > -5000) { AnswerSlider.value = 2; }
-                    else if (rec.lX < -1000 && rec.lX > -3000) { AnswerSlider.value = 3; }
-                    else if (rec.lX < 1000 && rec.lX > -1000) { AnswerSlider.value = 4; }
-                    else if (rec.lX > 1000 && rec.lX < 3000) { AnswerSlider.value = 5; }
-                    else if (rec.lX > 3000 && rec.lX < 5000) { AnswerSlider.value = 6; }
-                    else if (rec.lX > 5000) { AnswerSlider.value = 7; }
-                }
-
+                    GetSteeringWheelData();
 
                 if (ThresholdTimer > 2)
                 {
-                    // when the right lever is pulled, move to the next question
                     if (rec.rgbButtons[4] == 128)
-                    {
-                        if (QuestionnaireNumber < 12)
-                        {
-                            QuestionnaireNumber++;
-                            children[QuestionnaireNumber].gameObject.SetActive(true);
-                            children[QuestionnaireNumber - 1].gameObject.SetActive(false);
-                            AnswerSlider = children[QuestionnaireNumber].GetComponent<Slider>();
-                        }
-                        else if (QuestionnaireNumber == 12)
-                        {
-                            QuestionnaireNumber++;
-                            children[QuestionnaireNumber - 1].gameObject.SetActive(false);
-                            SaveTriggerObject.SetActive(true);
-                            
-                        }
-                        ThresholdTimer = 0;
-                    }
+                        NextQuestion();
 
-                    // when the left leve is pulled, get back to the previous question
                     if (rec.rgbButtons[5] == 128)
-                    {
-                        if (QuestionnaireNumber > 1 && QuestionnaireNumber != 13)
-                        {
-                            children[QuestionnaireNumber].gameObject.SetActive(false);
-                            children[QuestionnaireNumber - 1].gameObject.SetActive(true);
-                            AnswerSlider = children[QuestionnaireNumber - 1].GetComponent<Slider>();
-                            QuestionnaireNumber--;
-                        }
-                        ThresholdTimer = 0;
-                    }
+                        PrevQuestion();
                 }
 
-                // if the user pull the right lever when the save notice object is activated, the survey result will be saved to csv file
                 if (SaveTrigger)
                     SaveToCSV();
             }
@@ -108,7 +69,52 @@ public class Questionnaire : MonoBehaviour
         return children;
     }
 
-    public void SaveToCSV()
+    void GetSteeringWheelData()
+    {
+        LogitechGSDK.DIJOYSTATE2ENGINES rec;
+        rec = LogitechGSDK.LogiGetStateUnity(0);
+
+        if (rec.lX < -5000) { AnswerSlider.value = 1; }
+        else if (rec.lX < -3000 && rec.lX > -5000) { AnswerSlider.value = 2; }
+        else if (rec.lX < -1000 && rec.lX > -3000) { AnswerSlider.value = 3; }
+        else if (rec.lX < 1000 && rec.lX > -1000) { AnswerSlider.value = 4; }
+        else if (rec.lX > 1000 && rec.lX < 3000) { AnswerSlider.value = 5; }
+        else if (rec.lX > 3000 && rec.lX < 5000) { AnswerSlider.value = 6; }
+        else if (rec.lX > 5000) { AnswerSlider.value = 7; }
+    }
+
+    void NextQuestion()
+    {
+        if (QuestionnaireNumber < 12)
+        {
+            QuestionnaireNumber++;
+            children[QuestionnaireNumber].gameObject.SetActive(true);
+            children[QuestionnaireNumber - 1].gameObject.SetActive(false);
+            AnswerSlider = children[QuestionnaireNumber].GetComponent<Slider>();
+        }
+        else if (QuestionnaireNumber == 12)
+        {
+            QuestionnaireNumber++;
+            children[QuestionnaireNumber - 1].gameObject.SetActive(false);
+            SaveTriggerObject.SetActive(true);
+
+        }
+        ThresholdTimer = 0;
+    }
+
+    void PrevQuestion()
+    {
+        if (QuestionnaireNumber > 1 && QuestionnaireNumber != 13)
+        {
+            children[QuestionnaireNumber].gameObject.SetActive(false);
+            children[QuestionnaireNumber - 1].gameObject.SetActive(true);
+            AnswerSlider = children[QuestionnaireNumber - 1].GetComponent<Slider>();
+            QuestionnaireNumber--;
+        }
+        ThresholdTimer = 0;
+    }
+
+    void SaveToCSV()
     {
         DC.QuestionnaireCount++;
         csvFileName = "Questionnaire" + DC.CMScombination[DC.CMSchangeCount-1] + ".csv";

@@ -117,16 +117,7 @@ public class FinalQuestionnaire : MonoBehaviour
         for (int i = 0; i < children.Count; i++)
         {
             AnswerSlider = children[i].GetComponent<Slider>();
-            string[] QuestionnaireSubject = { "Compared to a normal mirror, I would prefer a camera- monitor system in my own vehicle", "Which of the three camera positions experienced in this experiment would you personally prefer",
-                                              "I prefer a defensive, cautious driving style", "I am willing to use CMS instead of the existing mirror system", "Using CMS instead of the existing mirror system will improve driving convenience",
-                                              "Using CMS instead of the existing mirror system will help me comprehend the side and rear situations more quickly and accurately",
-                                              "When purchasing a car with the same options/conditions, I will opt for CMS instead of the existing mirror system", "CMS is overall better than the existing mirror system",
-                                              "How much were you able to control events", "How natural did your interactions with the environment seem", "How completely were all of your senses engaged",
-                                              "How much did the visual aspects of the environment involve you", "How natural was the mechanism which controlled movement through the environment",
-                                              "How inconsistent or disconnected was the information coming from your various senses", "How much did your experiences in the virtual environment seem consistent with your real world experiences",
-                                              "How compelling was your sense of moving around inside the virtual environment", "To what degree did you feel confused or disoriented at the beginning of breaks or at the end of the experimental session",
-                                              "How involved were you in the virtual environment experience", "How distracting was the control mechanism", "How much delay did you experience between your actions and expected outcomes",
-                                              "How quickly did you adjust to the virtual environment experience", "How much did the visual display quality interfere or distract you from performing assigned tasks or required activities"};
+            string[] QuestionnaireSubject = {"1","2","3","4","5","6","7","8","9","10","11","12","13","14","15","16","17","18","19","20","21","22"};
             string[] Data = new string[2];
             Data[0] = QuestionnaireSubject[i];
             Data[1] = AnswerSlider.value.ToString();

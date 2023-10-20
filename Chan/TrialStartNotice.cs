@@ -16,19 +16,14 @@ public class TrialStartNotice : MonoBehaviour
             LogitechGSDK.DIJOYSTATE2ENGINES rec;
             rec = LogitechGSDK.LogiGetStateUnity(0);
 
-            if (Timer < 3)
-                Timer += Time.deltaTime;
+            Timer += Time.deltaTime;
 
-            if (Timer > 2 && rec.rgbButtons[5] == 128)
-            {
-                DC_C.FadingEvent = false;
-                DC_C.Activate_Fade = true;
-                DC.RespawnTrigger = false;
-                TM.TrialTask = true;
-                DC.waitTimer = 0;
-                gameObject.SetActive(false);
-                Timer = 0;
-            }
+            if (Timer > 3.5f)
+                if (rec.rgbButtons[5] == 128)
+                {
+                    DC.ActivateCar(Timer, gameObject);
+                    DC.DrivingPhase = true;
+                }
         }
     }
 }

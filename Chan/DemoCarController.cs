@@ -34,10 +34,10 @@ public class DemoCarController : MonoBehaviour
     // Default
     public int SampleNumber;
     public int taskCount;
-    public bool ResetData, RespawnTrigger;
+    public bool ResetTrigger, RespawnTrigger;
     public float waitTimer;
     public bool FirstTaskCountThreshold;
-    public bool MainTask;
+    public bool DrivingPhase;
 
     // CMS
     public int CMSchangeCount;
@@ -56,9 +56,9 @@ public class DemoCarController : MonoBehaviour
     // Array
     public bool SelectArray;
     public int laneChangeDirection;
-    public int[,] TaskScenario = new int[7, 6];
-    public int[,] LaneChangeTime = new int[7, 6]; // make the 2 dimension list by using counter-balance
-    public int[,] FollowingCarSpeed = new int[7, 6];
+    public int[,] TaskScenario = new int[7, 8];
+    public int[,] LaneChangeTime = new int[7, 8]; // make the 2 dimension list by using counter-balance
+    public int[,] FollowingCarSpeed = new int[7, 8];
     public int[] CMScombination = new int[7];
     int[,] CMScombination_Array = new int[70, 7];
 
@@ -202,34 +202,10 @@ public class DemoCarController : MonoBehaviour
             }
 
             if (RespawnTrigger)
-            {
-                if (waitTimer < 2)
-                    waitTimer += Time.deltaTime;
-                if (waitTimer > 1.5)
-                {
-                    // need : do not let the DC move during respawning and questionnaire
-                    rawForwardInput = 0;
-                    totalTorque = -9000;
-                    DC_C.FadingEvent = true;
-                    DC_C.Activate_Fade = true;
-                    velocity.Value = 0;
-                    wheelTorque.Value = wheelTorqueValue;
-                    VolvoCar.transform.localPosition = new Vector3(-2166, 0, 2300);
-                    VolvoCar.transform.rotation = Quaternion.Slerp(VolvoCar.transform.rotation, Quaternion.AngleAxis(-90, Vector3.up), 3f * Time.deltaTime);
-                }
-            }
+                Respawn();
 
-            if (ResetData)
-            {
-                Debug.Log("Reset");
-                ReactionStarted = 0;
-                ReactionNoCount = 0;
-                TotalFirstReactionValue = 0;
-                NumOfCollision = 0;
-                LaneChangeComplete = 0;
-                DC_C.DrivingIn2ndLane = false;
-                ResetData = false;
-            }
+            if (ResetTrigger)
+                ResetData();
 
             if (CMSchangeBool)
                 CMSchange();
@@ -250,19 +226,7 @@ public class DemoCarController : MonoBehaviour
 
     public void CMSchange()
     {
-        CMSCenter.SetActive(false);
-        CMS_LD_SW.SetActive(false);
-        CMS_LD_TM.SetActive(false);
-        CMS_RD_SW.SetActive(false);
-        CMS_RD_TM.SetActive(false);
-        CMSStitched.SetActive(false);
-        CMS_CAM_L.SetActive(false);
-        CMS_CAM_R.SetActive(false);
-        CMS_CAM_S.SetActive(false);
-        CAM_TM_L.SetActive(false);
-        CAM_TM_R.SetActive(false);
-        TraditionalMirrorLeft.SetActive(false);
-        TraditionalMirrorRight.SetActive(false);
+        ResetCMS();
 
         switch (CMScombination[CMSchangeCount])
         {
@@ -339,23 +303,78 @@ public class DemoCarController : MonoBehaviour
         SelectArray = false;
     }
 
+    public void ActivateCar(float Timer, GameObject Self)
+    {
+        RespawnTrigger = false;
+        waitTimer = 0;
+        DC_C.FadingEvent = false;
+        DC_C.Activate_Fade = true;
+        Timer = 0;
+        Self.SetActive(false);
+    }
+
+    void ResetCMS()
+    {
+        CMSCenter.SetActive(false);
+        CMS_LD_SW.SetActive(false);
+        CMS_LD_TM.SetActive(false);
+        CMS_RD_SW.SetActive(false);
+        CMS_RD_TM.SetActive(false);
+        CMSStitched.SetActive(false);
+        CMS_CAM_L.SetActive(false);
+        CMS_CAM_R.SetActive(false);
+        CMS_CAM_S.SetActive(false);
+        CAM_TM_L.SetActive(false);
+        CAM_TM_R.SetActive(false);
+        TraditionalMirrorLeft.SetActive(false);
+        TraditionalMirrorRight.SetActive(false);
+    }
+
     private void ApplyArray()
     {
         CMScombination_Array = new int[,] { /*{ 1,2,3,4,5,6,7}*/{ 1, 2, 3, 4, 5, 6, 7 }, { 1, 4, 2, 3, 7, 6, 5 }, { 1, 6, 4, 2, 3, 7, 5 }, { 2, 5, 7, 1, 6, 4, 3 }, { 3, 2, 5, 4, 6, 1, 7 }, { 3, 6, 4, 2, 1, 5, 7 },
                                             { 4, 2, 7, 3, 1, 5, 6 }, { 5, 2, 1, 4, 7, 3, 6 }, { 5, 4, 1, 2, 6, 3, 7 }, { 6, 1, 5, 7, 2, 4, 3 }, { 7, 2, 6, 4, 5, 3, 1 } };
 
-        FollowingCarSpeed = new int[,] { { 1, 2, 1, 2, 1, 2 }, { 2, 1, 2, 1, 2, 1 }, { 1, 1, 2, 2, 1, 1 }, { 2, 2, 1, 1, 2, 2 }, { 2, 1, 1, 2, 1, 2 },
-                                            { 1, 2, 2, 1, 2, 1 }, { 2, 1, 1, 1, 2, 1 } };
+        FollowingCarSpeed = new int[,] { {-2, -1, 1, 2, 1, 2, 1, 2}, {-2, -1, 2, 1, 2, 1, 2, 1}, {-2, -1, 1, 1, 2, 2, 1, 1}, {-2, -1, 2, 2, 1, 1, 2, 2}, {-2, -1, 2, 1, 1, 2, 1, 2},
+                                            {-2, -1, 1, 2, 2, 1, 2, 1}, {-2, -1, 2, 1, 1, 1, 2, 1} };
 
-        TaskScenario = new int[,] { { 1, 2, 3, 1, 2, 3 }, { 1, 3, 2, 2, 1, 3 }, { 1, 3, 1, 2, 3, 2 }, { 1, 2, 3, 2, 3, 1 }, { 2, 1, 2, 3, 3, 1 },
-                                          { 2, 3, 1, 2, 3, 1 }, { 2, 1, 2, 3, 1, 3 } };
+        TaskScenario = new int[,] { {-2, -1, 1, 2, 3, 1, 2, 3}, {-2, -1, 1, 3, 2, 2, 1, 3}, {-2, -1, 1, 3, 1, 2, 3, 2}, {-2, -1, 1, 2, 3, 2, 3, 1}, {-2, -1, 2, 1, 2, 3, 3, 1},
+                                          {-2, -1, 2, 3, 1, 2, 3, 1}, {-2, -1, 2, 1, 2, 3, 1, 3} };
 
-        LaneChangeTime = new int[,] {{ 1, 0, 3, 5, 7, 9 }, { 3, 7, 1, 0, 5, 9 }, { 9, 5, 1, 7, 3, 0 }, { 7, 5, 9, 0, 1, 3 }, { 5, 1, 9, 7, 0, 3 },
-                                        { 1, 7, 0, 5, 3, 9 }, { 9, 3, 7, 1, 0, 5 } };
+        LaneChangeTime = new int[,] {{ -2,-1, 1, 0, 3, 5, 7, 9 }, { -2,-1, 3, 7, 1, 0, 5, 9 }, {-2,-1, 9, 5, 1, 7, 3, 0 }, {-2, -1, 7, 5, 9, 0, 1, 3}, {-2, -1, 5, 1, 9, 7, 0, 3},
+                                        {-2, -1, 1, 7, 0, 5, 3, 9}, {-2, -1, 9, 3, 7, 1, 0, 5} };
 
         for (int i = 0; i < CMScombination.Length; i++)
             CMScombination[i] = CMScombination_Array[SampleNumber, i];
 
         CMSchange();
+    }
+
+    void ResetData()
+    {
+        Debug.Log("Reset");
+        ReactionStarted = 0;
+        ReactionNoCount = 0;
+        TotalFirstReactionValue = 0;
+        NumOfCollision = 0;
+        LaneChangeComplete = 0;
+        DC_C.DrivingIn2ndLane = false;
+        ResetTrigger = false;
+    }
+
+    void Respawn()
+    {
+        if (waitTimer < 2)
+            waitTimer += Time.deltaTime;
+        if (waitTimer > 1)
+        {
+            totalTorque = -9000;
+            DC_C.FadingEvent = true;
+            DC_C.Activate_Fade = true;
+            velocity.Value = 0;
+            wheelTorque.Value = wheelTorqueValue;
+            VolvoCar.transform.localPosition = new Vector3(-2166, 0, 2300);
+            VolvoCar.transform.rotation = Quaternion.Slerp(VolvoCar.transform.rotation, Quaternion.AngleAxis(-90, Vector3.up), 3f * Time.deltaTime);
+        }
     }
 }

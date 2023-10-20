@@ -29,6 +29,75 @@ public class FollowingCar : MonoBehaviour
 
     private void Start()
     {
+        SaveStartPos();
+    }
+
+    private void FixedUpdate()
+    {
+        TargetCarVelocity.z = TargetCar.GetComponent<Rigidbody>().velocity.z;
+
+        SetCarByDirection();
+
+        if (LC.TaskStart)
+        {
+            if (LC.TaskStartTime > 0)
+                Move(DC.taskCount);
+            else if(LC.TaskStartTime == 0)
+                ApplyVelocity();
+        }
+
+        if (RespawnTrigger)
+            Respawn();
+    }
+
+    void Move(int taskCount)
+    {
+        OvertakeTimer += Time.deltaTime;
+
+        StoppingTime = DC.LaneChangeTime[DC.CMSchangeCount - 1, taskCount];
+        AccelSpeed = DC.FollowingCarSpeed[DC.CMSchangeCount - 1, taskCount];
+
+        if (OvertakeTimer < 8 + StoppingTime && StoppingTime != 0)
+            ApplyVelocity();
+
+        if (OvertakeTimer >= 8 + StoppingTime && StoppingTime != 0)
+        {
+            FC_Accel_Timer += Time.fixedDeltaTime;
+
+            if (LC.LC_Direction == 1)
+                SetTargetObject(Obstacle_1, LC_1);
+            else if (LC.LC_Direction == 2)
+                SetTargetObject(Obstacle_2, LC_2);
+
+            LC_StopPos_for_FC_L.x = FCL_Velocity.transform.position.x;
+            LC_StopPos_for_FC_R.x = FCR_Velocity.transform.position.x;
+            LC_StopPos_for_FC_B.x = FCB_Velocity.transform.position.x;
+
+            ApplyLerp();
+        }
+
+        if (StoppingTime == 0)
+            ApplyVelocity();
+    }
+
+    void SetCarByDirection()
+    {
+        if (LC.DrivingDirection == 1)
+        {
+            FCL_Velocity = FCL_1;
+            FCR_Velocity = FCR_1;
+            FCB_Velocity = FCB_1;
+        }
+        else if (LC.DrivingDirection == -1)
+        {
+            FCL_Velocity = FCL_2;
+            FCR_Velocity = FCR_2;
+            FCB_Velocity = FCB_2;
+        }
+    }
+
+    void SaveStartPos()
+    {
         StartPos_FCL_1 = FCL_1.transform.position;
         StartPos_FCL_2 = FCL_2.transform.position;
         StartPos_FCR_1 = FCR_1.transform.position;
@@ -40,138 +109,61 @@ public class FollowingCar : MonoBehaviour
         FCB_Velocity = FCB_1;
     }
 
-    private void FixedUpdate()
+    void ApplyVelocity()
     {
-        TargetCarVelocity.z = TargetCar.GetComponent<Rigidbody>().velocity.z;
-
-        if (LC.DrivingDirection == 1)
-        {
-            FCL_Velocity = FCL_1;
-            FCR_Velocity = FCR_1;
-            FCB_Velocity = FCB_1;
-            //LC.DrivingDirection = 0;
-        }
-        else if (LC.DrivingDirection == -1)
-        {
-            FCL_Velocity = FCL_2;
-            FCR_Velocity = FCR_2;
-            FCB_Velocity = FCB_2;
-            //LC.DrivingDirection = 0;
-        }
-
-        if (LC.TaskStart)
-            StartAceel = true;
-        else
-        {
-            FCL_Velocity.GetComponent<Rigidbody>().velocity = TargetCarVelocity;
-            FCR_Velocity.GetComponent<Rigidbody>().velocity = TargetCarVelocity;
-            FCB_Velocity.GetComponent<Rigidbody>().velocity = TargetCarVelocity;
-        }
-
-        if (StartAceel && LC.TaskStartTime != 0)
-            Accel(DC.taskCount);
-
-        if (RespawnTrigger)
-            Respawn();
-    }
-
-    private void Accel(int taskCount)
-    {
-        OvertakeTimer += Time.deltaTime;
-
-        StoppingTime = DC.LaneChangeTime[DC.CMSchangeCount - 1, taskCount];
-        AccelSpeed = DC.FollowingCarSpeed[DC.CMSchangeCount - 1, taskCount];
-
-        if (OvertakeTimer < 8 + StoppingTime && StoppingTime != 0)
-        {
-            FCL_Velocity.GetComponent<Rigidbody>().velocity = TargetCarVelocity;
-            FCR_Velocity.GetComponent<Rigidbody>().velocity = TargetCarVelocity;
-            FCB_Velocity.GetComponent<Rigidbody>().velocity = TargetCarVelocity;
-        }
-
-        if (OvertakeTimer >= 8 + StoppingTime && StoppingTime != 0)
-        {
-            FC_Accel_Timer += Time.fixedDeltaTime;
-
-            if (LC.LC_Direction == 1)
-            {
-                if (LC.StartScenario_Obstacle)
-                {
-                    LC_StopPos_for_FC_L = Obstacle_1.position;
-                    LC_StopPos_for_FC_R = Obstacle_1.position;
-                    LC_StopPos_for_FC_B = Obstacle_1.position;
-                }
-                else
-                {
-                    LC_StopPos_for_FC_L.z = LC_1.transform.position.z;
-                    LC_StopPos_for_FC_R.z = LC_1.transform.position.z;
-                    LC_StopPos_for_FC_B.z = LC_1.transform.position.z;
-                }
-            }
-            else if (LC.LC_Direction == 2)
-            {
-                if (LC.StartScenario_Obstacle)
-                {
-                    LC_StopPos_for_FC_L = Obstacle_2.position;
-                    LC_StopPos_for_FC_R = Obstacle_2.position;
-                    LC_StopPos_for_FC_B = Obstacle_2.position;
-                }
-                else
-                {
-                    LC_StopPos_for_FC_L.z = LC_2.transform.position.z;
-                    LC_StopPos_for_FC_R.z = LC_2.transform.position.z;
-                    LC_StopPos_for_FC_B.z = LC_2.transform.position.z;
-                }
-            }
-            LC_StopPos_for_FC_L.x = FCL_Velocity.transform.position.x;
-            LC_StopPos_for_FC_R.x = FCR_Velocity.transform.position.x;
-            LC_StopPos_for_FC_B.x = FCB_Velocity.transform.position.x;
-
-            float FC_Fast_ReachingPercent = FC_Accel_Timer / FC_Fast_Time;
-            //float FC_Slow_ReachingPercent = FC_Accel_Timer / FC_Slow_Time;
-
-            if (AccelSpeed == 1)
-            {
-                // LCR is faster
-                FCL_Velocity.transform.position = Vector3.Lerp(FCL_Velocity.transform.position, LC_StopPos_for_FC_L, FC_Fast_ReachingPercent / 150f);
-                FCR_Velocity.transform.position = Vector3.Lerp(FCR_Velocity.transform.position, LC_StopPos_for_FC_R, FC_Fast_ReachingPercent / 50f);
-                FCB_Velocity.transform.position = Vector3.Lerp(FCB_Velocity.transform.position, LC_StopPos_for_FC_B, FC_Fast_ReachingPercent / 150f);
-                TargetCarVelocity.x = 0;
-                TargetCarVelocity.z = 0;
-                TargetCarVelocity.y = 0;
-                FCL_Velocity.GetComponent<Rigidbody>().velocity = TargetCarVelocity;
-                FCR_Velocity.GetComponent<Rigidbody>().velocity = TargetCarVelocity;
-                FCB_Velocity.GetComponent<Rigidbody>().velocity = TargetCarVelocity;
-            }
-            else if (AccelSpeed == 2)
-            {
-                // LCL is faster
-                FCL_Velocity.transform.position = Vector3.Lerp(FCL_Velocity.transform.position, LC_StopPos_for_FC_L, FC_Fast_ReachingPercent / 50f);
-                FCR_Velocity.transform.position = Vector3.Lerp(FCR_Velocity.transform.position, LC_StopPos_for_FC_R, FC_Fast_ReachingPercent / 150f);
-                FCB_Velocity.transform.position = Vector3.Lerp(FCB_Velocity.transform.position, LC_StopPos_for_FC_B, FC_Fast_ReachingPercent / 150f);
-                TargetCarVelocity.x = 0;
-                TargetCarVelocity.z = 0;
-                TargetCarVelocity.y = 0;
-                FCL_Velocity.GetComponent<Rigidbody>().velocity = TargetCarVelocity;
-                FCR_Velocity.GetComponent<Rigidbody>().velocity = TargetCarVelocity;
-                FCB_Velocity.GetComponent<Rigidbody>().velocity = TargetCarVelocity;
-            }
-        }
-
-        if (StoppingTime == 0)
-        {
-            FCL_Velocity.GetComponent<Rigidbody>().velocity = TargetCarVelocity;
-            FCR_Velocity.GetComponent<Rigidbody>().velocity = TargetCarVelocity;
-            FCB_Velocity.GetComponent<Rigidbody>().velocity = TargetCarVelocity;
-        }
-    }
-
-    private void Respawn()
-    {
-        TargetCarVelocity = Vector3.zero;
         FCL_Velocity.GetComponent<Rigidbody>().velocity = TargetCarVelocity;
         FCR_Velocity.GetComponent<Rigidbody>().velocity = TargetCarVelocity;
         FCB_Velocity.GetComponent<Rigidbody>().velocity = TargetCarVelocity;
+    }
+
+    void SetTargetObject(Transform TargetObstacle, GameObject TargetCar)
+    {
+        if (LC.StartScenario_Obstacle)
+        {
+            LC_StopPos_for_FC_L = TargetObstacle.position;
+            LC_StopPos_for_FC_R = TargetObstacle.position;
+            LC_StopPos_for_FC_B = TargetObstacle.position;
+        }
+        else
+        {
+            LC_StopPos_for_FC_L.z = TargetCar.transform.position.z;
+            LC_StopPos_for_FC_R.z = TargetCar.transform.position.z;
+            LC_StopPos_for_FC_B.z = TargetCar.transform.position.z;
+        }
+    }
+
+    void ApplyLerp()
+    {
+        float FC_Fast_ReachingPercent = FC_Accel_Timer / FC_Fast_Time;
+
+        if (AccelSpeed == 1)
+        {
+            // LCR is faster
+            FCL_Velocity.transform.position = Vector3.Lerp(FCL_Velocity.transform.position, LC_StopPos_for_FC_L, FC_Fast_ReachingPercent / 150f);
+            FCR_Velocity.transform.position = Vector3.Lerp(FCR_Velocity.transform.position, LC_StopPos_for_FC_R, FC_Fast_ReachingPercent / 50f);
+            FCB_Velocity.transform.position = Vector3.Lerp(FCB_Velocity.transform.position, LC_StopPos_for_FC_B, FC_Fast_ReachingPercent / 150f);
+            TargetCarVelocity.x = 0;
+            TargetCarVelocity.y = 0;
+            TargetCarVelocity.z = 0;
+            ApplyVelocity();
+        }
+        else if (AccelSpeed == 2)
+        {
+            // LCL is faster
+            FCL_Velocity.transform.position = Vector3.Lerp(FCL_Velocity.transform.position, LC_StopPos_for_FC_L, FC_Fast_ReachingPercent / 50f);
+            FCR_Velocity.transform.position = Vector3.Lerp(FCR_Velocity.transform.position, LC_StopPos_for_FC_R, FC_Fast_ReachingPercent / 150f);
+            FCB_Velocity.transform.position = Vector3.Lerp(FCB_Velocity.transform.position, LC_StopPos_for_FC_B, FC_Fast_ReachingPercent / 150f);
+            TargetCarVelocity.x = 0;
+            TargetCarVelocity.y = 0;
+            TargetCarVelocity.z = 0;
+            ApplyVelocity();
+        }
+    }
+
+    void Respawn()
+    {
+        TargetCarVelocity = Vector3.zero;
+        ApplyVelocity() ;
         StartAceel = false;
         AccelSpeed = 0;
         FC_Accel_Timer = 0;

@@ -9,13 +9,13 @@ public class DC_Collidor : MonoBehaviour
     [SerializeField] TrialManager TM;
     [SerializeField] CSV_Save CSV;
     [SerializeField] FollowingCar FC;
-    public GameObject QuestionnaireStartNotice, TaskFailureNotice;
+    public GameObject QuestionnaireStartNotice, TaskFailureNotice, DoNotMoveNotice;
     public float alpha = 0;
     public bool Activate_Fade, FadingEvent;
     private Material _mat;
     public bool DrivingIn2ndLane;
     float TimerForTaskCountThresholding, FadingTimer;
-    int TaskCountNum = 5;
+    int TaskCountNum = 7;
 
     void Start()
     {
@@ -26,23 +26,7 @@ public class DC_Collidor : MonoBehaviour
     void FixedUpdate()
     {
         if (Activate_Fade)
-        {
-            FadingTimer += Time.deltaTime;
-
-            if (FadingEvent && alpha <= 1.05f)
-                alpha += .01f;
-            else if (!FadingEvent && alpha >= -0.5)
-                alpha -= .01f;
-
-            Color nNew = new Color(0, 0, 0, alpha);
-            _mat.SetColor("_BaseColor", nNew);
-
-            if (FadingTimer > 5)
-            {
-                FadingTimer = 0;
-                Activate_Fade = false;
-            }
-        }
+            FadeInOut();
 
         if (TimerForTaskCountThresholding < 3)
             TimerForTaskCountThresholding += Time.deltaTime;
@@ -53,44 +37,22 @@ public class DC_Collidor : MonoBehaviour
         if (other.gameObject.CompareTag("AR_Signal_L") || other.gameObject.CompareTag("AR_Signal_R") || other.gameObject.CompareTag("FC"))
         {
             DC.NumOfCollision = 1;
-            CSV.DataLoggingEnd = true;
             DC.RespawnTrigger = true;
-            FC.RespawnTrigger = true;
-            LC.RespawnTrigger = true;
-
-            if (DC.taskCount == TaskCountNum) 
-            {
-                QuestionnaireStartNotice.SetActive(true);
-                DC.taskCount = 0;
-                DC.FirstTaskCountThreshold = false;
-            }
-            else if(DC.taskCount < TaskCountNum)
-                TaskFailureNotice.SetActive(true);
+            RespawnOtherCars();
+            CheckTaskCount();
         }
 
         if (other.gameObject.CompareTag("OutOfRoad"))
         {
             DC.NumOfCollision = 2;
-            CSV.DataLoggingEnd = true;
             DC.RespawnTrigger = true;
-            FC.RespawnTrigger = true;
-            LC.RespawnTrigger = true;
-
-            if (DC.taskCount == TaskCountNum)
-            {
-                QuestionnaireStartNotice.SetActive(true);
-                DC.taskCount = 0;
-                DC.FirstTaskCountThreshold = false;
-            }
-            else if(DC.taskCount < TaskCountNum)
-                TaskFailureNotice.SetActive(true);
+            RespawnOtherCars();
+            CheckTaskCount();
         }
 
         if (other.gameObject.CompareTag("TaskEndPoint"))
         {
-            CSV.DataLoggingEnd = true;
-            LC.RespawnTrigger = true;
-            FC.RespawnTrigger = true;
+            RespawnOtherCars();
 
             if (DC.taskCount == TaskCountNum)
             {
@@ -103,66 +65,14 @@ public class DC_Collidor : MonoBehaviour
 
         if (other.gameObject.CompareTag("TaskStartPoint_1"))
         {
-            if (DC.MainTask)
-            {
-                if (TimerForTaskCountThresholding > 2)
-                {
-                    if (DC.FirstTaskCountThreshold)
-                        DC.taskCount++;
-                    else
-                        DC.FirstTaskCountThreshold = true;
-
-                    TimerForTaskCountThresholding = 0;
-                }
-
-                CSV.Create_CSV_File = true;
-                CSV.DataLoggingStart = true;
-                DC.LaneChangeComplete = 0;
-
-                LC.TurnOn_LC_FC = 1;
-                LC.LC_Direction = 1;
-                LC.TaskStart = true;
-            }
-
-            if (TM.TrialTask)
-            {
-                TM.TrialTaskTimer = 0;
-                TM.TurnOnTrialCars = 1;
-                TM.MoveTrialCar = 1;
-                TM.ActivateTC_Speed = true;
-            }
+            IncreaseTaskCount();
+            CheckScenario(1);
         }
 
         if (other.gameObject.CompareTag("TaskStartPoint_2"))
         {
-            if (DC.MainTask)
-            {
-                if (TimerForTaskCountThresholding > 2)
-                {
-                    if (DC.FirstTaskCountThreshold)
-                        DC.taskCount++;
-                    else
-                        DC.FirstTaskCountThreshold = true;
-
-                    TimerForTaskCountThresholding = 0;
-                }
-
-                CSV.Create_CSV_File = true;
-                CSV.DataLoggingStart = true;
-                DC.LaneChangeComplete = 0;
-
-                LC.TurnOn_LC_FC = 2;
-                LC.LC_Direction = 2;
-                LC.TaskStart = true;
-            }
-
-            if (TM.TrialTask)
-            {
-                TM.TrialTaskTimer = 0;
-                TM.TurnOnTrialCars = 2;
-                TM.MoveTrialCar = 2;
-                TM.ActivateTC_Speed = true;
-            }
+            IncreaseTaskCount();
+            CheckScenario(2);
         }
     }
 
@@ -176,5 +86,75 @@ public class DC_Collidor : MonoBehaviour
     {
         if (DrivingIn2ndLane && other.tag == ("LaneChangeTimeCalculator"))
             DC.LaneChangeComplete = 1;
+    }
+
+    void RespawnOtherCars()
+    {
+        CSV.DataLoggingEnd = true;
+        FC.RespawnTrigger = true;
+        LC.RespawnTrigger = true;
+        TM.RespawnTrigger = true;
+    }
+    void CheckTaskCount()
+    {
+        if (DC.taskCount == TaskCountNum)
+        {
+            QuestionnaireStartNotice.SetActive(true);
+            DC.taskCount = 0;
+            DC.FirstTaskCountThreshold = false;
+        }
+        else if (DC.taskCount < TaskCountNum)
+            TaskFailureNotice.SetActive(true);
+    }
+    void IncreaseTaskCount()
+    {
+        if (TimerForTaskCountThresholding > 2)
+        {
+            if (DC.FirstTaskCountThreshold)
+                DC.taskCount++;
+            else
+                DC.FirstTaskCountThreshold = true;
+
+            TimerForTaskCountThresholding = 0;
+        }
+    }
+    void CheckScenario(int Direction)
+    {
+        if (DC.TaskScenario[DC.CMSchangeCount - 1, DC.taskCount] > 0)
+        {
+            CSV.Create_CSV_File = true;
+            CSV.DataLoggingStart = true;
+            DC.LaneChangeComplete = 0;
+
+            LC.TurnOn_LC_FC = Direction;
+            LC.LC_Direction = Direction;
+            LC.TaskStart = true;
+        }
+        else if (DC.LaneChangeTime[DC.CMSchangeCount - 1, DC.taskCount] < 0)
+        {
+            TM.TurnOnTrialCars = Direction;
+            TM.MoveTrialCar = Direction;
+        }
+    }
+
+    void FadeInOut()
+    {
+        FadingTimer += Time.deltaTime;
+        DoNotMoveNotice.SetActive(true);
+
+        if (FadingEvent && alpha <= 1.05f)
+            alpha += .05f;
+        else if (!FadingEvent && alpha >= -0.5)
+            alpha -= .05f;
+
+        Color nNew = new Color(0, 0, 0, alpha);
+        _mat.SetColor("_BaseColor", nNew);
+
+        if (FadingTimer > 3)
+        {
+            DoNotMoveNotice.SetActive(false);
+            FadingTimer = 0;
+            Activate_Fade = false;
+        }
     }
 }

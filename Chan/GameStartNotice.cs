@@ -40,10 +40,10 @@ public class GameStartNotice : MonoBehaviour
                     if (ThresholdTimer > 0.3f)
                     {
                         if (rec.rgbButtons[1] == 128 && Num != 0)
-                            {
-                                Num--;
-                                ThresholdTimer = 0;
-                            }
+                        {
+                            Num--;
+                            ThresholdTimer = 0;
+                        }
 
                         if (rec.rgbButtons[2] == 128)
                         {
@@ -57,11 +57,11 @@ public class GameStartNotice : MonoBehaviour
                             ThresholdTimer = 0;
                         }
 
-                        if (rec.rgbButtons[0] == 128 && Num -10 >= 0)
-                            {
-                                Num -= 10;
-                                ThresholdTimer = 0;
-                            }
+                        if (rec.rgbButtons[0] == 128 && Num - 10 >= 0)
+                        {
+                            Num -= 10;
+                            ThresholdTimer = 0;
+                        }
                     }
                     SN.text = Num.ToString();
 
@@ -102,6 +102,7 @@ public class GameStartNotice : MonoBehaviour
                             TrialStartNotice.SetActive(true);
                             DC.SelectArray = true;
                             gameObject.SetActive(false);
+                            Destroy(gameObject);
                             break;
                     }
                 }
