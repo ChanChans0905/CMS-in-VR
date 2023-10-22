@@ -303,15 +303,16 @@ public class DemoCarController : MonoBehaviour
         SelectArray = false;
     }
 
-    public void ActivateCar(float Timer, GameObject Self)
-    {
-        RespawnTrigger = false;
-        waitTimer = 0;
-        DC_C.FadingEvent = false;
-        DC_C.Activate_Fade = true;
-        Timer = 0;
-        Self.SetActive(false);
-    }
+    //public void ActivateCar(float Timer, GameObject Self)
+    //{
+    //    RespawnTrigger = false;
+    //    waitTimer = 0;
+    //    DC_C.FadingEvent = false;
+    //    DC_C.Activate_Fade = true;
+    //    Timer = 0;
+    //    Debug.Log(Timer);
+    //    Self.SetActive(false);
+    //}
 
     void ResetCMS()
     {
@@ -335,14 +336,14 @@ public class DemoCarController : MonoBehaviour
         CMScombination_Array = new int[,] { /*{ 1,2,3,4,5,6,7}*/{ 1, 2, 3, 4, 5, 6, 7 }, { 1, 4, 2, 3, 7, 6, 5 }, { 1, 6, 4, 2, 3, 7, 5 }, { 2, 5, 7, 1, 6, 4, 3 }, { 3, 2, 5, 4, 6, 1, 7 }, { 3, 6, 4, 2, 1, 5, 7 },
                                             { 4, 2, 7, 3, 1, 5, 6 }, { 5, 2, 1, 4, 7, 3, 6 }, { 5, 4, 1, 2, 6, 3, 7 }, { 6, 1, 5, 7, 2, 4, 3 }, { 7, 2, 6, 4, 5, 3, 1 } };
 
-        FollowingCarSpeed = new int[,] { {-2, -1, 1, 2, 1, 2, 1, 2}, {-2, -1, 2, 1, 2, 1, 2, 1}, {-2, -1, 1, 1, 2, 2, 1, 1}, {-2, -1, 2, 2, 1, 1, 2, 2}, {-2, -1, 2, 1, 1, 2, 1, 2},
-                                            {-2, -1, 1, 2, 2, 1, 2, 1}, {-2, -1, 2, 1, 1, 1, 2, 1} };
+        FollowingCarSpeed = new int[,] { {-1, -1, 1, 2, 1, 2, 1, 2}, {-1, -1, 2, 1, 2, 1, 2, 1}, {-1, -1, 1, 1, 2, 2, 1, 1}, {-1, -1, 2, 2, 1, 1, 2, 2}, {-1, -1, 2, 1, 1, 2, 1, 2},
+                                            {-1, -1, 1, 2, 2, 1, 2, 1}, {-1, -1, 2, 1, 1, 1, 2, 1} };
 
-        TaskScenario = new int[,] { {-2, -1, 1, 2, 3, 1, 2, 3}, {-2, -1, 1, 3, 2, 2, 1, 3}, {-2, -1, 1, 3, 1, 2, 3, 2}, {-2, -1, 1, 2, 3, 2, 3, 1}, {-2, -1, 2, 1, 2, 3, 3, 1},
-                                          {-2, -1, 2, 3, 1, 2, 3, 1}, {-2, -1, 2, 1, 2, 3, 1, 3} };
+        TaskScenario = new int[,] { {-1, -1, 1, 2, 3, 1, 2, 3}, {-1, -1, 1, 3, 2, 2, 1, 3}, {-1, -1, 1, 3, 1, 2, 3, 2}, {-1, -1, 1, 2, 3, 2, 3, 1}, {-1, -1, 2, 1, 2, 3, 3, 1},
+                                          {-1, -1, 2, 3, 1, 2, 3, 1}, {-1, -1, 2, 1, 2, 3, 1, 3} };
 
-        LaneChangeTime = new int[,] {{ -2,-1, 1, 0, 3, 5, 7, 9 }, { -2,-1, 3, 7, 1, 0, 5, 9 }, {-2,-1, 9, 5, 1, 7, 3, 0 }, {-2, -1, 7, 5, 9, 0, 1, 3}, {-2, -1, 5, 1, 9, 7, 0, 3},
-                                        {-2, -1, 1, 7, 0, 5, 3, 9}, {-2, -1, 9, 3, 7, 1, 0, 5} };
+        LaneChangeTime = new int[,] {{ -1,-1, 1, 0, 3, 5, 7, 9 }, { -1,-1, 3, 7, 1, 0, 5, 9 }, {-1,-1, 9, 5, 1, 7, 3, 0 }, {-1, -1, 7, 5, 9, 0, 1, 3}, {-1, -1, 5, 1, 9, 7, 0, 3},
+                                        {-1, -1, 1, 7, 0, 5, 3, 9}, {-1, -1, 9, 3, 7, 1, 0, 5} };
 
         for (int i = 0; i < CMScombination.Length; i++)
             CMScombination[i] = CMScombination_Array[SampleNumber, i];
@@ -373,8 +374,13 @@ public class DemoCarController : MonoBehaviour
             DC_C.Activate_Fade = true;
             velocity.Value = 0;
             wheelTorque.Value = wheelTorqueValue;
-            VolvoCar.transform.localPosition = new Vector3(-2166, 0, 2300);
-            VolvoCar.transform.rotation = Quaternion.Slerp(VolvoCar.transform.rotation, Quaternion.AngleAxis(-90, Vector3.up), 3f * Time.deltaTime);
+            FixCarPos();
         }
+    }
+
+    public void FixCarPos()
+    {
+        VolvoCar.transform.localPosition = new Vector3(-2166, 0, 2300);
+        VolvoCar.transform.rotation = Quaternion.Slerp(VolvoCar.transform.rotation, Quaternion.AngleAxis(-90, Vector3.up), 3f * Time.deltaTime);
     }
 }

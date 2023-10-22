@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Rendering.HighDefinition;
 using UnityEngine.UI;
+using VolvoCars.Data;
 
 public class GameStartNotice : MonoBehaviour
 {
@@ -11,6 +12,7 @@ public class GameStartNotice : MonoBehaviour
     [SerializeField] DemoCarController DC;
 
     public GameObject WelcomeNotice, KeepLaneNotice, ProcessNotice, TrialStartNotice, SampleSelectionNotice;
+    public GameObject VolvoCar;
 
     public Text SN;
     int Num;
@@ -32,6 +34,8 @@ public class GameStartNotice : MonoBehaviour
             {
                 LogitechGSDK.DIJOYSTATE2ENGINES rec;
                 rec = LogitechGSDK.LogiGetStateUnity(0);
+
+                DC.FixCarPos();
 
                 ThresholdTimer += Time.deltaTime;
 

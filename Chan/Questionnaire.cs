@@ -27,6 +27,8 @@ public class Questionnaire : MonoBehaviour
     {
         if (QuestionnairePhase)
         {
+            Debug.Log("QuestionnairePhase");
+
             if (LogitechGSDK.LogiUpdate() && LogitechGSDK.LogiIsConnected(0))
             {
                 LogitechGSDK.DIJOYSTATE2ENGINES rec;
@@ -74,6 +76,8 @@ public class Questionnaire : MonoBehaviour
         LogitechGSDK.DIJOYSTATE2ENGINES rec;
         rec = LogitechGSDK.LogiGetStateUnity(0);
 
+        List<Transform> children = GetChildren(transform);
+
         if (rec.lX < -5000) { AnswerSlider.value = 1; }
         else if (rec.lX < -3000 && rec.lX > -5000) { AnswerSlider.value = 2; }
         else if (rec.lX < -1000 && rec.lX > -3000) { AnswerSlider.value = 3; }
@@ -87,6 +91,8 @@ public class Questionnaire : MonoBehaviour
     {
         if (QuestionnaireNumber < 12)
         {
+            List<Transform> children = GetChildren(transform);
+
             QuestionnaireNumber++;
             children[QuestionnaireNumber].gameObject.SetActive(true);
             children[QuestionnaireNumber - 1].gameObject.SetActive(false);
@@ -94,6 +100,8 @@ public class Questionnaire : MonoBehaviour
         }
         else if (QuestionnaireNumber == 12)
         {
+            List<Transform> children = GetChildren(transform);
+
             QuestionnaireNumber++;
             children[QuestionnaireNumber - 1].gameObject.SetActive(false);
             SaveTriggerObject.SetActive(true);
@@ -106,6 +114,8 @@ public class Questionnaire : MonoBehaviour
     {
         if (QuestionnaireNumber > 1 && QuestionnaireNumber != 13)
         {
+            List<Transform> children = GetChildren(transform);
+
             children[QuestionnaireNumber].gameObject.SetActive(false);
             children[QuestionnaireNumber - 1].gameObject.SetActive(true);
             AnswerSlider = children[QuestionnaireNumber - 1].GetComponent<Slider>();
@@ -133,12 +143,14 @@ public class Questionnaire : MonoBehaviour
         {
             DC.CMSchangeBool = true;
             TrialStartNotice.SetActive(true);
+            gameObject.SetActive(false);
         }
 
         if (DC.QuestionnaireCount == 7)
         {
             DC.FinalQuestionnaireBool = true;
             FinalQuestionnaireStartNotice.SetActive(true);
+            gameObject.SetActive(false);
         }
     }
 

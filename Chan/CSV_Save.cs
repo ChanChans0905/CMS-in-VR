@@ -65,9 +65,10 @@ public class CSV_Save : MonoBehaviour
 
         if (DataLoggingEnd)
         {
+            Debug.Log("DatalogEnd");
             DataLoggingStart = false;
-            DataLoggingEnd = false;
             DC.ResetTrigger = true;
+            DataLoggingEnd = false;
         }
     }
 

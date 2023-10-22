@@ -10,7 +10,8 @@ public class LeadingCar : MonoBehaviour
     public Transform TargetCar;
     public GameObject Obstacle_1, Obstacle_2;
     public GameObject LeadingCar_1, LeadingCar_2, LC_1_RearLight, LC_2_RearLight;
-    public GameObject FCL_1, FCR_1, FCB_1, FCL_2, FCR_2, FCB_2, TaskEndPoint_1, TaskEndPoint_2;
+    public GameObject FC_Group_1, FC_Group_2;
+    public GameObject TaskEndPoint_1, TaskEndPoint_2;
     GameObject LeadingCarVelocity;
     Vector3 TargetCarVelocity;
     Vector3 StartPos_LC_1, StartPos_LC_2;
@@ -61,34 +62,38 @@ public class LeadingCar : MonoBehaviour
 
             if (StartScenario_None)
                 None();
-
-            if (RespawnTrigger)
-                Respawn();
         }
+
+        if (RespawnTrigger)
+            Respawn();
     }
 
     void SelectScenario()
     {
         TaskStartTime = DC.LaneChangeTime[DC.CMSchangeCount - 1, DC.taskCount];
 
-        switch (DC.TaskScenario[DC.SampleNumber, DC.taskCount])
+        if(TaskStartTime != 0)
         {
-            case -1:
-                StartTrial = true;
-                break;
-            case 0:
-                StartScenario_None = true;
-                break;
-            case 1:
-                StartScenario_LaneChangeThenStop = true;
-                break;
-            case 2:
-                StartScenario_LaneChangeWithLowSpeed = true;
-                break;
-            case 3:
-                StartScenario_Obstacle = true;
-                break;
+            switch (DC.TaskScenario[DC.CMSchangeCount - 1, DC.taskCount])
+            {
+                case -1:
+                    StartTrial = true;
+                    break;
+                case 1:
+                    StartScenario_LaneChangeThenStop = true;
+                    break;
+                case 2:
+                    StartScenario_LaneChangeWithLowSpeed = true;
+                    break;
+                case 3:
+                    StartScenario_Obstacle = true;
+                    break;
+            }
         }
+        else if (TaskStartTime == 0)
+            StartScenario_None = true;
+
+
         TaskStart = false;
     }
 
@@ -97,9 +102,7 @@ public class LeadingCar : MonoBehaviour
         if (TurnOn_LC_FC == 1)
         {
             LeadingCar_1.SetActive(true);
-            FCL_1.SetActive(true);
-            FCR_1.SetActive(true);
-            FCB_1.SetActive(true);
+            FC_Group_1.SetActive(true);
             TaskEndPoint_1.SetActive(true);
             LC_1_RearLight.SetActive(false);
             TurnOn_LC_FC = 0;
@@ -107,9 +110,7 @@ public class LeadingCar : MonoBehaviour
         else if (TurnOn_LC_FC == 2)
         {
             LeadingCar_2.SetActive(true);
-            FCL_2.SetActive(true);
-            FCR_2.SetActive(true);
-            FCB_2.SetActive(true);
+            FC_Group_2.SetActive(true);
             TaskEndPoint_2.SetActive(true);
             LC_2_RearLight.SetActive(false);
             TurnOn_LC_FC = 0;
@@ -191,7 +192,7 @@ public class LeadingCar : MonoBehaviour
         OvertakeTimer += Time.deltaTime;
 
         if (OvertakeTimer <= 10 + TaskStartTime)
-            SetDistance(1);
+            SetDistance(2);
 
         if (OvertakeTimer >= 10 + TaskStartTime && OvertakeTimer <= 13 + TaskStartTime)
         {            
@@ -202,7 +203,7 @@ public class LeadingCar : MonoBehaviour
             if (DrivingDirection == 1)
                 TargetCarVelocity.x = 2f;
 
-            if (OvertakeTimer > 11)
+            if (OvertakeTimer > 10.5f + TaskStartTime)
                 LC_StoppingTime = 1;
 
             LC_1_RearLight.SetActive(true);

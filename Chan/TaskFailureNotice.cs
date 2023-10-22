@@ -7,7 +7,7 @@ public class TaskFailureNotice : MonoBehaviour
     [SerializeField] DemoCarController DC;
     [SerializeField] DC_Collidor DC_C;
 
-    float Timer;
+    public float Timer;
 
     void Update()
     {
@@ -18,9 +18,19 @@ public class TaskFailureNotice : MonoBehaviour
 
             Timer += Time.deltaTime;
 
-            if(Timer > 3.5f)
+            DC.FixCarPos();
+
+            if (Timer > 3.5f)
                 if (rec.rgbButtons[5] == 128)
-                    DC.ActivateCar(Timer, gameObject);
+                {
+                    DC.RespawnTrigger = false;
+                    DC.waitTimer = 0;
+                    DC_C.FadingEvent = false;
+                    DC_C.Activate_Fade = true;
+                    Timer = 0;
+                    gameObject.SetActive(false);
+                }
+
         }
     }
 }

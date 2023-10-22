@@ -18,10 +18,17 @@ public class TrialStartNotice : MonoBehaviour
 
             Timer += Time.deltaTime;
 
+            DC.FixCarPos();
+
             if (Timer > 3.5f)
                 if (rec.rgbButtons[5] == 128)
                 {
-                    DC.ActivateCar(Timer, gameObject);
+                    DC.RespawnTrigger = false;
+                    DC.waitTimer = 0;
+                    DC_C.FadingEvent = false;
+                    DC_C.Activate_Fade = true;
+                    Timer = 0;
+                    gameObject.SetActive(false);
                     DC.DrivingPhase = true;
                 }
         }

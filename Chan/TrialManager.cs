@@ -14,7 +14,7 @@ public class TrialManager : MonoBehaviour
     public GameObject TC_1_L1, TC_1_L2, TC_1_L3, TC_1_L4, TC_1_R1, TC_1_R2, TC_1_R3, TC_1_R4;
     public GameObject TC_2_L1, TC_2_L2, TC_2_L3, TC_2_L4, TC_2_R1, TC_2_R2, TC_2_R3, TC_2_R4;
     public GameObject TC_Parent_1, TC_Parent_2;
-    
+    public GameObject TaskEndPoint_1, TaskEndPoint_2;
     public GameObject TrialStartNotice, TaskStartNotice;
 
     Vector3 StartPos_TC_1_L, StartPos_TC_1_R;
@@ -55,11 +55,13 @@ public class TrialManager : MonoBehaviour
 
         if (TurnOnTrialCars == 1)
         {
+            TaskEndPoint_1.SetActive(true);
             TC_Parent_1.SetActive(true);
             TurnOnTrialCars = 0;
         }
         else if (TurnOnTrialCars == 2)
         {
+            TaskEndPoint_2.SetActive(true);
             TC_Parent_2.SetActive(true);
             TurnOnTrialCars = 0;
         }
