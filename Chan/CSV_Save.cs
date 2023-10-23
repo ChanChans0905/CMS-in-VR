@@ -26,6 +26,8 @@ public class CSV_Save : MonoBehaviour
 
     float[] DataArray = new float[29];
     float FrameNumber;
+    float EndLoggingTimer;
+    public bool AddEndloggingTimer;
 
     private void Start()
     {
@@ -44,6 +46,19 @@ public class CSV_Save : MonoBehaviour
             SaveDataIntoArray();
             AppendToCsv(DataArray);
         }
+
+        if (AddEndloggingTimer && EndLoggingTimer < 3)
+            EndLoggingTimer += Time.deltaTime;
+
+        if (DataLoggingEnd && EndLoggingTimer > 2f)
+        {
+            Debug.Log("DatalogEnd");
+            DataLoggingStart = false;
+            DataLoggingEnd = false;
+            DC.ResetTrigger = true;
+            EndLoggingTimer = 0;
+            AddEndloggingTimer = false;
+        }
     }
 
     private void AppendToCsv(float[] data)
@@ -61,14 +76,6 @@ public class CSV_Save : MonoBehaviour
             }
             csvFinalString += csvSeparator;
             sw.WriteLine(csvFinalString);
-        }
-
-        if (DataLoggingEnd)
-        {
-            Debug.Log("DatalogEnd");
-            DataLoggingStart = false;
-            DC.ResetTrigger = true;
-            DataLoggingEnd = false;
         }
     }
 

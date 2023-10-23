@@ -9,7 +9,7 @@ public class AR_Manager : MonoBehaviour
 
     public GameObject AR_Signal_CMS_5_L, AR_Signal_CMS_5_R, AR_Signal_CMS_6_L, AR_Signal_CMS_6_R, AR_Signal_CMS_7_L, AR_Signal_CMS_7_R;
 
-    int TurnOn_AR_Signal_L, TurnOn_AR_Signal_R;
+    public int TurnOn_AR_Signal_L, TurnOn_AR_Signal_R;
 
     void FixedUpdate()
     {
@@ -28,23 +28,6 @@ public class AR_Manager : MonoBehaviour
             if (DC.RespawnTrigger)
                 Respawn();
         }
-    }
-    private void OnTriggerStay(Collider other)
-    {
-        if (other.tag == "AR_Signal_L" || other.tag == "TC_L")
-            TurnOn_AR_Signal_L = 1;
-
-        if (other.tag == "AR_Signal_R" || other.tag == "TC_R") 
-            TurnOn_AR_Signal_R = 1;
-    }
-
-    private void OnTriggerExit(Collider other)
-    {
-        if (other.tag == "AR_Signal_L" || other.tag == "TC_L")
-            TurnOn_AR_Signal_L = 2;
-
-        if (other.tag == "AR_Signal_R" || other.tag == "TC_R")
-            TurnOn_AR_Signal_R = 2;
     }
 
     void Respawn()
