@@ -50,9 +50,6 @@ public class DemoCarController : MonoBehaviour
     public int QuestionnaireCount;
     public bool FinalQuestionnaireBool;
 
-    // Car
-    public float FC1Lposition, FC1Rposition, LC1position, FC2Lposition, FC2Rposition, LC2position, DCposition;
-
     // Array
     public bool SelectArray;
     public int laneChangeDirection;
@@ -64,10 +61,12 @@ public class DemoCarController : MonoBehaviour
 
     // Data
     public float Acc, Br, SW, SteeringWheel_Data, Pedal_Data;
+    public float VelocityValue;
     int ReactionStarted, ReactionNoCount;
     public int TotalFirstReactionValue, NumOfCollision;
     float FirstReactionTimer;
     public int LaneChangeComplete;
+    public float FC1Lposition, FC1Rposition, LC1position, FC2Lposition, FC2Rposition, LC2position, DCposition;
 
     #region Private variables not shown in the inspector
     private VolvoCars.Data.Value.Public.WheelTorque wheelTorqueValue = new VolvoCars.Data.Value.Public.WheelTorque(); // This is the value type used by the wheelTorque data item.     
@@ -89,6 +88,7 @@ public class DemoCarController : MonoBehaviour
             float rawForwardInput /*= Input.GetAxis("Vertical")*/;
             float parkInput = Input.GetAxis("Jump");
 
+            VelocityValue = velocity.Value;
             Acc = (32768f - rec.lY) / 65536f;
             Br = (rec.lRz - 32768f) / 65536f;
             rawForwardInput = Acc + Br;
@@ -179,10 +179,10 @@ public class DemoCarController : MonoBehaviour
             if (velocity.Value >= 27.7f)
                 totalTorque = 0;
 
-            if (velocity.Value > 0)
-                EngineSound.SetActive(true);
-            else if (velocity.Value < 0)
-                EngineSound.SetActive(false);
+            //if (velocity.Value > 0)
+            //    EngineSound.SetActive(true);
+            //else if (velocity.Value < 0)
+            //    EngineSound.SetActive(false);
 
             ApplyWheelTorques(totalTorque);
 
@@ -342,7 +342,7 @@ public class DemoCarController : MonoBehaviour
         TaskScenario = new int[,] { {-1, -1, 1, 2, 3, 1, 2, 3}, {-1, -1, 1, 3, 2, 2, 1, 3}, {-1, -1, 1, 3, 1, 2, 3, 2}, {-1, -1, 1, 2, 3, 2, 3, 1}, {-1, -1, 2, 1, 2, 3, 3, 1},
                                           {-1, -1, 2, 3, 1, 2, 3, 1}, {-1, -1, 2, 1, 2, 3, 1, 3} };
 
-        LaneChangeTime = new int[,] {{ -1,-1, 1, 0, 3, 5, 7, 9 }, { -1,-1, 3, 7, 1, 0, 5, 9 }, {-1,-1, 9, 5, 1, 7, 3, 0 }, {-1, -1, 7, 5, 9, 0, 1, 3}, {-1, -1, 5, 1, 9, 7, 0, 3},
+        LaneChangeTime = new int[,] {{ -1,-1, 1, 0, 3, 5, 7, 9 }, { -1,-1, 3, 7, 1, 0, 5, 9 }, {-1,-1, 9, 5, 1, 7, 0, 3 }, {-1, -1, 7, 5, 9, 0, 1, 3}, {-1, -1, 5, 1, 9, 7, 0, 3},
                                         {-1, -1, 1, 7, 0, 5, 3, 9}, {-1, -1, 9, 3, 7, 1, 0, 5} };
 
         for (int i = 0; i < CMScombination.Length; i++)
