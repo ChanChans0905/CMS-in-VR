@@ -144,8 +144,11 @@ public class LeadingCar : MonoBehaviour
 
     void GetDistance()
     {
+        // increase the value ?
+        // now it takes about 2 seconds to the crash
+        // 3~6 seconds might be enough for checking the side mirrors
         if (TargetCarVelocity.z > 27 || TargetCarVelocity.z < -27)
-            StoppingDistance = 80;
+            StoppingDistance = 80; 
         else if (TargetCarVelocity.z > 25 || TargetCarVelocity.z < -25)
             StoppingDistance = 75;
         else if (TargetCarVelocity.z > 22 || TargetCarVelocity.z < -22)
