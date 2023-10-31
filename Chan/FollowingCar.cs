@@ -121,9 +121,7 @@ public class FollowingCar : MonoBehaviour
         if (AccelSpeed == 1)
         {
             // LCR is faster
-            FCL_Velocity.GetComponent<Rigidbody>().velocity = 30f;
-            FCR_Velocity.GetComponent<Rigidbody>().velocity = 30ff;
-            FCB_Velocity.GetComponent<Rigidbody>().velocity = 20f;
+            // re-change to the lerp
             TargetCarVelocity.x = 0;
             TargetCarVelocity.y = 0;
             TargetCarVelocity.z = 0;
@@ -131,9 +129,7 @@ public class FollowingCar : MonoBehaviour
         else if (AccelSpeed == 2)
         {
             // LCL is faster
-            FCL_Velocity.GetComponent<Rigidbody>().velocity = 20f;
-            FCR_Velocity.GetComponent<Rigidbody>().velocity = 30f;
-            FCB_Velocity.GetComponent<Rigidbody>().velocity = 30f;
+// re-change to the lerp
             TargetCarVelocity.x = 0;
             TargetCarVelocity.y = 0;
             TargetCarVelocity.z = 0;
