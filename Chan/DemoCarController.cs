@@ -53,9 +53,9 @@ public class DemoCarController : MonoBehaviour
     // Array
     public bool SelectArray;
     public int laneChangeDirection;
-    public int[,] TaskScenario = new int[7, 8];
-    public int[,] LaneChangeTime = new int[7, 8]; // make the 2 dimension list by using counter-balance
-    public int[,] FollowingCarSpeed = new int[7, 8];
+    public int[,] TaskScenario = new int[7, 7];
+    public int[,] LaneChangeTime = new int[7, 7]; // make the 2 dimension list by using counter-balance
+    public int[,] FollowingCarSpeed = new int[7, 7];
     public int[] CMScombination = new int[7];
     int[,] CMScombination_Array = new int[70, 7];
 
@@ -336,14 +336,14 @@ public class DemoCarController : MonoBehaviour
         CMScombination_Array = new int[,] { /*{ 1,2,3,4,5,6,7}*/{ 6, 2, 3, 4, 5, 6, 7 }, { 1, 4, 2, 3, 7, 6, 5 }, { 1, 6, 4, 2, 3, 7, 5 }, { 2, 5, 7, 1, 6, 4, 3 }, { 3, 2, 5, 4, 6, 1, 7 }, { 3, 6, 4, 2, 1, 5, 7 },
                                             { 4, 2, 7, 3, 1, 5, 6 }, { 5, 2, 1, 4, 7, 3, 6 }, { 5, 4, 1, 2, 6, 3, 7 }, { 6, 1, 5, 7, 2, 4, 3 }, { 7, 2, 6, 4, 5, 3, 1 } };
 
-        FollowingCarSpeed = new int[,] { {-1, -1, 1, 2, 1, 2, 1, 2}, {-1, -1, 2, 1, 2, 1, 2, 1}, {-1, -1, 1, 1, 2, 2, 1, 1}, {-1, -1, 2, 2, 1, 1, 2, 2}, {-1, -1, 2, 1, 1, 2, 1, 2},
-                                            {-1, -1, 1, 2, 2, 1, 2, 1}, {-1, -1, 2, 1, 1, 1, 2, 1} };
+        FollowingCarSpeed = new int[,] { { -1, 1, 2, 1, 2, 1, 2}, { -1, 2, 1, 2, 1, 2, 1}, {-1, 1, 1, 2, 2, 1, 1}, {-1, 2, 2, 1, 1, 2, 2}, {-1, 2, 1, 1, 2, 1, 2},
+                                            {-1, 1, 2, 2, 1, 2, 1}, {-1, 2, 1, 1, 1, 2, 1} };
 
-        TaskScenario = new int[,] { {-1, -1, 1, 2, 3, 1, 2, 3}, {-1, -1, 1, 3, 2, 2, 1, 3}, {-1, -1, 1, 3, 1, 2, 3, 2}, {-1, -1, 1, 2, 3, 2, 3, 1}, {-1, -1, 2, 1, 2, 3, 3, 1},
-                                          {-1, -1, 2, 3, 1, 2, 3, 1}, {-1, -1, 2, 1, 2, 3, 1, 3} };
+        TaskScenario = new int[,] { {-1, 1, 2, 3, 1, 2, 3}, {-1, 1, 3, 2, 2, 1, 3}, {-1, 1, 3, 1, 2, 3, 2}, {-1, 1, 2, 3, 2, 3, 1}, {-1, 2, 1, 2, 3, 3, 1},
+                                          {-1, 2, 3, 1, 2, 3, 1}, {-1, 2, 1, 2, 3, 1, 3} };
 
-        LaneChangeTime = new int[,] {{ -1,-1, 1, 0, 3, 5, 7, 9 }, { -1,-1, 3, 7, 1, 0, 5, 9 }, {-1,-1, 9, 5, 1, 7, 0, 3 }, {-1, -1, 7, 5, 9, 0, 1, 3}, {-1, -1, 5, 1, 9, 7, 0, 3},
-                                        {-1, -1, 1, 7, 0, 5, 3, 9}, {-1, -1, 9, 3, 7, 1, 0, 5} };
+        LaneChangeTime = new int[,] {{ -1, 1, 0, 3, 5, 7, 9 }, { -1, 3, 7, 1, 0, 5, 9 }, {-1, 9, 5, 1, 7, 0, 3 }, {-1, 7, 5, 9, 0, 1, 3}, {-1, 5, 1, 9, 7, 0, 3},
+                                        {-1, 1, 7, 0, 5, 3, 9}, {-1, 9, 3, 7, 1, 0, 5} };
 
         for (int i = 0; i < CMScombination.Length; i++)
             CMScombination[i] = CMScombination_Array[SampleNumber, i];

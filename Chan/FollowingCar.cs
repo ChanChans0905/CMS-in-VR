@@ -121,7 +121,9 @@ public class FollowingCar : MonoBehaviour
         if (AccelSpeed == 1)
         {
             // LCR is faster
-            // re-change to the lerp
+            FCL_Velocity.transform.position = Vector3.Lerp(FCL_Velocity.transform.position, LC_StopPos_for_FC_L, FC_Fast_ReachingPercent / 200f);
+            FCR_Velocity.transform.position = Vector3.Lerp(FCR_Velocity.transform.position, LC_StopPos_for_FC_R, FC_Fast_ReachingPercent / 80f);
+            FCB_Velocity.transform.position = Vector3.Lerp(FCB_Velocity.transform.position, LC_StopPos_for_FC_B, FC_Fast_ReachingPercent / 200f);
             TargetCarVelocity.x = 0;
             TargetCarVelocity.y = 0;
             TargetCarVelocity.z = 0;
@@ -129,7 +131,9 @@ public class FollowingCar : MonoBehaviour
         else if (AccelSpeed == 2)
         {
             // LCL is faster
-// re-change to the lerp
+            FCL_Velocity.transform.position = Vector3.Lerp(FCL_Velocity.transform.position, LC_StopPos_for_FC_L, FC_Fast_ReachingPercent / 80f);
+            FCR_Velocity.transform.position = Vector3.Lerp(FCR_Velocity.transform.position, LC_StopPos_for_FC_R, FC_Fast_ReachingPercent / 200f);
+            FCB_Velocity.transform.position = Vector3.Lerp(FCB_Velocity.transform.position, LC_StopPos_for_FC_B, FC_Fast_ReachingPercent / 200f);
             TargetCarVelocity.x = 0;
             TargetCarVelocity.y = 0;
             TargetCarVelocity.z = 0;

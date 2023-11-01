@@ -19,7 +19,7 @@ public class Questionnaire : MonoBehaviour
     public int QuestionnaireNumber;
     string csvSeparator = ",";
     string csvFileName;
-    string csvDirectoryName = "Questionnaire";
+    string csvDirectoryName = "Questionnaire_CMS_";
     string[] csvHeaders = new string[2] { "Questionnaire", "Answer" };
     float ThresholdTimer;
 

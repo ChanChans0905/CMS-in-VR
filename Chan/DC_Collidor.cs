@@ -16,7 +16,7 @@ public class DC_Collidor : MonoBehaviour
     private Material _mat;
     public bool DrivingIn2ndLane;
     float TimerForTaskCountThresholding, FadingTimer, TimerForTriggerThresholding;
-    int TaskCountNum = 7;
+    int TaskCountNum = 6;
 
     void Start()
     {
@@ -38,7 +38,7 @@ public class DC_Collidor : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        if (other.gameObject.CompareTag("AR_Signal_L") || other.gameObject.CompareTag("AR_Signal_R") || other.gameObject.CompareTag("FC"))
+        if (other.gameObject.CompareTag("LC") || other.gameObject.CompareTag("FC"))
         {
             if (TimerForTriggerThresholding > 2)
             {
@@ -115,7 +115,7 @@ public class DC_Collidor : MonoBehaviour
     }
     void CheckTaskCount()
     {
-        if ((DC.taskCount != TaskCountNum) && (DC.taskCount != 1))
+        if ((DC.taskCount != TaskCountNum) && (DC.taskCount != 0))
         {
             Debug.Log("Entered");
             if (DC.NumOfCollision > 0)
@@ -131,7 +131,7 @@ public class DC_Collidor : MonoBehaviour
             DC.taskCount = 0;
             DC.FirstTaskCountThreshold = false;
         }
-        else if (DC.taskCount == 1)
+        else if (DC.taskCount == 0)
         {
             DC.RespawnTrigger = true;
             TaskStartNotice.SetActive(true);
@@ -177,10 +177,10 @@ public class DC_Collidor : MonoBehaviour
         FadingTimer += Time.deltaTime;
         //DoNotMoveNotice.SetActive(true);
 
-        if (FadingEvent && alpha <= 1.05f)
-            alpha += .05f;
-        else if (!FadingEvent && alpha >= -0.5)
-            alpha -= .05f;
+        if (FadingEvent && alpha <= 1.01f)
+            alpha += .01f;
+        else if (!FadingEvent && alpha >= -0.1f)
+            alpha -= .01f;
 
         Color nNew = new Color(0, 0, 0, alpha);
         _mat.SetColor("_BaseColor", nNew);

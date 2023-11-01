@@ -148,13 +148,13 @@ public class LeadingCar : MonoBehaviour
         // now it takes about 2 seconds to the crash
         // 3~6 seconds might be enough for checking the side mirrors
         if (TargetCarVelocity.z > 27 || TargetCarVelocity.z < -27)
-            StoppingDistance = 80; 
+            StoppingDistance = 97.195f; //80, 120 
         else if (TargetCarVelocity.z > 25 || TargetCarVelocity.z < -25)
-            StoppingDistance = 75;
+            StoppingDistance = 91f; // 75
         else if (TargetCarVelocity.z > 22 || TargetCarVelocity.z < -22)
-            StoppingDistance = 66;
+            StoppingDistance = 84f; //66
         else if (TargetCarVelocity.z > 19 || TargetCarVelocity.z < -19)
-            StoppingDistance = 57;
+            StoppingDistance = 73.5f; // 57
     }
 
     void LaneChangeThenStop()
