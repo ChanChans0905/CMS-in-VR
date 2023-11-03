@@ -26,6 +26,7 @@ public class FollowingCar : MonoBehaviour
     //float FC_Fast_ReachingPercent, FC_Slow_ReachingPercent;
     int AccelSpeed;
     public bool RespawnTrigger;
+    public GameObject Box_1, Box_2, Box_3, Box_4;
 
     private void Start()
     {
@@ -122,21 +123,26 @@ public class FollowingCar : MonoBehaviour
         {
             // LCR is faster
             FCL_Velocity.transform.position = Vector3.Lerp(FCL_Velocity.transform.position, LC_StopPos_for_FC_L, FC_Fast_ReachingPercent / 200f);
-            FCR_Velocity.transform.position = Vector3.Lerp(FCR_Velocity.transform.position, LC_StopPos_for_FC_R, FC_Fast_ReachingPercent / 80f);
+            FCR_Velocity.transform.position = Vector3.Lerp(FCR_Velocity.transform.position, LC_StopPos_for_FC_R, FC_Fast_ReachingPercent / 50f);
             FCB_Velocity.transform.position = Vector3.Lerp(FCB_Velocity.transform.position, LC_StopPos_for_FC_B, FC_Fast_ReachingPercent / 200f);
             TargetCarVelocity.x = 0;
             TargetCarVelocity.y = 0;
             TargetCarVelocity.z = 0;
+            Box_1.SetActive(true);
+            Box_2.SetActive(true);
+            
         }
         else if (AccelSpeed == 2)
         {
             // LCL is faster
-            FCL_Velocity.transform.position = Vector3.Lerp(FCL_Velocity.transform.position, LC_StopPos_for_FC_L, FC_Fast_ReachingPercent / 80f);
+            FCL_Velocity.transform.position = Vector3.Lerp(FCL_Velocity.transform.position, LC_StopPos_for_FC_L, FC_Fast_ReachingPercent / 50f);
             FCR_Velocity.transform.position = Vector3.Lerp(FCR_Velocity.transform.position, LC_StopPos_for_FC_R, FC_Fast_ReachingPercent / 200f);
             FCB_Velocity.transform.position = Vector3.Lerp(FCB_Velocity.transform.position, LC_StopPos_for_FC_B, FC_Fast_ReachingPercent / 200f);
             TargetCarVelocity.x = 0;
             TargetCarVelocity.y = 0;
             TargetCarVelocity.z = 0;
+            Box_3.SetActive(true);
+            Box_4.SetActive(true);
         }
     }
 
@@ -156,6 +162,10 @@ public class FollowingCar : MonoBehaviour
         FC_Group_1.SetActive(false);
         FC_Group_2.SetActive(false);
         RespawnTrigger = false;
+        Box_1.SetActive(false);
+        Box_2.SetActive(false);
+        Box_3.SetActive(false);
+        Box_4.SetActive(false);
     }
 }
 
