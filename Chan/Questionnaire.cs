@@ -36,7 +36,7 @@ public class Questionnaire : MonoBehaviour
 
                 List<Transform> children = GetChildren(transform);
 
-                if (ThresholdTimer < 3)
+                if (ThresholdTimer < 2)
                     ThresholdTimer += Time.deltaTime;
 
                 if (FirstSlider)
@@ -48,7 +48,7 @@ public class Questionnaire : MonoBehaviour
                 if(QuestionnaireNumber <= 12)
                     GetSteeringWheelData();
 
-                if (ThresholdTimer > 2)
+                if (ThresholdTimer > 1.5f)
                 {
                     if (rec.rgbButtons[4] == 128)
                         NextQuestion();

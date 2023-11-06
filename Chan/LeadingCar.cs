@@ -148,13 +148,13 @@ public class LeadingCar : MonoBehaviour
         // now it takes about 2 seconds to the crash
         // 3~6 seconds might be enough for checking the side mirrors
         if (TargetCarVelocity.z > 27 || TargetCarVelocity.z < -27)
-            StoppingDistance = 97.195f; //80, 120 
+            StoppingDistance = 111.08f; //80, 120 
         else if (TargetCarVelocity.z > 25 || TargetCarVelocity.z < -25)
-            StoppingDistance = 91f; // 75
+            StoppingDistance = 104f; // 75
         else if (TargetCarVelocity.z > 22 || TargetCarVelocity.z < -22)
-            StoppingDistance = 84f; //66
+            StoppingDistance = 96f; //66
         else if (TargetCarVelocity.z > 19 || TargetCarVelocity.z < -19)
-            StoppingDistance = 73.5f; // 57
+            StoppingDistance = 84f; // 57
     }
 
     void LaneChangeThenStop()
@@ -181,6 +181,7 @@ public class LeadingCar : MonoBehaviour
         if (OvertakeTimer > 8 + TaskStartTime)
         {
             LC_StoppingTime = 1;
+
             TargetCarVelocity.z = 0;
             LC_1_RearLight.SetActive(true);
             LC_2_RearLight.SetActive(true);
@@ -277,11 +278,10 @@ public class LeadingCar : MonoBehaviour
             TargetCarVelocity.x = 0;
         }
 
-        if(OvertakeTimer > 23)
+        if(OvertakeTimer > 14 + TaskStartTime)
         {
-            TargetCarVelocity.z = 0;
-            LC_1_RearLight.SetActive(true);
-            LC_2_RearLight.SetActive(true);
+            LeadingCar_1.SetActive(false);
+            LeadingCar_2.SetActive(false);
         }
 
         LeadingCarVelocity.GetComponent<Rigidbody>().velocity = TargetCarVelocity;

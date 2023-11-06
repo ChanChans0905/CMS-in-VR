@@ -6,7 +6,6 @@ public class TrialStartNotice : MonoBehaviour
 {
     [SerializeField] DemoCarController DC;
     [SerializeField] DC_Collidor DC_C;
-    [SerializeField] TrialManager TM;
     float Timer;
 
     void Update()

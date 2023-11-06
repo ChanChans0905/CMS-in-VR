@@ -17,29 +17,14 @@ public class AR_Manager : MonoBehaviour
         {
             if (TurnOn_AR_Signal_L == 1)
                 ManageLeft(true);
-            else if (TurnOn_AR_Signal_L == 2)
+            else if (TurnOn_AR_Signal_L == 2 || DC.ResetTrigger)
                 ManageLeft(false);
 
             if (TurnOn_AR_Signal_R == 1)
                 ManageRight(true);
-            else if (TurnOn_AR_Signal_R == 2)
+            else if (TurnOn_AR_Signal_R == 2 || DC.ResetTrigger)
                 ManageRight(false);
-
-            if (DC.RespawnTrigger)
-                Respawn();
         }
-    }
-
-    void Respawn()
-    {
-        TurnOn_AR_Signal_L = 0;
-        TurnOn_AR_Signal_R = 0;
-        AR_Signal_CMS_5_L.SetActive(false);
-        AR_Signal_CMS_6_L.SetActive(false);
-        AR_Signal_CMS_7_L.SetActive(false);
-        AR_Signal_CMS_5_R.SetActive(false);
-        AR_Signal_CMS_6_R.SetActive(false);
-        AR_Signal_CMS_7_R.SetActive(false);
     }
 
     void ManageLeft(bool value)

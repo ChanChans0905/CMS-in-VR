@@ -8,9 +8,11 @@ public class DC_Collidor : MonoBehaviour
     [SerializeField] DemoCarController DC;
     [SerializeField] LeadingCar LC;
     [SerializeField] TrialManager TM;
-    [SerializeField] CSV_Save CSV;
+    [SerializeField] CSV_Save_Raw CSV_Raw;
+    [SerializeField] CSV_Save_Processed CSV_Processed;
     [SerializeField] FollowingCar FC;
-    public GameObject QuestionnaireStartNotice, TaskFailureNotice, DoNotMoveNotice, TaskStartNotice;
+    [SerializeField] RayCastToGazeTarget RayCaster;
+    public GameObject QuestionnaireStartNotice, TaskFailureNotice, TaskStartNotice;
     public float alpha = 0;
     public bool Activate_Fade, FadingEvent;
     private Material _mat;
@@ -42,11 +44,12 @@ public class DC_Collidor : MonoBehaviour
         {
             if (TimerForTriggerThresholding > 2)
             {
-                Debug.Log("A activated" + Time.time);
                 DC.NumOfCollision = 1;
+                if (LC.LC_StoppingTime == 1) CSV_Processed.Save_CSV_Analysis();
                 RespawnOtherCars();
                 CheckTaskCount();
                 TimerForTriggerThresholding = 0;
+
             }
         }
 
@@ -54,8 +57,8 @@ public class DC_Collidor : MonoBehaviour
         {
             if (TimerForTriggerThresholding > 2)
             {
-                Debug.Log("B activated" + Time.time);
                 DC.NumOfCollision = 2;
+                if (LC.LC_StoppingTime == 1) CSV_Processed.Save_CSV_Analysis();
                 RespawnOtherCars();
                 CheckTaskCount();
                 TimerForTriggerThresholding = 0;
@@ -66,7 +69,7 @@ public class DC_Collidor : MonoBehaviour
         {
             if (TimerForTriggerThresholding > 2)
             {
-                Debug.Log("C activated" + Time.time);
+                if (LC.LC_StoppingTime == 1) CSV_Processed.Save_CSV_Analysis();
                 RespawnOtherCars();
                 CheckTaskCount();
                 TimerForTriggerThresholding = 0;
@@ -77,6 +80,8 @@ public class DC_Collidor : MonoBehaviour
         {
             if (TimerForTriggerThresholding > 2)
             {
+                RayCaster.DrivingDirection = true;
+                RayCaster.Reset();
                 IncreaseTaskCount();
                 CheckScenario(1);
                 TimerForTriggerThresholding = 0;
@@ -87,6 +92,8 @@ public class DC_Collidor : MonoBehaviour
         {
             if (TimerForTriggerThresholding > 2)
             {
+                RayCaster.DrivingDirection = false;
+                RayCaster.Reset();
                 IncreaseTaskCount();
                 CheckScenario(2);
                 TimerForTriggerThresholding = 0;
@@ -108,16 +115,16 @@ public class DC_Collidor : MonoBehaviour
 
     void RespawnOtherCars()
     {
-        CSV.DataLoggingEnd = true;
+        CSV_Raw.DataLoggingEnd = true;
         FC.RespawnTrigger = true;
         LC.RespawnTrigger = true;
         TM.RespawnTrigger = true;
     }
+
     void CheckTaskCount()
     {
         if ((DC.taskCount != TaskCountNum) && (DC.taskCount != 0))
         {
-            Debug.Log("Entered");
             if (DC.NumOfCollision > 0)
             {
                 DC.RespawnTrigger = true;
@@ -137,8 +144,9 @@ public class DC_Collidor : MonoBehaviour
             TaskStartNotice.SetActive(true);
         }
 
-        CSV.AddEndloggingTimer = true;
+        CSV_Raw.AddEndloggingTimer = true;
     }
+
     void IncreaseTaskCount()
     {
         if (TimerForTaskCountThresholding > 2)
@@ -151,10 +159,11 @@ public class DC_Collidor : MonoBehaviour
             TimerForTaskCountThresholding = 0;
         }
     }
+
     void CheckScenario(int Direction)
     {
-        CSV.Create_CSV_File = true;
-        CSV.DataLoggingStart = true;
+        CSV_Raw.Create_CSV_File = true;
+        CSV_Raw.DataLoggingStart = true;
         DC.LaneChangeComplete = 0;
 
         if (DC.TaskScenario[DC.CMSchangeCount - 1, DC.taskCount] > 0)
@@ -175,19 +184,17 @@ public class DC_Collidor : MonoBehaviour
     void FadeInOut()
     {
         FadingTimer += Time.deltaTime;
-        //DoNotMoveNotice.SetActive(true);
 
-        if (FadingEvent && alpha <= 1.01f)
-            alpha += .01f;
-        else if (!FadingEvent && alpha >= -0.1f)
-            alpha -= .01f;
+        if (FadingEvent)
+            alpha = 1;
+        else if (!FadingEvent)
+            alpha = 0;
 
         Color nNew = new Color(0, 0, 0, alpha);
         _mat.SetColor("_BaseColor", nNew);
 
         if (FadingTimer > 3)
         {
-            //DoNotMoveNotice.SetActive(false);
             FadingTimer = 0;
             Activate_Fade = false;
         }

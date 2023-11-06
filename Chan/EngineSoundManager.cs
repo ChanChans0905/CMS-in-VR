@@ -7,7 +7,7 @@ public class EngineSoundManager : MonoBehaviour
     [SerializeField] DemoCarController DC;
     public AudioSource EngineSound;
 
-    void Update()
+    void FIxedUpdate()
     {
         EngineSound.volume = DC.VelocityValue / 27.7f;
     }

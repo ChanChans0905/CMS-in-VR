@@ -24,12 +24,11 @@ public class DemoCarController : MonoBehaviour
 
     [SerializeField] LeadingCar LC;
     [SerializeField] DC_Collidor DC_C;
+    [SerializeField] CSV_Save_Processed CSV_P;
 
     public GameObject VolvoCar;
-    public GameObject CMS_LD_SW, CMS_LD_TM, CMS_RD_SW, CMS_RD_TM, CMSCenter, CMSStitched, TraditionalMirrorLeft, TraditionalMirrorRight;
+    public GameObject CMS_LD_SW, CMS_LD_TM, CMS_RD_SW, CMS_RD_TM, CMSStitched, TraditionalMirrorLeft, TraditionalMirrorRight;
     public GameObject CMS_CAM_L, CMS_CAM_R, CMS_CAM_S, CAM_TM_L, CAM_TM_R;
-    public GameObject CSV_Manager;
-    public GameObject EngineSound;
 
     // Default
     public int SampleNumber;
@@ -64,7 +63,7 @@ public class DemoCarController : MonoBehaviour
     public float VelocityValue;
     int ReactionStarted, ReactionNoCount;
     public int TotalFirstReactionValue, NumOfCollision;
-    float FirstReactionTimer;
+    float LogTimer;
     public int LaneChangeComplete;
     public float FC1Lposition, FC1Rposition, LC1position, FC2Lposition, FC2Rposition, LC2position, DCposition;
 
@@ -179,27 +178,13 @@ public class DemoCarController : MonoBehaviour
             if (velocity.Value >= 27.7f)
                 totalTorque = 0;
 
-            //if (velocity.Value > 0)
-            //    EngineSound.SetActive(true);
-            //else if (velocity.Value < 0)
-            //    EngineSound.SetActive(false);
-
             ApplyWheelTorques(totalTorque);
 
             if (SelectArray)
                 ApplyArray();
 
             if (LC.LC_StoppingTime == 1)
-            {
-                FirstReactionTimer += Time.deltaTime;
-                if (FirstReactionTimer <= 0.1f && (Br <= -0.7 || Mathf.Abs(SteeringWheel_Data) > 0.02f))
-                    ReactionNoCount = 2;
-
-                if (FirstReactionTimer >= 0.1f && (Br <= -0.7 || Mathf.Abs(SteeringWheel_Data) > 0.02f))
-                    ReactionStarted = 1;
-
-                TotalFirstReactionValue = ReactionStarted - ReactionNoCount;
-            }
+                LogData();
 
             if (RespawnTrigger)
                 Respawn();
@@ -232,7 +217,6 @@ public class DemoCarController : MonoBehaviour
         {
             case 1: // Traditional Mirror
                 {
-                    Debug.Log("TM");
                     TraditionalMirrorLeft.SetActive(true);
                     TraditionalMirrorRight.SetActive(true);
                     CAM_TM_L.SetActive(true);
@@ -242,8 +226,6 @@ public class DemoCarController : MonoBehaviour
                 }
             case 2: // CMS under A-pillar
                 {
-                    Debug.Log("CMS_Under Pillar");
-                    CMSCenter.SetActive(true);
                     CMS_LD_TM.SetActive(true);
                     CMS_RD_TM.SetActive(true);
                     CMS_CAM_L.SetActive(true);
@@ -253,8 +235,6 @@ public class DemoCarController : MonoBehaviour
                 }
             case 3: // CMS near the Steering Wheel
                 {
-                    Debug.Log("CMS_Steering Wheel");
-                    CMSCenter.SetActive(true);
                     CMS_LD_SW.SetActive(true);
                     CMS_RD_SW.SetActive(true);
                     CMS_CAM_L.SetActive(true);
@@ -264,7 +244,6 @@ public class DemoCarController : MonoBehaviour
                 }
             case 4: // CMS Stitched
                 {
-                    Debug.Log("CMS_Stitched");
                     CMSStitched.SetActive(true);
                     CMS_CAM_S.SetActive(true);
                     Activate_AR = false;
@@ -272,7 +251,6 @@ public class DemoCarController : MonoBehaviour
                 }
             case 5: // CMS under A-pillar with AR signal
                 {
-                    CMSCenter.SetActive(true);
                     CMS_LD_TM.SetActive(true);
                     CMS_RD_TM.SetActive(true);
                     CMS_CAM_L.SetActive(true);
@@ -282,7 +260,6 @@ public class DemoCarController : MonoBehaviour
                 }
             case 6: // CMS near the Steering Wheel with AR signal
                 {
-                    CMSCenter.SetActive(true);
                     CMS_LD_SW.SetActive(true);
                     CMS_RD_SW.SetActive(true);
                     CMS_CAM_L.SetActive(true);
@@ -303,20 +280,8 @@ public class DemoCarController : MonoBehaviour
         SelectArray = false;
     }
 
-    //public void ActivateCar(float Timer, GameObject Self)
-    //{
-    //    RespawnTrigger = false;
-    //    waitTimer = 0;
-    //    DC_C.FadingEvent = false;
-    //    DC_C.Activate_Fade = true;
-    //    Timer = 0;
-    //    Debug.Log(Timer);
-    //    Self.SetActive(false);
-    //}
-
     void ResetCMS()
     {
-        CMSCenter.SetActive(false);
         CMS_LD_SW.SetActive(false);
         CMS_LD_TM.SetActive(false);
         CMS_RD_SW.SetActive(false);
@@ -333,7 +298,7 @@ public class DemoCarController : MonoBehaviour
 
     private void ApplyArray()
     {
-        CMScombination_Array = new int[,] { /*{ 1,2,3,4,5,6,7}*/{ 6, 2, 3, 4, 5, 6, 7 }, { 1, 4, 2, 3, 7, 6, 5 }, { 1, 6, 4, 2, 3, 7, 5 }, { 2, 5, 7, 1, 6, 4, 3 }, { 3, 2, 5, 4, 6, 1, 7 }, { 3, 6, 4, 2, 1, 5, 7 },
+        CMScombination_Array = new int[,] { { 6, 2, 3, 4, 5, 6, 7 }, { 1, 4, 2, 3, 7, 6, 5 }, { 1, 6, 4, 2, 3, 7, 5 }, { 2, 5, 7, 1, 6, 4, 3 }, { 3, 2, 5, 4, 6, 1, 7 }, { 3, 6, 4, 2, 1, 5, 7 },
                                             { 4, 2, 7, 3, 1, 5, 6 }, { 5, 2, 1, 4, 7, 3, 6 }, { 5, 4, 1, 2, 6, 3, 7 }, { 6, 1, 5, 7, 2, 4, 3 }, { 7, 2, 6, 4, 5, 3, 1 } };
 
         FollowingCarSpeed = new int[,] { { -1, 1, 2, 1, 2, 1, 2}, { -1, 2, 1, 2, 1, 2, 1}, {-1, 1, 1, 2, 2, 1, 1}, {-1, 2, 2, 1, 1, 2, 2}, {-1, 2, 1, 1, 2, 1, 2},
@@ -351,9 +316,27 @@ public class DemoCarController : MonoBehaviour
         CMSchange();
     }
 
+    private void LogData()
+    {
+        LogTimer += Time.deltaTime;
+
+        if (LogTimer <= 0.1f && (Br <= -0.7 || Mathf.Abs(SteeringWheel_Data) > 0.02f))
+            ReactionNoCount = 2;
+
+        if (LogTimer >= 0.1f && (Br <= -0.7 || Mathf.Abs(SteeringWheel_Data) > 0.02f))
+            ReactionStarted = 1;
+
+        TotalFirstReactionValue = ReactionStarted - ReactionNoCount;
+
+        if (TotalFirstReactionValue == 1 && CSV_P.Log_FirstReactionTime == 0)
+            CSV_P.Log_FirstReactionTime = LogTimer;
+
+        if (LaneChangeComplete == 1 && CSV_P.Log_LaneChangeComplete == 0)
+            CSV_P.Log_LaneChangeComplete = LogTimer;
+    }
+
     void ResetData()
     {
-        Debug.Log("Reset");
         ReactionStarted = 0;
         ReactionNoCount = 0;
         TotalFirstReactionValue = 0;
@@ -361,7 +344,9 @@ public class DemoCarController : MonoBehaviour
         LaneChangeComplete = 0;
         DC_C.DrivingIn2ndLane = false;
         ResetTrigger = false;
-        Debug.Log("Num of Collision : " + NumOfCollision + " , "+ Time.time);
+        CSV_P.Log_FirstReactionTime = 0;
+        CSV_P.Log_LaneChangeComplete = 0;
+        LogTimer = 0;
     }
 
     void Respawn()
