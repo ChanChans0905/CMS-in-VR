@@ -19,7 +19,7 @@ public class Questionnaire : MonoBehaviour
     public int QuestionnaireNumber;
     string csvSeparator = ",";
     string csvFileName;
-    string csvDirectoryName = "Questionnaire_CMS_";
+    string csvDirectoryName = "Questionnaire";
     string[] csvHeaders = new string[2] { "Questionnaire", "Answer" };
     float ThresholdTimer;
 
@@ -127,7 +127,7 @@ public class Questionnaire : MonoBehaviour
     void SaveToCSV()
     {
         DC.QuestionnaireCount++;
-        csvFileName = "Questionnaire" + DC.CMScombination[DC.CMSchangeCount-1] + ".csv";
+        csvFileName = "Questionnaire_CMS_" + DC.CMScombination[DC.CMSchangeCount-1] + ".csv";
         List<Transform> children = GetChildren(transform);
         for (int i = 0; i < children.Count; i++)
         {
