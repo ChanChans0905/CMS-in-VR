@@ -41,9 +41,13 @@ public class RayCastToGazeTarget : MonoBehaviour
                 EOR_Time += Time.deltaTime;
                 PlaceOfGazeTarget = 1;
             }
-            else if (Physics.Raycast(transform.position, transform.forward, 300.0f, Mask_CMS_Right))
+            if (Physics.Raycast(transform.position, transform.forward, 300.0f, Mask_CMS_Right))
+            {
+                EOR_Time += Time.deltaTime;
                 PlaceOfGazeTarget = 2;
-            else if (Physics.Raycast(transform.position, transform.forward, 300.0f, Mask_FrontMirror))
+            }
+                
+            if (Physics.Raycast(transform.position, transform.forward, 300.0f, Mask_FrontMirror))
                 PlaceOfGazeTarget = 0;
 
             if (!StopCheckingGlance && (CheckIfGlanceChanged != PlaceOfGazeTarget))

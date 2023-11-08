@@ -278,7 +278,7 @@ public class LeadingCar : MonoBehaviour
             TargetCarVelocity.x = 0;
         }
 
-        if(OvertakeTimer > 14 + TaskStartTime)
+        if(OvertakeTimer > 12 + TaskStartTime)
         {
             LeadingCar_1.SetActive(false);
             LeadingCar_2.SetActive(false);

@@ -12,6 +12,7 @@ public class DC_Collidor : MonoBehaviour
     [SerializeField] CSV_Save_Processed CSV_Processed;
     [SerializeField] FollowingCar FC;
     [SerializeField] RayCastToGazeTarget RayCaster;
+    [SerializeField] TaskStartNotice TSN;
     public GameObject QuestionnaireStartNotice, TaskFailureNotice, TaskStartNotice;
     public float alpha = 0;
     public bool Activate_Fade, FadingEvent;
@@ -142,6 +143,7 @@ public class DC_Collidor : MonoBehaviour
         {
             DC.RespawnTrigger = true;
             TaskStartNotice.SetActive(true);
+            TSN.Calibration = true;
         }
 
         CSV_Raw.AddEndloggingTimer = true;

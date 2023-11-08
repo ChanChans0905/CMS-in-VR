@@ -14,6 +14,7 @@ public class Questionnaire : MonoBehaviour
     [SerializeField] FinalQuestionnaire FQ;
     [SerializeField] Slider AnswerSlider;
     List<Transform> children;
+
     public GameObject SaveTriggerObject, FinalQuestionnaireStartNotice, TrialStartNotice;
     public bool SaveTrigger, QuestionnairePhase, FirstSlider;
     public int QuestionnaireNumber;
@@ -27,7 +28,6 @@ public class Questionnaire : MonoBehaviour
     {
         if (QuestionnairePhase)
         {
-            Debug.Log("QuestionnairePhase");
 
             if (LogitechGSDK.LogiUpdate() && LogitechGSDK.LogiIsConnected(0))
             {
@@ -61,7 +61,7 @@ public class Questionnaire : MonoBehaviour
                     SaveToCSV();
             }
         }
-    }
+}
 
     List<Transform> GetChildren(Transform parent)
     {
