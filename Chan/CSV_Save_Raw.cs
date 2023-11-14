@@ -114,9 +114,9 @@ public class CSV_Save_Raw : MonoBehaviour
         DataArray[7] = Gaze.transform.localPosition.x;
         DataArray[8] = Gaze.transform.localPosition.y;
         DataArray[9] = Gaze.transform.localPosition.z;
-        DataArray[10] = Head.transform.position.x;
-        DataArray[11] = Head.transform.position.y;
-        DataArray[12] = Head.transform.position.z;
+        DataArray[10] = Head.transform.localPosition.x;
+        DataArray[11] = Head.transform.localPosition.y;
+        DataArray[12] = Head.transform.localPosition.z;
 
         DataArray[13] = Volvocar.transform.position.x;
         DataArray[14] = 0;

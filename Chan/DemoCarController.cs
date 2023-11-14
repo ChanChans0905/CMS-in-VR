@@ -55,8 +55,8 @@ public class DemoCarController : MonoBehaviour
     public int[,] TaskScenario = new int[7, 7];
     public int[,] LaneChangeTime = new int[7, 7]; // make the 2 dimension list by using counter-balance
     public int[,] FollowingCarSpeed = new int[7, 7];
-    public int[] CMScombination = new int[80];
-    int[,] CMScombination_Array = new int[70, 7];
+    public int[] CMScombination = new int[7];
+    int[,] CMScombination_Array = new int[80, 7];
 
     // Data
     public float Acc, Br, SW, SteeringWheel_Data, Pedal_Data;
@@ -298,7 +298,7 @@ public class DemoCarController : MonoBehaviour
 
     private void ApplyArray()
     {
-        CMScombination_Array = new int[,] 
+        CMScombination_Array = new int[,]
         {{4, 3, 7, 1, 5, 6, 2},{4, 3, 2, 1, 5, 6, 7},{4, 3, 5, 6, 1, 7, 2},{4, 6, 7, 5, 3, 2, 1},{4, 6, 2, 7, 5, 1, 3},{4, 2, 3, 7, 5, 1, 6},{4, 2, 6, 3, 5, 7, 1},{4, 5, 3, 2, 1, 6, 7},
 {4, 5, 2, 1, 3, 7, 6},{4, 1, 3, 7, 6, 2, 5},{4, 1, 2, 3, 5, 7, 6},{4, 1, 5, 2, 3, 6, 7},{3, 4, 6, 7, 1, 2, 5},{3, 4, 7, 6, 1, 2, 5},{3, 4, 2, 6, 1, 7, 5},{3, 4, 2, 1, 5, 7, 6},
 {3, 6, 4, 5, 1, 7, 2},{3, 6, 2, 7, 5, 4, 1},{3, 7, 4, 1, 6, 2, 5},{3, 7, 1, 5, 6, 2, 4},{3, 2, 5, 7, 1, 6, 4},{3, 5, 7, 1, 2, 6, 4},{3, 5, 2, 6, 4, 7, 1},{3, 1, 7, 6, 4, 2, 5},

@@ -31,23 +31,24 @@ public class RayCastToGazeTarget : MonoBehaviour
         {
             transform.LookAt(GazeTarget);
 
+            if (!Physics.Raycast(transform.position, transform.forward, 500.0f, Mask_FrontMirror))
+                EOR_Time += Time.deltaTime;
+
             if (DrivingDirection && (DC_Transform.position.z > LC1_Transform.position.z))
                 StopCheckingGlance = true;
             else if (!DrivingDirection && (DC_Transform.position.z < LC2_Transform.position.z))
                 StopCheckingGlance = true;
 
-            if (Physics.Raycast(transform.position, transform.forward, 300.0f, Mask_CMS_Left))
+            if (Physics.Raycast(transform.position, transform.forward, 500.0f, Mask_CMS_Left))
             {
-                EOR_Time += Time.deltaTime;
                 PlaceOfGazeTarget = 1;
             }
-            if (Physics.Raycast(transform.position, transform.forward, 300.0f, Mask_CMS_Right))
+            if (Physics.Raycast(transform.position, transform.forward, 500.0f, Mask_CMS_Right))
             {
-                EOR_Time += Time.deltaTime;
                 PlaceOfGazeTarget = 2;
             }
                 
-            if (Physics.Raycast(transform.position, transform.forward, 300.0f, Mask_FrontMirror))
+            if (Physics.Raycast(transform.position, transform.forward, 500.0f, Mask_FrontMirror))
                 PlaceOfGazeTarget = 0;
 
             if (!StopCheckingGlance && (CheckIfGlanceChanged != PlaceOfGazeTarget))
